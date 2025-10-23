@@ -5,24 +5,24 @@
   transition: all 0.2s ease-in-out;
   outline: none;
   font-family: inherit;
-  
+
   &:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 10%);
   }
-  
+
   &:disabled {
     background-color: #f9fafb;
     color: #6b7280;
     cursor: not-allowed;
   }
-  
+
   &::placeholder {
     color: #9ca3af;
   }
 }
 
-// Sizes
+/* Sizes */
 .small {
   padding: 6px 12px;
   font-size: 14px;
@@ -41,13 +41,13 @@
   min-height: 48px;
 }
 
-// States
+/* States */
 .error {
   border-color: #ef4444;
-  
+
   &:focus {
     border-color: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 0 3px rgb(239 68 68 / 10%);
   }
 }
 

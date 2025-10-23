@@ -18,8 +18,10 @@ export const Input: React.FC<InputProps> = ({
     styles[size],
     error ? styles.error : '',
     disabled ? styles.disabled : '',
-    className
-  ].filter(Boolean).join(' ');
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <input
