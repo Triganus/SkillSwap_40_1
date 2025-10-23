@@ -1,0 +1,29 @@
+[
+  {
+    "id": "user1",
+    "name": "Алексей Иванов",
+    "email": "alexey@example.com",
+    "avatar": "https://via.placeholder.com/150",
+    "bio": "Frontend разработчик с 5+ летним опытом",
+    "skills": ["react", "typescript", "ui-design"],
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "user2",
+    "name": "Мария Петрова",
+    "email": "maria@example.com",
+    "avatar": "https://via.placeholder.com/150",
+    "bio": "Backend разработчик, изучаю frontend",
+    "skills": ["python", "django", "sql"],
+    "createdAt": "2024-01-02T00:00:00Z"
+  },
+  {
+    "id": "user3",
+    "name": "Дмитрий Сидоров",
+    "email": "dmitry@example.com",
+    "avatar": "https://via.placeholder.com/150",
+    "bio": "Full-stack разработчик",
+    "skills": ["react", "nodejs", "mongodb", "docker"],
+    "createdAt": "2024-01-03T00:00:00Z"
+  }
+]
