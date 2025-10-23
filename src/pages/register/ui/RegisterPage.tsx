@@ -18,12 +18,12 @@ export default function RegisterPage() {
   return (
     <div>
       <h1>Register</h1>
-      <p>Шаг {current} из {TOTAL_STEPS}</p>
+      <p>
+        Шаг {current} из {TOTAL_STEPS}
+      </p>
 
       <div style={{ display: 'flex', gap: 8 }}>
-        {prevStep && (
-          <button onClick={() => navigate(`/register/${prevStep}`)}>Назад</button>
-        )}
+        {prevStep && <button onClick={() => navigate(`/register/${prevStep}`)}>Назад</button>}
         {nextStep ? (
           <button onClick={() => navigate(`/register/${nextStep}`)}>Дальше</button>
         ) : (

@@ -9,9 +9,7 @@ export default function ProfilePage() {
       <h1>Profile</h1>
       {auth.user ? (
         <>
-          <p>
-            {auth.user.name}
-          </p>
+          <p>{auth.user.name}</p>
           <button onClick={logout}>Выйти</button>
         </>
       ) : (
