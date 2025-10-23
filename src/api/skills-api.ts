@@ -7,11 +7,11 @@ import type { Skill } from '../entities/skill/model/types/types';
 export const fetchSkills = async (): Promise<Skill[]> => {
   try {
     const response = await fetch('/db/skills.json');
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const skills: Skill[] = await response.json();
     return skills;
   } catch (error) {

@@ -5,11 +5,13 @@
 ## Доступные функции
 
 ### `fetchSkills(): Promise<Skill[]>`
+
 Загружает список всех навыков из `/db/skills.json`.
 
 **Возвращает:** Promise с массивом объектов типа `Skill`
 
 **Пример использования:**
+
 ```typescript
 import { fetchSkills } from './api';
 
@@ -18,11 +20,13 @@ console.log(skills); // [{ id: "1", title: "React Development", ... }, ...]
 ```
 
 ### `fetchUsers(): Promise<User[]>`
+
 Загружает список всех пользователей из `/db/users.json`.
 
 **Возвращает:** Promise с массивом объектов типа `User`
 
 **Пример использования:**
+
 ```typescript
 import { fetchUsers } from './api';
 
@@ -33,6 +37,7 @@ console.log(users); // [{ id: "user1", name: "Алексей Иванов", ... 
 ## Типы данных
 
 ### Skill
+
 ```typescript
 interface Skill {
   id: string;
@@ -47,6 +52,7 @@ interface Skill {
 ```
 
 ### User
+
 ```typescript
 interface User {
   id: string;
@@ -62,6 +68,7 @@ interface User {
 ## Обработка ошибок
 
 Все функции включают обработку ошибок:
+
 - HTTP ошибки (404, 500, etc.)
 - Ошибки парсинга JSON
 - Сетевые ошибки
@@ -71,6 +78,7 @@ interface User {
 ## Тестирование
 
 Для тестирования API функций можно использовать:
+
 1. Компонент `ApiTest` в `src/components/ApiTest.tsx`
 2. Функцию `testApiFunctions()` в `src/test-api.tsx`
 3. Консоль браузера: `window.testApiFunctions()`

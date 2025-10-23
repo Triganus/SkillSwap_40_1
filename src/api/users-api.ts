@@ -7,11 +7,11 @@ import type { User } from '../entities/user/model/types/types';
 export const fetchUsers = async (): Promise<User[]> => {
   try {
     const response = await fetch('/db/users.json');
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const users: User[] = await response.json();
     return users;
   } catch (error) {
