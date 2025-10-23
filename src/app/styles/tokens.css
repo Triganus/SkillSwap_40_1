@@ -1,0 +1,53 @@
+/* Типографика */
+:root {
+  --font-sans: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* Радиусы */
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 20px;
+  --radius-pill: 999px;
+
+  /* Высота и паддинги контролов */
+  --control-h: 48px;
+  --control-pad-x: var(--space-5);
+  --control-pad-y: 12px;
+  --control-gap: var(--space-2);
+
+  /* Семантика на базе палитры */
+  --muted-text: var(--color-caption);
+  --border-color: var(--color-caption);
+  --border-color-strong: var(--color-accent);
+  --focus-color: var(--color-link);
+  --success: var(--color-accent);
+  --warning: var(--color-alarm);
+  --danger: var(--color-error);
+  --info: var(--color-button-hover);
+  --on-surface: var(--color-text);
+  --on-accent: #1f2716; /* тёмный текст на зелёном фоне */
+  --on-danger: #ffffff;
+
+  /* Поверхности/слои */
+  --surface-1: var(--color-surface);
+
+  /* Анимации */
+  --easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur-normal: 200ms;
+  --dur-slow: 320ms;
+
+  /* Z-index scale */
+  --z-dropdown: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
+}
