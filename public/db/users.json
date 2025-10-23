@@ -1,0 +1,606 @@
+{
+    "users": [
+      {
+        "id": "user1",
+        "name": "Иван",
+        "date_of_birth": "1990-05-23",
+        "age": 34,
+        "date_of_registration": "2023-01-15",
+        "about_me": "Профессиональный барабанщик с многолетним опытом. Люблю делиться знаниями и учиться новому.",
+        "avatar_image": "db/avatars/ivan.png",
+        "gender": "мужской",
+        "user_profession": "Музыкант",
+        "is_online": true,
+        "location": "Санкт-Петербург",
+        "contacts": {
+          "phone": "+79097514385",
+          "email": "ivanivan@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Индивидуальный подход."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user2",
+        "name": "Анна",
+        "date_of_birth": "1998-03-15",
+        "age": 26,
+        "date_of_registration": "2023-02-20",
+        "about_me": "Преподаватель английского языка. Активно изучаю новые навыки и делюсь знаниями.",
+        "avatar_image": "db/avatars/anna.png",
+        "gender": "женский",
+        "user_profession": "Преподаватель английского",
+        "is_online": true,
+        "location": "Казань",
+        "contacts": {
+          "phone": "+79161234567",
+          "email": "anna.english@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "lang_001",
+              "skill_description": "Преподаю английский язык для всех уровней. Индивидуальный подход."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user3",
+        "name": "Максим",
+        "date_of_birth": "2001-08-14",
+        "age": 23,
+        "date_of_registration": "2023-03-10",
+        "about_me": "Молодой предприниматель, специализируюсь на создании бизнес-планов. Стремлюсь к постоянному развитию.",
+        "avatar_image": "db/avatars/maxim_new.png",
+        "gender": "мужской",
+        "user_profession": "Предприниматель",
+        "is_online": true,
+        "location": "Москва",
+        "contacts": {
+          "phone": "+79105551234",
+          "email": "maxim.business@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "bus_008",
+              "skill_description": "Помогу создать эффективный бизнес-план с нуля. Опыт запуска стартапов."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+  
+      {
+        "id": "user4",
+        "name": "Илона",
+        "date_of_birth": "1991-07-20",
+        "age": 33,
+        "date_of_registration": "2024-03-15",
+        "about_me": "Преподаватель английского языка с опытом работы за рубежом. Люблю изучать новые навыки.",
+        "avatar_image": "db/avatars/ilona.png",
+        "gender": "женский",
+        "user_profession": "Преподаватель английского",
+        "is_online": false,
+        "location": "Екатеринбург",
+        "contacts": {
+          "phone": "+79161234568",
+          "email": "ilona.english@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "lang_001",
+              "skill_description": "Преподаю английский язык для всех уровней. Опыт работы в международных компаниях."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user5",
+        "name": "Михаил",
+        "date_of_birth": "1995-12-10",
+        "age": 29,
+        "date_of_registration": "2024-07-10",
+        "about_me": "Преподаватель английского языка. Активно развиваюсь в разных направлениях.",
+        "avatar_image": "db/avatars/mikhail.png",
+        "gender": "мужской",
+        "user_profession": "Преподаватель английского",
+        "is_online": true,
+        "location": "Новосибирск",
+        "contacts": {
+          "phone": "+79161234569",
+          "email": "mikhail.english@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "lang_001",
+              "skill_description": "Преподаю английский язык для всех уровней. Современные методики обучения."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user6",
+        "name": "Мария",
+        "date_of_birth": "2003-04-05",
+        "age": 21,
+        "date_of_registration": "2025-03-10",
+        "about_me": "Молодой преподаватель английского языка. Энергичная и открытая для новых знаний.",
+        "avatar_image": "db/avatars/maria_new.png",
+        "gender": "женский",
+        "user_profession": "Преподаватель английского",
+        "is_online": true,
+        "location": "Краснодар",
+        "contacts": {
+          "phone": "+79161234570",
+          "email": "maria.english@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "lang_001",
+              "skill_description": "Преподаю английский язык для всех уровней. Современный подход к обучению."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user7",
+        "name": "Виктория",
+        "date_of_birth": "1994-09-12",
+        "age": 30,
+        "date_of_registration": "2025-04-09",
+        "about_me": "Профессиональная барабанщица. Люблю музыку и стремлюсь к гармонии в жизни.",
+        "avatar_image": "db/avatars/victoria_kemerovo.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": false,
+        "location": "Кемерово",
+        "contacts": {
+          "phone": "+79161234571",
+          "email": "victoria.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Профессиональный подход и индивидуальные занятия."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user8",
+        "name": "Елизавета",
+        "date_of_birth": "1999-06-18",
+        "age": 25,
+        "date_of_registration": "2023-02-05",
+        "about_me": "Талантливая барабанщица. Активно развиваюсь и изучаю новые навыки.",
+        "avatar_image": "db/avatars/elizaveta.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": true,
+        "location": "Владивосток",
+        "contacts": {
+          "phone": "+79161234572",
+          "email": "elizaveta.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Современные техники и стили."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user9",
+        "name": "Виктория",
+        "date_of_birth": "1993-11-25",
+        "age": 31,
+        "date_of_registration": "2024-05-10",
+        "about_me": "Опытная барабанщица с многолетним стажем. Стремлюсь к постоянному развитию.",
+        "avatar_image": "db/avatars/victoria_sochi.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": true,
+        "location": "Сочи",
+        "contacts": {
+          "phone": "+79161234573",
+          "email": "victoria.sochi@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Классические и современные стили."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user10",
+        "name": "Елена",
+        "date_of_birth": "1996-02-14",
+        "age": 28,
+        "date_of_registration": "2023-01-10",
+        "about_me": "Профессиональная барабанщица. Люблю музыку и стремлюсь к совершенству.",
+        "avatar_image": "db/avatars/elena_krasnoyarsk.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": false,
+        "location": "Красноярск",
+        "contacts": {
+          "phone": "+79161234574",
+          "email": "elena.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Индивидуальный подход к каждому ученику."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user11",
+        "name": "Константин",
+        "date_of_birth": "1988-10-08",
+        "age": 36,
+        "date_of_registration": "2024-03-23",
+        "about_me": "Опытный барабанщик с многолетним стажем. Делюсь знаниями и учусь новому.",
+        "avatar_image": "db/avatars/konstantin.png",
+        "gender": "мужской",
+        "user_profession": "Музыкант",
+        "is_online": true,
+        "location": "Иркутск",
+        "contacts": {
+          "phone": "+79161234575",
+          "email": "konstantin.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Профессиональные техники и стили."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user12",
+        "name": "София",
+        "date_of_birth": "2000-01-30",
+        "age": 24,
+        "date_of_registration": "2025-03-12",
+        "about_me": "Молодая барабанщица с большим потенциалом. Активно развиваюсь в музыке.",
+        "avatar_image": "db/avatars/sofia.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": true,
+        "location": "Абакан",
+        "contacts": {
+          "phone": "+79161234576",
+          "email": "sofia.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Современные подходы к обучению."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user13",
+        "name": "Екатерина",
+        "date_of_birth": "1991-05-22",
+        "age": 33,
+        "date_of_registration": "2024-03-24",
+        "about_me": "Профессиональная барабанщица. Люблю музыку и стремлюсь к постоянному развитию.",
+        "avatar_image": "db/avatars/ekaterina.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": false,
+        "location": "Пермь",
+        "contacts": {
+          "phone": "+79161234577",
+          "email": "ekaterina.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Индивидуальный подход и профессиональные техники."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user14",
+        "name": "Дарья",
+        "date_of_birth": "1998-08-16",
+        "age": 26,
+        "date_of_registration": "2025-06-10",
+        "about_me": "Талантливая барабанщица. Активно изучаю новые навыки и делюсь знаниями.",
+        "avatar_image": "db/avatars/darya.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": true,
+        "location": "Ярославль",
+        "contacts": {
+          "phone": "+79161234578",
+          "email": "darya.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Современные методики обучения."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user15",
+        "name": "Алла",
+        "date_of_birth": "2002-12-03",
+        "age": 22,
+        "date_of_registration": "2025-08-08",
+        "about_me": "Молодая барабанщица с большим энтузиазмом. Стремлюсь к совершенству в музыке.",
+        "avatar_image": "db/avatars/alla.png",
+        "gender": "женский",
+        "user_profession": "Музыкант",
+        "is_online": true,
+        "location": "Архангельск",
+        "contacts": {
+          "phone": "+79161234579",
+          "email": "alla.drums@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Энергичный подход к обучению."
+            }
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      }
+    ]
+  }
+  
