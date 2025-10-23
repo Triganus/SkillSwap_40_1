@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "React Development",
+    "description": "Modern React with hooks, context, and best practices",
+    "type": "teaching",
+    "category": "Programming",
+    "tags": ["react", "javascript", "frontend"],
+    "authorId": "user1",
+    "createdAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "title": "TypeScript",
+    "description": "TypeScript fundamentals and advanced patterns",
+    "type": "learning",
+    "category": "Programming",
+    "tags": ["typescript", "javascript", "types"],
+    "authorId": "user2",
+    "createdAt": "2024-01-16T14:30:00Z"
+  },
+  {
+    "id": "3",
+    "title": "UI/UX Design",
+    "description": "User interface and user experience design principles",
+    "type": "teaching",
+    "category": "Design",
+    "tags": ["design", "ui", "ux", "figma"],
+    "authorId": "user1",
+    "createdAt": "2024-01-17T09:15:00Z"
+  }
+]
