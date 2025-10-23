@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier ./src --write",
+    "format:check": "prettier . --check",
     "check": "npm run stylelint:fix && npm run lint:fix && npm run format"
   },
   "dependencies": {
