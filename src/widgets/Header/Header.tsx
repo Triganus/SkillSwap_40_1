@@ -1,4 +1,4 @@
-import type React from "react"
+import type React from 'react';
 
 // Описание работы header: 
 
@@ -32,10 +32,10 @@ export const HeaderWidget: React.FC = () => (
             <div>Логотип</div>
             <ul>
                 {/* заглушка */}
-                <li>О проекте</li>
+                <li>О проекте</li>
 
                 {/* всплывающее окно */}
-                <li>Все навыки</li>
+                <li>Все навыки</li>
             </ul>
             <div>
                 <input 
