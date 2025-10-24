@@ -30,12 +30,12 @@
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
-    
+
     &:hover {
       background-color: transparent;
       transform: none;
     }
-    
+
     &:active {
       transform: none;
     }
@@ -47,11 +47,11 @@
   height: 24px;
   transition: all 0.2s ease-in-out;
   display: block;
-  
+
   .likeButton:hover & {
     transform: scale(1.1);
   }
-  
+
   .likeButton:disabled:hover & {
     transform: none;
   }

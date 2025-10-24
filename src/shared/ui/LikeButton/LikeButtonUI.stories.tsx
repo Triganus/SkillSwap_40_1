@@ -66,7 +66,7 @@ export const DisabledActive: Story = {
 
 const InteractiveComponent = (args: typeof LikeButtonUI.arguments) => {
   const [isActive, setIsActive] = React.useState(args.isActive ?? false);
-  
+
   return (
     <LikeButtonUI
       {...args}
