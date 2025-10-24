@@ -72,7 +72,7 @@ export const Interactive: Story = {
   },
   render: (args) => {
     const [isActive, setIsActive] = React.useState(args.isActive);
-    
+
     return (
       <LikeButtonUI
         {...args}

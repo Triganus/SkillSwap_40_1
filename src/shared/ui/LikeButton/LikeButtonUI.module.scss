@@ -13,7 +13,7 @@
   outline: none;
 
   &:hover {
-    background-color: rgba(255, 182, 193, 0.1);
+    background-color: rgb(255 182 193 / 10%);
     transform: scale(1.05);
   }
 
@@ -29,12 +29,12 @@
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
-    
+
     &:hover {
       background-color: transparent;
       transform: none;
     }
-    
+
     &:active {
       transform: none;
     }
@@ -45,11 +45,11 @@
   width: 20px;
   height: 20px;
   transition: all 0.2s ease-in-out;
-  
+
   .likeButton:hover & {
     transform: scale(1.1);
   }
-  
+
   .likeButton:disabled:hover & {
     transform: none;
   }
@@ -61,6 +61,6 @@
 
 .heartIconOutline {
   fill: none;
-  stroke: #666;
+  stroke: #666666;
   stroke-width: 2;
 }
