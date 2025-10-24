@@ -2,8 +2,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
   border: none;
   border-radius: 50%;
   background: transparent;
@@ -13,7 +14,7 @@
   outline: none;
 
   &:hover {
-    background-color: rgb(255 182 193 / 10%);
+    background-color: rgba(255, 182, 193, 0.1);
     transform: scale(1.05);
   }
 
@@ -29,12 +30,12 @@
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
-
+    
     &:hover {
       background-color: transparent;
       transform: none;
     }
-
+    
     &:active {
       transform: none;
     }
@@ -42,14 +43,15 @@
 }
 
 .heartIcon {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   transition: all 0.2s ease-in-out;
-
+  display: block;
+  
   .likeButton:hover & {
     transform: scale(1.1);
   }
-
+  
   .likeButton:disabled:hover & {
     transform: none;
   }
@@ -60,7 +62,5 @@
 }
 
 .heartIconOutline {
-  fill: none;
-  stroke: #666666;
-  stroke-width: 2;
+  color: #666;
 }

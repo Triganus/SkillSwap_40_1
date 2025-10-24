@@ -64,22 +64,24 @@ export const DisabledActive: Story = {
   },
 };
 
+const InteractiveComponent = (args: typeof LikeButtonUI.arguments) => {
+  const [isActive, setIsActive] = React.useState(args.isActive ?? false);
+  
+  return (
+    <LikeButtonUI
+      {...args}
+      isActive={isActive}
+      onClick={() => setIsActive(!isActive)}
+      ariaLabel={isActive ? 'Не нравится' : 'Нравится'}
+    />
+  );
+};
+
 export const Interactive: Story = {
   args: {
     isActive: false,
     disabled: false,
     ariaLabel: 'Нравится',
   },
-  render: (args) => {
-    const [isActive, setIsActive] = React.useState(args.isActive);
-
-    return (
-      <LikeButtonUI
-        {...args}
-        isActive={isActive}
-        onClick={() => setIsActive(!isActive)}
-        ariaLabel={isActive ? 'Не нравится' : 'Нравится'}
-      />
-    );
-  },
+  render: InteractiveComponent,
 };
