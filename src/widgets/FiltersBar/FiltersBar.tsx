@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const FiltersBar = () => {
   return (
     <aside className="filters-bar">
