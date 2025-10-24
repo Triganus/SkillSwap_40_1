@@ -1,0 +1,240 @@
+/* Мягкий базовый reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans), sans-serif;
+  color: var(--color-text);
+  background: var(--color-background);
+  line-height: 1.5;
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  scrollbar-gutter: stable both-edges;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  font-weight: inherit;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+a:active {
+  color: var(--color-link);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Убираем стандартный outline на фокусе у интерактивов
+   Кастомное фокус-окружение задаётся ниже через :focus-visible */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+summary:focus,
+[contenteditable]:focus,
+[tabindex]:not([tabindex='-1']):focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Normalize-inspired additions */
+main {
+  display: block;
+}
+
+hr {
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: var(--space-4) 0;
+  color: inherit;
+}
+
+abbr[title] {
+  text-decoration: underline dotted;
+}
+
+b,
+strong {
+  font-weight: 700;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: ui-monospace, 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+  font-size: 0.95em;
+}
+
+small {
+  font-size: 0.875em;
+}
+
+sub,
+sup {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/* Формы */
+button {
+  background: none;
+  border: 0;
+}
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  appearance: auto;
+}
+
+input,
+textarea,
+select {
+  background-color: transparent;
+  border-radius: 0; /* iOS rounded */
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Firefox внутренний отступ у кнопок */
+::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+:-moz-focusring {
+  outline: 1px dotted;
+}
+
+/* WebKit search/number/file */
+[type='search'] {
+  appearance: textfield;
+  outline-offset: -2px;
+}
+
+::-webkit-search-decoration,
+::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+[type='number']::-webkit-inner-spin-button,
+[type='number']::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+::-webkit-file-upload-button {
+  appearance: auto;
+  font: inherit;
+}
+
+/* Таблицы */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Скрытые элементы и details/summary */
+[hidden] {
+  display: none !important;
+}
+
+details {
+  display: block;
+}
+
+summary {
+  display: list-item;
+  cursor: pointer;
+}
+
+/* Единое focus-окружение */
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--focus-color), transparent 30%);
+  outline-offset: 2px;
+}
+
+/* Выделение текста */
+::selection {
+  background: color-mix(in srgb, var(--color-link), var(--surface-1) 70%);
+  color: var(--on-surface);
+}
+
+/* Утилиты */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

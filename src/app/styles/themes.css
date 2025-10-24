@@ -1,0 +1,81 @@
+/* Глобальные цветовые переменные тем */
+:root,
+:root[data-theme='light'],
+html[data-theme='light'] {
+  /* Base */
+  --color-text: #253017; /* Text */
+  --color-caption: #69735d; /* Caption */
+  --color-text-disabled: #9ca197; /* Disabled Text */
+  --color-toggle: #b2b9a9; /* Toggle */
+  --color-disabled: #e4e8df; /* Disabled */
+  --color-surface: #ffffff; /* Card, input */
+  --color-link: #508826; /* Text link, Button pressed */
+  --color-accent: #abd27a; /* Accent */
+  --color-button-hover: #deebc5; /* Button hover */
+  --color-background: #f9faf7; /* Background */
+  --color-alarm: #e0796e; /* Alarm */
+  --color-error: #bf3920; /* Error */
+
+  /* Tag backgrounds */
+  --tag-business: #eee7f7; /* Бизнес и карьера */
+  --tag-art: #f7e7f2; /* Творчество и искусство */
+  --tag-languages: #e8e5c5; /* Иностранные языки */
+  --tag-education: #e7f2f6; /* Образование и развитие */
+  --tag-home: #f7ebf5; /* Дом и уют */
+  --tag-health: #e9f7e7; /* Здоровье и лайфстайл */
+  --tag-other: #e8ecf7; /* Прочее */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    /* Base */
+    --color-text: #e9f2e5;
+    --color-caption: #a7b3a4;
+    --color-text-disabled: #7d857b;
+    --color-toggle: #5e6a5f;
+    --color-disabled: #2a2f2b;
+    --color-surface: #1a201b;
+    --color-link: #9cd36a;
+    --color-accent: #9cd36a;
+    --color-button-hover: #2a3625;
+    --color-background: #111412;
+    --color-alarm: #f1988d;
+    --color-error: #e06046;
+
+    /* Tag backgrounds */
+    --tag-business: #3a3347;
+    --tag-art: #3f3340;
+    --tag-languages: #3a3a2a;
+    --tag-education: #24343a;
+    --tag-home: #3a2f39;
+    --tag-health: #24352a;
+    --tag-other: #2a3345;
+  }
+}
+
+/* Тёмная тема */
+:root[data-theme='dark'],
+html[data-theme='dark'] {
+  /* Base */
+  --color-text: #e9f2e5;
+  --color-caption: #a7b3a4;
+  --color-text-disabled: #7d857b;
+  --color-toggle: #5e6a5f;
+  --color-disabled: #2a2f2b;
+  --color-surface: #1a201b;
+  --color-link: #9cd36a;
+  --color-accent: #9cd36a;
+  --color-button-hover: #2a3625;
+  --color-background: #111412;
+  --color-alarm: #f1988d;
+  --color-error: #e06046;
+
+  /* Tag backgrounds */
+  --tag-business: #3a3347;
+  --tag-art: #3f3340;
+  --tag-languages: #3a3a2a;
+  --tag-education: #24343a;
+  --tag-home: #3a2f39;
+  --tag-health: #24352a;
+  --tag-other: #2a3345;
+}
