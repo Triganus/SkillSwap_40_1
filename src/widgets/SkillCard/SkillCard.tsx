@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const SkillCard = () => {
   return (
     <article className="skill-card">
