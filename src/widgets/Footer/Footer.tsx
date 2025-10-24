@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from 'Footer.module.css';
 
-export const FooterWidget: /*FC<TFooterWidgetProps> = ({ userName })*/React.FC = () => (
+export const FooterWidget: /*FC<TFooterWidgetProps> = ({ userName })*/ React.FC = () => (
   <footer className={styles.footer}>
     <div className={styles.logo}>
       <img src="path_to_logo" alt="SkillSwap" />
