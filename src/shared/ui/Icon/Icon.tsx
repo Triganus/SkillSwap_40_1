@@ -30,7 +30,6 @@ export const Icon: React.FC<IconProps> = ({ name, size, title, className }) => {
       aria-label={title}
       className={className}
       fill="currentColor"
-      stroke="currentColor"
     >
       {title ? <title>{title}</title> : null}
       <use href={`#icon-${name}`} />

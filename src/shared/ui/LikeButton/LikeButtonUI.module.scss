@@ -1,4 +1,4 @@
-.likeButton {
+.like-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -42,25 +42,25 @@
   }
 }
 
-.heartIcon {
+.heart-icon {
   width: 24px;
   height: 24px;
   transition: all 0.2s ease-in-out;
   display: block;
 
-  .likeButton:hover & {
+  .like-button:hover & {
     transform: scale(1.1);
   }
 
-  .likeButton:disabled:hover & {
+  .like-button:disabled:hover & {
     transform: none;
   }
 }
 
-.heartIconFilled {
+.heart-icon-filled {
   fill: #ff6b9d;
 }
 
-.heartIconOutline {
+.heart-icon-outline {
   color: #666666;
 }

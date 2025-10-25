@@ -18,6 +18,12 @@
   --radius-l: 20px;
   --radius-pill: 999px;
 
+  /* Размеры input[type=radio] input[type=checkbox] */
+  --rb-size-sm: 16px;
+  --rb-size-md: 18px;
+  --rb-size-lg: 20px;
+  --rb-ring: 3px;
+
   /* Высота и паддинги контролов */
   --control-h: 48px;
   --control-pad-x: var(--space-5);
