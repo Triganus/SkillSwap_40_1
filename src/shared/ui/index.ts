@@ -12,3 +12,6 @@ export type { IconProps } from './Icon';
 
 export { RadioButtonUI } from './RadioButton';
 export type { TRadioButtonUIProps } from './RadioButton';
+
+export { CheckBoxUI } from './CheckBox';
+export type { TCheckBoxUIProps } from './CheckBox';
