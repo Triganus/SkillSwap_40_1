@@ -1,11 +1,40 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import path from 'node:path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), svgr()],
+  plugins: [
+    react(),
+    svgr(),
+    createSvgIconsPlugin({
+      iconDirs: [path.resolve(__dirname, 'src/shared/assets/icons')],
+      symbolId: 'icon-[dir]-[name]',
+      svgoOptions: {
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                removeViewBox: false,
+              },
+            },
+          },
+          'removeDimensions',
+          {
+            name: 'removeAttrs',
+            params: {
+              attrs: '(fill|stroke|style|class|data-name)'
+            }
+          },
+          'prefixIds',
+        ],
+      },
+      inject: 'body-last',
+    }),
+  ],
   server: {
     open: true,
   },

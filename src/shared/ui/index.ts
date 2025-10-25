@@ -4,5 +4,5 @@ export type { ButtonProps } from './Button';
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
-export { LogoUI } from './Logo';
-export type { TLogoUIProps } from './Logo';
+export { ModalUI } from './Modal';
+export type { TModalUIProps, ModalAction } from './Modal';
