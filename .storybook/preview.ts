@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/react';
 import '@/index.css';
-import '../src/shared/config/storybook/setupSvgSprite';
+import '@shared/config/storybook/setupSvgSprite';
 
 const preview: Preview = {
   parameters: {
