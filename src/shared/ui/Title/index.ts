@@ -1,2 +1,2 @@
 export { TitleUI } from './TitleUI';
-export type { TTitleUIProps } from './TitleUIProps'
+export type { TTitleUIProps } from './TitleUIProps';
