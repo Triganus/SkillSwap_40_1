@@ -1,0 +1,146 @@
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Visually hide but keep accessible */
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 20px;
+  min-block-size: 34px;
+  padding-inline: var(--space-2);
+  color: var(--on-surface);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.read-only {
+  cursor: default;
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.control {
+  position: relative;
+  inline-size: var(--rb-size-lg);
+  block-size: var(--rb-size-lg);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  background: transparent;
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
+    box-shadow var(--dur-fast) var(--easing-standard),
+    background-color var(--dur-fast) var(--easing-standard);
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+/* Inner dot */
+.control::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--color-link);
+  transform: scale(0);
+  transition: transform var(--dur-fast) var(--easing-standard);
+}
+
+/* Sizes */
+.sm .label .control {
+  inline-size: var(--rb-size-sm);
+  block-size: var(--rb-size-sm);
+}
+
+.md .label .control {
+  inline-size: var(--rb-size-md);
+  block-size: var(--rb-size-md);
+}
+
+.text {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 16px;
+}
+
+.sm .text {
+  font-size: 14px;
+}
+
+.md .text {
+  font-size: 16px;
+}
+
+/* Hover/active */
+.label:hover .control {
+  border-color: var(--border-color-strong);
+}
+
+.label:active .control {
+  box-shadow: 0 0 0 var(--rb-ring) var(--color-button-hover);
+}
+
+/* Focus styles via input sibling */
+.input:focus-visible + .label .control {
+  outline: none;
+  box-shadow: 0 0 0 var(--rb-ring) color-mix(in oklab, var(--focus-color) 35%, transparent);
+  border-color: var(--focus-color);
+}
+
+/* Checked */
+.input:checked + .label .control {
+  border-color: var(--color-link);
+}
+
+.input:checked + .label .control::after {
+  transform: scale(1);
+}
+
+/* Disabled */
+.input:disabled + .label {
+  cursor: not-allowed;
+  color: var(--color-text-disabled);
+}
+
+.input:disabled + .label .control {
+  border-color: var(--color-disabled);
+}
+
+/* Error */
+.is-error .label .control {
+  border-color: var(--color-error);
+}
+
+.is-error .input:focus-visible + .label .control {
+  box-shadow: 0 0 0 var(--rb-ring) color-mix(in oklab, var(--color-error) 35%, transparent);
+}
+
+.error-message {
+  margin-block-start: var(--space-1);
+  margin-inline-start: calc(var(--rb-size-md) + var(--space-4));
+  color: var(--color-error);
+  font-size: 14px;
+}

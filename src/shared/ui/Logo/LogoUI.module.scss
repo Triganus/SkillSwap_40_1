@@ -1,0 +1,27 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #abd27a;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+}
+
+.logo-svg {
+  width: 159px;
+  height: 40px;
+  display: block;
+}

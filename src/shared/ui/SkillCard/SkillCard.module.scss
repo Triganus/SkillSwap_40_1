@@ -1,0 +1,140 @@
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  max-width: 320px;
+  font-family: 'Jost', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 4px;
+  line-height: 1.2;
+}
+
+.location {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.like-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.liked {
+  color: #e74c3c;
+  fill: #e74c3c;
+}
+
+.not-liked {
+  color: #bdc3c7;
+  fill: #bdc3c7;
+}
+
+.skills-section {
+  margin-bottom: 20px;
+}
+
+.skill-group {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.skill-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+  margin: 0 0 8px;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2c3e50;
+  white-space: nowrap;
+}
+
+.teach-tag {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.learn-tag {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.more-tag {
+  background-color: #e2e3e5;
+  color: #6c757d;
+}
+
+.details-button {
+  width: 100%;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #218838;
+  }
+
+  &:active {
+    background-color: #1e7e34;
+  }
+}
