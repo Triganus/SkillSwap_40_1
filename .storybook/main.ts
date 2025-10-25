@@ -29,7 +29,7 @@ const config: StorybookConfig = {
       ...config.css,
       preprocessorOptions: {
         scss: {
-          additionalData: `@import "src/index.css";`
+          additionalData: `@import "@/index.css";`
         }
       }
     };
