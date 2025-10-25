@@ -6,3 +6,6 @@ export type { InputProps } from './Input';
 
 export { ModalUI } from './Modal';
 export type { TModalUIProps, ModalAction } from './Modal';
+
+export { CheckBoxUI } from './CheckBox';
+export type { TCheckBoxUIProps } from './CheckBox';

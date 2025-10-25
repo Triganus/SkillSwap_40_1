@@ -49,4 +49,9 @@ export default defineConfig({
       '@api': path.resolve(__dirname, 'src/api'),
     },
   },
+  css: {
+    modules: {
+      localsConvention: 'camelCaseOnly'
+    }
+  }
 });
