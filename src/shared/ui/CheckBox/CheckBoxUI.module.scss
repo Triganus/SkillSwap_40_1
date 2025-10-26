@@ -87,6 +87,7 @@
 .input:checked[data-checked-mark='done'] + .label .control .icon-empty {
   display: none;
 }
+
 .input:checked[data-checked-mark='done'] + .label .control .icon-remove {
   display: none;
 }
