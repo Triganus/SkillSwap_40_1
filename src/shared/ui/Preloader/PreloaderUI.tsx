@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './PreloaderUI.module.scss';
-import { TPreloaderUIProps } from './TPreloaderUIProps';
+import type { TPreloaderUIProps } from './TPreloaderUIProps';
 
 export const PreloaderUI: React.FC<TPreloaderUIProps> = ({
   size = 'medium',
