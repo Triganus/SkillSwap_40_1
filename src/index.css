@@ -2,6 +2,7 @@
 @import url('./app/styles/fonts.css');
 @import url('./app/styles/themes.css');
 @import url('./app/styles/tokens.css');
+@import url('./app/styles/layout.css');
 
 :root {
   font-family: system-ui, 'Avenir', 'Helvetica', 'Arial', sans-serif;
@@ -28,15 +29,12 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  display: block;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
-/* focus-обводка управляется глобально в reset.css через :focus-visible */
