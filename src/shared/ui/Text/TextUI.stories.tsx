@@ -14,7 +14,7 @@ const meta: Meta<typeof TextUI> = {
     },
     color: {
       control: 'inline-radio',
-      options: ['primary', 'secondary', 'muted' ,'accent', 'error', 'link'] satisfies TextColor[],
+      options: ['primary', 'secondary', 'muted', 'accent', 'error', 'link'] satisfies TextColor[],
       description: 'Цвет текста по теме',
     },
     children: {
@@ -43,12 +43,24 @@ export const Playground: Story = {
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'grid', gap: 12 }}>
-      <TextUI variant="h1" color='secondary'>H1 — Заголовок крупный</TextUI>
-      <TextUI variant="h2" color='secondary'>H2 — Подзаголовок</TextUI>
-      <TextUI variant="h3" color='secondary'>H3 — Средний заголовок</TextUI>
-      <TextUI variant="h4" color='secondary'>H4 — Малый заголовок</TextUI>
-      <TextUI variant="body" color='secondary'>Body — основной текстовый стиль</TextUI>
-      <TextUI variant="caption" color='secondary'>Caption — подпись или вспомогательный текст</TextUI>
+      <TextUI variant="h1" color="secondary">
+        H1 — Заголовок крупный
+      </TextUI>
+      <TextUI variant="h2" color="secondary">
+        H2 — Подзаголовок
+      </TextUI>
+      <TextUI variant="h3" color="secondary">
+        H3 — Средний заголовок
+      </TextUI>
+      <TextUI variant="h4" color="secondary">
+        H4 — Малый заголовок
+      </TextUI>
+      <TextUI variant="body" color="secondary">
+        Body — основной текстовый стиль
+      </TextUI>
+      <TextUI variant="caption" color="secondary">
+        Caption — подпись или вспомогательный текст
+      </TextUI>
     </div>
   ),
 };

@@ -1,7 +1,7 @@
 import styles from './TextUI.module.scss';
 import type { TTextUIProps } from './TTextUIProps';
 
- export const  TextUI: React.FC<TTextUIProps> = ({
+export const TextUI: React.FC<TTextUIProps> = ({
   children,
   variant = 'body',
   color = 'primary',
@@ -17,5 +17,4 @@ import type { TTextUIProps } from './TTextUIProps';
       {children}
     </p>
   );
-}
-
+};
