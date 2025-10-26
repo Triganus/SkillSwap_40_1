@@ -17,7 +17,8 @@ export type IconProps = {
  *   <Icon name="shared-add" size={20} />
  */
 export const Icon: React.FC<IconProps> = ({ name, size, title, className }) => {
-  const sizeValue = typeof (size ?? 24) === 'number' ? `${size}` : size;
+  const resultSize = size || 24;
+  const sizeValue = typeof resultSize === 'number' ? `${resultSize}` : resultSize;
   const ariaHidden = title ? undefined : true;
   const role = title ? 'img' : 'presentation';
 

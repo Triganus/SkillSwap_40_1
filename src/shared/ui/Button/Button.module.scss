@@ -1,7 +1,6 @@
 .button {
-  border: none;
+  border: 1px solid;
   border-radius: 8px;
-  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   display: inline-flex;
@@ -10,77 +9,53 @@
   text-decoration: none;
   outline: none;
 
-  &:focus {
-    box-shadow: 0 0 0 3px rgb(59 130 246 / 30%);
-  }
-
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.6;
+    color: var(--color-caption);
+    background-color: var(--color-disabled);
+    border-color: var(--color-disabled);
   }
 }
 
 /* Variants */
 .primary {
-  background-color: #3b82f6;
-  color: white;
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
 
   &:hover:not(:disabled) {
-    background-color: #2563eb;
+    background-color: var(--color-button-hover);
+    border-color: var(--color-text);
   }
 
   &:active:not(:disabled) {
-    background-color: #1d4ed8;
+    background-color: var(--color-link);
+    border-color: var(--color-link);
   }
 }
 
 .secondary {
-  background-color: #6b7280;
-  color: white;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-accent);
+
+  &:disabled {
+    color: var(--color-disabled);
+  }
 
   &:hover:not(:disabled) {
-    background-color: #4b5563;
+    border-color: var(--color-button-hover);
+    color: var(--color-caption);
   }
 
   &:active:not(:disabled) {
-    background-color: #374151;
-  }
-}
-
-.outline {
-  background-color: transparent;
-  color: #3b82f6;
-  border: 2px solid #3b82f6;
-
-  &:hover:not(:disabled) {
-    background-color: #3b82f6;
-    color: white;
-  }
-
-  &:active:not(:disabled) {
-    background-color: #2563eb;
-    border-color: #2563eb;
-  }
-}
-
-.ghost {
-  background-color: transparent;
-  color: #6b7280;
-
-  &:hover:not(:disabled) {
-    background-color: #f3f4f6;
-    color: #374151;
-  }
-
-  &:active:not(:disabled) {
-    background-color: #e5e7eb;
+    border-color: var(--color-link);
   }
 }
 
 /* Sizes */
 .small {
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: var(--font-size-small);
   min-height: 32px;
 }
 
@@ -91,8 +66,8 @@
 }
 
 .large {
-  padding: 12px 24px;
-  font-size: 18px;
+  padding: 7px 24px;
+  font-size: var(--fs-body);
   min-height: 48px;
 }
 

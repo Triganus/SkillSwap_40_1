@@ -7,7 +7,9 @@ const LoginPage = lazy(() => import('@pages/login/ui/LoginPage'));
 const RegisterPage = lazy(() => import('@pages/register/ui/RegisterPage'));
 const ProfilePage = lazy(() => import('@pages/profile/ui/ProfilePage'));
 const FavoritesPage = lazy(() => import('@pages/favorites/ui/FavoritesPage'));
-const NotFoundPage = lazy(() => import('@pages/not-found404/ui/NotFoundPage'));
+const NotFoundPage = lazy(() =>
+  import('@pages/not-found404').then((m) => ({ default: m.NotFoundPage }))
+);
 
 function RequireAuth() {
   const { auth } = useAuth();
