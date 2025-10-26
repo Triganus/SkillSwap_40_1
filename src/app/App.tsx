@@ -1,7 +1,7 @@
 // import { Link } from 'react-router-dom';
 import './App.css';
 // import { useAuth } from './Provider';
-import { AppLayout } from './AppLayout';
+import AppRouter from '@app/router/AppRouter.tsx';
 
 // function Header() {
 //   const { auth, logout } = useAuth();
@@ -25,5 +25,5 @@ import { AppLayout } from './AppLayout';
 // }
 
 export default function App() {
-  return <AppLayout>здесь должен быть main</AppLayout>;
+  return <AppRouter />;
 }

@@ -1,0 +1,20 @@
+#root {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* header | main | footer */
+  grid-template-columns: 100%;
+  align-items: stretch;
+  gap: 32px;
+}
+
+#root > main {
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+#root > footer {
+  margin-block-start: 28px;
+}
