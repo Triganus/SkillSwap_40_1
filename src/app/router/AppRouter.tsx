@@ -10,6 +10,9 @@ const FavoritesPage = lazy(() => import('@pages/favorites/ui/FavoritesPage'));
 const NotFoundPage = lazy(() =>
   import('@pages/not-found404').then((m) => ({ default: m.NotFoundPage }))
 );
+const ServerErrorPage = lazy(() =>
+  import('@pages/server-error500').then((m) => ({ default: m.ServerErrorPage }))
+);
 
 function RequireAuth() {
   const { auth } = useAuth();
@@ -36,6 +39,8 @@ export default function AppRouter() {
           <Route path="/favorites" element={<FavoritesPage />} />
         </Route>
 
+        {/* Страницы ошибок */}
+        <Route path="/500" element={<ServerErrorPage />} />
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
