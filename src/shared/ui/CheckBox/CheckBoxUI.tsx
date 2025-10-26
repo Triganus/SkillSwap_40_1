@@ -1,30 +1,25 @@
-import React, { forwardRef, memo, useCallback, useId, useMemo } from 'react';
-import type { TRadioButtonUIProps } from '@shared/ui';
-import styles from './RadioButtonUI.module.scss';
+import React, { forwardRef, memo, useCallback, useEffect, useId, useMemo, useRef } from 'react';
+import type { TCheckBoxUIProps } from '@shared/ui';
+import { Icon } from '@shared/ui/Icon';
+import styles from './CheckBoxUI.module.scss';
 
 /**
- * RadioButtonUI
- * Доступная радиокнопка, построенная на нативном input[type="radio"].
+ * CheckBoxUI
+ * Доступный чекбокс на базе нативного input[type="checkbox"].
  *
  * Примечания:
  * - Используйте либо контролируемый (checked), либо неконтролируемый (defaultChecked) режим, но не оба.
  * - `label` обязателен, когда не предоставлен `ariaLabel`. В большинстве случаев предпочтительнее видимая метка.
- *
- * Пример использования:
- * <form>
- *   <RadioButtonUI name="level" value="all" label="Всё" defaultChecked onChange={(e, v) => {}} />
- *   <RadioButtonUI name="level" value="learn" label="Хочу научиться" />
- *   <RadioButtonUI name="level" value="teach" label="Могу научить" />
- * </form>
  */
-const RadioButtonUINode = forwardRef<HTMLInputElement, TRadioButtonUIProps>(
-  function RadioButtonUI(props, ref) {
+const CheckBoxUINode = forwardRef<HTMLInputElement, TCheckBoxUIProps>(
+  function CheckBoxUI(props, ref) {
     const {
       name,
       value,
       label,
       checked,
       defaultChecked,
+      indeterminate = false,
       disabled = false,
       required = false,
       readOnly = false,
@@ -33,6 +28,7 @@ const RadioButtonUINode = forwardRef<HTMLInputElement, TRadioButtonUIProps>(
       ariaDescribedBy,
       error = false,
       errorMessage,
+      hint,
       onChange,
       onFocus,
       onBlur,
@@ -40,28 +36,63 @@ const RadioButtonUINode = forwardRef<HTMLInputElement, TRadioButtonUIProps>(
       size = 'lg',
       fullWidth = false,
       tabIndex,
+      checkedMark = 'done',
     } = props;
 
     const reactId = useId();
-    const inputId = id ?? `rb-${reactId}`;
+    const inputId = id ?? `cb-${reactId}`;
 
     const errorId = errorMessage ? `${inputId}-error` : undefined;
+    const hintId = hint ? `${inputId}-hint` : undefined;
     const describedBy = useMemo(() => {
-      const ids = [ariaDescribedBy, errorId].filter(Boolean).join(' ').trim();
+      const ids = [ariaDescribedBy, hintId, errorId].filter(Boolean).join(' ').trim();
       return ids.length ? ids : undefined;
-    }, [ariaDescribedBy, errorId]);
+    }, [ariaDescribedBy, hintId, errorId]);
 
-    const isReadOnly = readOnly || disabled;
+    const isReadOnly = readOnly || false;
+
+    const localInputRef = useRef<HTMLInputElement | null>(null);
+
+    // Сливаем внешний ref с локальным
+    useEffect(() => {
+      if (!ref) return;
+      const node = localInputRef.current;
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref && 'current' in ref) {
+        (ref as unknown as { current: HTMLInputElement | null }).current = node;
+      }
+    }, [ref]);
+
+    // Выставляем indeterminate на DOM-элемент
+    useEffect(() => {
+      if (localInputRef.current) {
+        localInputRef.current.indeterminate = Boolean(indeterminate);
+        localInputRef.current.setAttribute('data-indeterminate', String(Boolean(indeterminate)));
+      }
+    }, [indeterminate]);
 
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (readOnly) {
+        if (isReadOnly) {
           e.preventDefault();
+          e.stopPropagation();
+
           return;
         }
-        onChange?.(e, value);
+        onChange?.(e, e.target.checked, value);
       },
-      [onChange, readOnly, value]
+      [isReadOnly, onChange, value]
+    );
+
+    const handleClick = useCallback(
+      (e: React.MouseEvent<HTMLInputElement>) => {
+        if (isReadOnly) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+      [isReadOnly]
     );
 
     const rootClass = useMemo(() => {
@@ -82,12 +113,12 @@ const RadioButtonUINode = forwardRef<HTMLInputElement, TRadioButtonUIProps>(
     return (
       <div className={rootClass} data-readonly={isReadOnly || undefined}>
         <input
-          ref={ref}
+          ref={localInputRef}
           id={inputId}
           className={styles.input}
-          type="radio"
+          type="checkbox"
           name={name}
-          value={String(value)}
+          value={value == null ? undefined : String(value)}
           checked={checked}
           defaultChecked={defaultChecked}
           disabled={disabled}
@@ -97,16 +128,27 @@ const RadioButtonUINode = forwardRef<HTMLInputElement, TRadioButtonUIProps>(
           aria-invalid={error || undefined}
           aria-describedby={describedBy}
           tabIndex={tabIndex}
+          data-checked-mark={checkedMark}
           onChange={handleChange}
+          onClick={handleClick}
           onFocus={onFocus}
           onBlur={onBlur}
         />
         <label htmlFor={inputId} className={`${styles.label} ${isReadOnly ? styles.readOnly : ''}`}>
           <span className={styles.content}>
-            <span className={styles.control} aria-hidden="true" />
+            <span className={styles.control} aria-hidden="true">
+              <Icon name="checkbox-empty" size="100%" className={styles.iconEmpty} />
+              <Icon name="checkbox-done" size="100%" className={styles.iconDone} />
+              <Icon name="checkbox-remove" size="100%" className={styles.iconRemove} />
+            </span>
             {labelText && <span className={styles.text}>{labelText}</span>}
           </span>
         </label>
+        {hint && (
+          <div id={hintId} className={styles.hint} aria-live="polite">
+            {hint}
+          </div>
+        )}
         {errorMessage && (
           <div id={errorId} className={styles.errorMessage} aria-live="assertive">
             {errorMessage}
@@ -117,6 +159,6 @@ const RadioButtonUINode = forwardRef<HTMLInputElement, TRadioButtonUIProps>(
   }
 );
 
-export const RadioButtonUI = memo(RadioButtonUINode);
+export const CheckBoxUI = memo(CheckBoxUINode);
 
-export default RadioButtonUI;
+export default CheckBoxUI;
