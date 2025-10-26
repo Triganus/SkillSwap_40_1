@@ -1,4 +1,3 @@
-
 .text {
   margin: 0;
   font-family: var(--font-sans);
@@ -19,7 +18,7 @@
   font-family: 'Jost', var(--font-sans);
   font-size: 24px;
   line-height: 28px;
-  letter-spacing: -0.011em;;
+  letter-spacing: -0.011em;
   font-weight: 500;
 }
 
@@ -27,7 +26,7 @@
   font-family: 'Jost', var(--font-sans);
   font-size: 20px;
   line-height: 24px;
-  letter-spacing: -0.011em;;
+  letter-spacing: -0.011em;
   font-weight: 500;
 }
 
@@ -58,10 +57,21 @@
 }
 
 /* Цвета */
-.primary { color: var(--color-text); }
-.secondary { color: var(--color-caption); }
-.muted { color: var(--color-text-disabled); }
-.accent { color: var(--color-accent); }
-.link { color: var(--color-link); }
-.error { color: var(--color-error); }
-
+.primary {
+  color: var(--color-text);
+}
+.secondary {
+  color: var(--color-caption);
+}
+.muted {
+  color: var(--color-text-disabled);
+}
+.accent {
+  color: var(--color-accent);
+}
+.link {
+  color: var(--color-link);
+}
+.error {
+  color: var(--color-error);
+}

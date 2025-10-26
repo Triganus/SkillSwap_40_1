@@ -71,8 +71,8 @@
   --z-modal: 1100;
   --z-toast: 1200;
 
-/* Размеры текста */
---text-s: 16px;
---text-m: 20px;
---text-l: 32px;
+  /* Размеры текста */
+  --text-s: 16px;
+  --text-m: 20px;
+  --text-l: 32px;
 }

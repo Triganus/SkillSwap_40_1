@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './PreloaderUI.module.scss';
-import type { TPreloaderUIProps } from "./TPreloaderUIProps";
-
+import type { TPreloaderUIProps } from './TPreloaderUIProps';
 
 export const PreloaderUI: React.FC<TPreloaderUIProps> = ({
   size = 'medium',
@@ -16,4 +15,4 @@ export const PreloaderUI: React.FC<TPreloaderUIProps> = ({
       aria-live="polite"
     />
   );
-}; 
+};
