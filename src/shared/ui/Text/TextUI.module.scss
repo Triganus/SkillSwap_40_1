@@ -1,0 +1,67 @@
+
+.text {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+/* Заголовки — Jost */
+.h1 {
+  font-family: 'Jost', var(--font-sans);
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -1.1%;
+  font-weight: 500;
+}
+
+.h2 {
+  font-family: 'Jost', var(--font-sans);
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -0.011em;;
+  font-weight: 500;
+}
+
+.h3 {
+  font-family: 'Jost', var(--font-sans);
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: -0.011em;;
+  font-weight: 500;
+}
+
+.h4 {
+  font-family: 'Roboto', var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: 2%;
+}
+
+/* Основной текст */
+.body {
+  font-family: 'Roboto', var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 2%;
+}
+
+/* Подписи */
+.caption {
+  font-family: 'Roboto', var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: 2%;
+}
+
+/* Цвета */
+.primary { color: var(--color-text); }
+.secondary { color: var(--color-caption); }
+.muted { color: var(--color-text-disabled); }
+.accent { color: var(--color-accent); }
+.link { color: var(--color-link); }
+.error { color: var(--color-error); }
+
