@@ -1,0 +1,18 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(249 250 247 / 100%);
+
+  &_body {
+    display: flex;
+    flex: 1;
+    position: relative;
+  }
+
+  &_main {
+    flex: 1;
+    padding: 0 36px 0 24px;
+    overflow: auto;
+  }
+}
