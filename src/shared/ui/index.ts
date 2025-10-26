@@ -12,3 +12,6 @@ export type { IconProps } from './Icon';
 
 export { RadioButtonUI } from './RadioButton';
 export type { TRadioButtonUIProps } from './RadioButton';
+
+export { TextUI } from './Text';
+export type { TTextUIProps } from './Text';
