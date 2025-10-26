@@ -39,24 +39,4 @@ h1 {
   line-height: 1.1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  cursor: pointer;
-  transition:
-    border-color 0.25s,
-    background-color 0.25s;
-}
-
-button:hover {
-  border-color: var(--color-button-hover);
-  background-color: var(--color-button-hover);
-}
-
 /* focus-обводка управляется глобально в reset.css через :focus-visible */
