@@ -8,7 +8,7 @@ export type IconProps = {
   /** доступный заголовок; если указан, role="img" и aria-hidden=false */
   title?: string;
   className?: string;
-   /** дополнительные SVG-атрибуты */
+  /** дополнительные SVG-атрибуты */
   svgProps?: React.SVGProps<SVGSVGElement>;
 };
 
@@ -25,7 +25,6 @@ export const Icon: React.FC<IconProps> = ({ name, size, title, className, svgPro
   const role = title ? 'img' : 'presentation';
   const fill = svgProps.fill ?? 'currentColor';
 
-
   return (
     <svg
       width={sizeValue}
@@ -35,7 +34,7 @@ export const Icon: React.FC<IconProps> = ({ name, size, title, className, svgPro
       aria-label={title}
       className={className}
       fill={fill}
-      {...svgProps} 
+      {...svgProps}
     >
       {title ? <title>{title}</title> : null}
       <use href={`#icon-${name}`} />

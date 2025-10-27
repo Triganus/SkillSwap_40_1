@@ -75,7 +75,7 @@ export const Sizes: Story = {
       <Icon name="shared-add" size={48} title="48px" />
     </div>
   ),
-}; 
+};
 
 export const ColorInherit: Story = {
   render: () => (
