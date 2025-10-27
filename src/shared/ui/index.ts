@@ -19,3 +19,6 @@ export { TextUI } from './Text';
 export type { TTextUIProps } from './Text';
 export { CheckBoxUI } from './CheckBox';
 export type { TCheckBoxUIProps } from './CheckBox';
+
+export { Actions } from './Actions';
+export type { ActionsProps, ActionItem, IconAction, CustomAction, ActionId } from './Actions';
