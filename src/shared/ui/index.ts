@@ -23,3 +23,6 @@ export type { TCheckBoxUIProps } from './CheckBox';
 
 export { TagUI } from './Tag';
 export type { TTagUIProps } from './Tag';
+
+export { PopoverUI } from './Popover';
+export type { TPopoverUIProps, PopoverPosition } from './Popover';
