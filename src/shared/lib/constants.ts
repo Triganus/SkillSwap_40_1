@@ -56,4 +56,3 @@ export const isValidCity = (city: string): city is City => {
 export const isValidGender = (gender: string): gender is Gender => {
   return GENDERS.includes(gender as Gender);
 };
-

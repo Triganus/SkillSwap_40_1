@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BrowserRouter } from 'react-router-dom';
 import { FooterWidget } from './Footer';
 
-
 const meta = {
   title: 'Widgets/FooterWidget',
   component: FooterWidget,
