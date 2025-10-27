@@ -2,6 +2,8 @@ import type React from 'react';
 import { LogoUI } from '@shared/ui/Logo';
 import { NavMenu } from '@widgets/NavMenu';
 import { baseNavItems } from '@/shared/config/navigation';
+import { SearchUI } from '@shared/ui/Search';
+import { Icon } from '@shared/ui/Icon';
 
 // Описание работы header:
 
@@ -34,7 +36,10 @@ export const HeaderWidget: React.FC = () => (
       <LogoUI />
       <NavMenu orientation="row" items={baseNavItems} />
       <div>
-        <input type="text" placeholder="Искать навык" />
+        <SearchUI
+          placeholder="Искать навык"
+          prefix={<Icon name="search" size={24} title="Поиск" />}
+        />
       </div>
       <div>
         <button>Тема</button>
