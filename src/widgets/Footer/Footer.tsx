@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import styles from './Footer.module.scss';
 import { LogoUI } from '@/shared/ui/Logo';
+import { NavMenu } from '@widgets/NavMenu';
+import { baseNavItems, docsNavItems, infoNavItems } from '@/shared/config/navigation';
 
 export const FooterWidget: /*FC<TFooterWidgetProps> = ({ userName })*/ React.FC = () => (
   <footer className={styles.footer}>
@@ -11,38 +12,16 @@ export const FooterWidget: /*FC<TFooterWidgetProps> = ({ userName })*/ React.FC 
       {' '}
       {/* Контейнер для колонок */}
       {/* Левая колонка: Список с • */}
-      <nav className={styles.footerColumn}>
-        <ul className={styles.footerLinksListWithDot}>
-          <li>
-            <Link to="/project">О проекте</Link>
-          </li>
-          <li>
-            <Link to="/skills">Все навыки</Link>
-          </li>
-        </ul>
-      </nav>
+      <NavMenu
+        className={styles.footerColumn}
+        orientation="column"
+        showMarkers
+        items={baseNavItems}
+      />
       {/* Средняя колонка: Контакты */}
-      <nav className={styles.footerColumn}>
-        <ul className={styles.footerLinksList}>
-          <li>
-            <Link to="/contacts">Контакты</Link>
-          </li>
-          <li>
-            <Link to="/blog">Блог</Link>
-          </li>
-        </ul>
-      </nav>
+      <NavMenu className={styles.footerColumn} orientation="column" items={infoNavItems} />
       {/* Правая колонка: Политика */}
-      <nav className={styles.footerColumn}>
-        <ul className={styles.footerLinksList}>
-          <li>
-            <Link to="/privacy">Политика конфиденциальности</Link>
-          </li>
-          <li>
-            <Link to="/terms">Пользовательское соглашение</Link>
-          </li>
-        </ul>
-      </nav>
+      <NavMenu className={styles.footerColumn} orientation="column" items={docsNavItems} />
     </div>
   </footer>
 );
