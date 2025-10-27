@@ -30,7 +30,7 @@ const meta: Meta<typeof Icon> = {
   argTypes: {
     name: {
       control: { type: 'select' },
-      options: ['shared-add', 'shared-check', 'shared-close', 'idea'],
+      options: ['shared-add', 'shared-check', 'shared-close'],
       description:
         'Часть после `icon-` в id символа внутри спрайта. Например: `shared-add` для `#icon-shared-add`',
     },
