@@ -21,93 +21,163 @@ const options5 = [
   { value: '5', label: 'Опция 5' },
 ];
 
-export const Default: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [value, setValue] = useState('');
+const DefaultComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [value, setValue] = useState('');
 
-    return (
-      <div style={{ width: '300px' }}>
-        <DropDownUI
-          options={options5}
-          value={value}
-          onChange={setValue}
-          isOpen={isOpen}
-          onToggle={() => setIsOpen(!isOpen)}
-          placeholder="Выберите опцию"
-          label="Выберите значение"
-        />
-      </div>
-    );
-  },
+  return (
+    <div style={{ width: '300px' }}>
+      <DropDownUI
+        options={options5}
+        value={value}
+        onChange={setValue}
+        isOpen={isOpen}
+        onToggle={() => setIsOpen(!isOpen)}
+        placeholder="Выберите опцию"
+        label="Выберите значение"
+      />
+    </div>
+  );
+};
+
+export const Default: Story = {
+  render: () => <DefaultComponent />,
+};
+
+const WithDefaultValueComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div style={{ width: '300px' }}>
+      <DropDownUI
+        options={options5}
+        defaultValue="2"
+        onChange={(v) => console.log(v)}
+        isOpen={isOpen}
+        onToggle={() => setIsOpen(!isOpen)}
+        placeholder="Выберите опцию"
+        label="Выберите значение"
+      />
+    </div>
+  );
 };
 
 export const WithDefaultValue: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
+  render: () => <WithDefaultValueComponent />,
+};
 
-    return (
-      <div style={{ width: '300px' }}>
-        <DropDownUI
-          options={options5}
-          defaultValue="2"
-          onChange={(v) => console.log(v)}
-          isOpen={isOpen}
-          onToggle={() => setIsOpen(!isOpen)}
-          placeholder="Выберите опцию"
-          label="Выберите значение"
-        />
-      </div>
-    );
-  },
+const SmallComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [value, setValue] = useState('');
+
+  return (
+    <DropDownUI
+      options={options5}
+      value={value}
+      onChange={setValue}
+      size="small"
+      isOpen={isOpen}
+      onToggle={() => setIsOpen(!isOpen)}
+      placeholder="Выберите опцию"
+      label="Маленький размер"
+    />
+  );
 };
 
 export const Small: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [value, setValue] = useState('');
+  render: () => <SmallComponent />,
+};
 
-    return (
-      <DropDownUI
-        options={options5}
-        value={value}
-        onChange={setValue}
-        size="small"
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-        placeholder="Выберите опцию"
-        label="Маленький размер"
-      />
-    );
-  },
+const LargeComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [value, setValue] = useState('');
+
+  return (
+    <DropDownUI
+      options={options5}
+      value={value}
+      onChange={setValue}
+      size="large"
+      isOpen={isOpen}
+      onToggle={() => setIsOpen(!isOpen)}
+      placeholder="Выберите опцию"
+      label="Большой размер"
+    />
+  );
 };
 
 export const Large: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [value, setValue] = useState('');
+  render: () => <LargeComponent />,
+};
 
-    return (
-      <DropDownUI
-        options={options5}
-        value={value}
-        onChange={setValue}
-        size="large"
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-        placeholder="Выберите опцию"
-        label="Большой размер"
-      />
-    );
-  },
+const RequiredComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [value, setValue] = useState('');
+
+  return (
+    <DropDownUI
+      options={options5}
+      value={value}
+      onChange={setValue}
+      isOpen={isOpen}
+      onToggle={() => setIsOpen(!isOpen)}
+      placeholder="Выберите опцию"
+      label="Обязательное поле"
+      required
+    />
+  );
 };
 
 export const Required: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [value, setValue] = useState('');
+  render: () => <RequiredComponent />,
+};
 
-    return (
+const WithErrorComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <DropDownUI
+      options={options5}
+      isOpen={isOpen}
+      onToggle={() => setIsOpen(!isOpen)}
+      placeholder="Выберите опцию"
+      label="С ошибкой"
+      error
+      errorMessage="Поле обязательно для заполнения"
+    />
+  );
+};
+
+export const WithError: Story = {
+  render: () => <WithErrorComponent />,
+};
+
+const DisabledComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <DropDownUI
+      options={options5}
+      defaultValue="3"
+      isOpen={isOpen}
+      onToggle={() => setIsOpen(!isOpen)}
+      placeholder="Выберите опцию"
+      label="Отключенный"
+      disabled
+    />
+  );
+};
+
+export const Disabled: Story = {
+  render: () => <DisabledComponent />,
+};
+
+const FullWidthComponent = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [value, setValue] = useState('');
+
+  return (
+    <div style={{ width: '500px' }}>
       <DropDownUI
         options={options5}
         value={value}
@@ -115,67 +185,13 @@ export const Required: Story = {
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
         placeholder="Выберите опцию"
-        label="Обязательное поле"
-        required
+        label="На всю ширину"
+        fullWidth
       />
-    );
-  },
-};
-
-export const WithError: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-      <DropDownUI
-        options={options5}
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-        placeholder="Выберите опцию"
-        label="С ошибкой"
-        error
-        errorMessage="Поле обязательно для заполнения"
-      />
-    );
-  },
-};
-
-export const Disabled: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-      <DropDownUI
-        options={options5}
-        defaultValue="3"
-        isOpen={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-        placeholder="Выберите опцию"
-        label="Отключенный"
-        disabled
-      />
-    );
-  },
+    </div>
+  );
 };
 
 export const FullWidth: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [value, setValue] = useState('');
-
-    return (
-      <div style={{ width: '500px' }}>
-        <DropDownUI
-          options={options5}
-          value={value}
-          onChange={setValue}
-          isOpen={isOpen}
-          onToggle={() => setIsOpen(!isOpen)}
-          placeholder="Выберите опцию"
-          label="На всю ширину"
-          fullWidth
-        />
-      </div>
-    );
-  },
+  render: () => <FullWidthComponent />,
 };
