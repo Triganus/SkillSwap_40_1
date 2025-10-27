@@ -1,6 +1,7 @@
 import React from 'react';
 import type { TLogoUIProps } from './TLogoUIProps';
 import styles from './LogoUI.module.scss';
+import { Link } from 'react-router-dom';
 
 export const LogoUI: React.FC<TLogoUIProps> = ({ onClick, className }) => {
   const handleClick = (e: React.MouseEvent) => {
@@ -18,8 +19,8 @@ export const LogoUI: React.FC<TLogoUIProps> = ({ onClick, className }) => {
   };
 
   return (
-    <a
-      href="/"
+    <Link
+      to="/"
       className={`${styles.logo} ${className || ''}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
@@ -45,6 +46,6 @@ export const LogoUI: React.FC<TLogoUIProps> = ({ onClick, className }) => {
           fill="#253017"
         />
       </svg>
-    </a>
+    </Link>
   );
 };

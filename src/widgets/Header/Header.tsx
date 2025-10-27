@@ -1,4 +1,5 @@
 import type React from 'react';
+import { LogoUI } from '@shared/ui/Logo';
 
 // Описание работы header:
 
@@ -28,7 +29,7 @@ export const HeaderWidget: React.FC = () => (
   <header>
     <nav>
       {/* ссылка возвращает на главную страницу */}
-      <div>Логотип</div>
+      <LogoUI />
       <ul>
         {/* заглушка */}
         <li>О проекте</li>

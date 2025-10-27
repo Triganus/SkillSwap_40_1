@@ -40,6 +40,7 @@ const config: StorybookConfig = {
       ...config.resolve,
       alias: {
         ...(config.resolve?.alias as Record<string, string> | undefined),
+        '@': path.resolve(__dirname, '../src'),
         '@app': path.resolve(__dirname, '../src/app'),
         '@entities': path.resolve(__dirname, '../src/entities'),
         '@features': path.resolve(__dirname, '../src/features'),
