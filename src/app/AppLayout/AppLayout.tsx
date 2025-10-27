@@ -1,4 +1,4 @@
-import { FooterWidget } from '@/widgets/Footer/Footer';
+/*import { FooterWidget } from '@/widgets/Footer/Footer';
 import styles from './AppLayout.module.scss';
 
 export interface AppLayoutProps {
@@ -12,12 +12,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   return (
     <div className={styles.appLayout}>
-      {/* <Header /> */}
       <div className={styles.appLayoutBody}>
-        {/* {showSideBar && <SideBar />} */}
         <main className={styles.appLayoutMain}>{children}</main>
       </div>
       <FooterWidget />
     </div>
   );
-};
+};*/

@@ -34,7 +34,13 @@ export const HeaderWidget: React.FC = () => (
     <nav>
       {/* ссылка возвращает на главную страницу */}
       <LogoUI />
-      <NavMenu orientation="row" items={baseNavItems} />
+      <ul>
+        {/* заглушка */}
+        <li>О проекте</li>
+
+        {/* всплывающее окно */}
+        <li>Все навыки</li>
+      </ul>
       <div>
         <SearchUI
           placeholder="Искать навык"

@@ -17,5 +17,12 @@ export type { TRadioButtonUIProps } from './RadioButton';
 
 export { TextUI } from './Text';
 export type { TTextUIProps } from './Text';
+
 export { CheckBoxUI } from './CheckBox';
 export type { TCheckBoxUIProps } from './CheckBox';
+
+export { TagUI } from './Tag';
+export type { TTagUIProps } from './Tag';
+
+export { PopoverUI } from './Popover';
+export type { TPopoverUIProps, PopoverPosition } from './Popover';
