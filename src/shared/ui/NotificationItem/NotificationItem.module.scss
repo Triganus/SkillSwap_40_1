@@ -9,7 +9,7 @@
   max-width: 436px;
 }
 
-.topRow {
+.top-row {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3); /* 12px */
@@ -33,13 +33,13 @@
   white-space: nowrap;
 }
 
-.ctaRow {
+.cta-row {
   display: flex;
   align-items: center;
   gap: var(--space-3);
 }
 
-.iconBase {
+.icon-base {
   color: var(--color-text);
   flex-shrink: 0;
   width: 24px;
