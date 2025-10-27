@@ -1,5 +1,7 @@
 import type React from 'react';
 import { LogoUI } from '@shared/ui/Logo';
+import { NavMenu } from '@widgets/NavMenu';
+import { baseNavItems } from '@/shared/config/navigation';
 
 // Описание работы header:
 
@@ -30,13 +32,7 @@ export const HeaderWidget: React.FC = () => (
     <nav>
       {/* ссылка возвращает на главную страницу */}
       <LogoUI />
-      <ul>
-        {/* заглушка */}
-        <li>О проекте</li>
-
-        {/* всплывающее окно */}
-        <li>Все навыки</li>
-      </ul>
+      <NavMenu orientation="row" items={baseNavItems} />
       <div>
         <input type="text" placeholder="Искать навык" />
       </div>
