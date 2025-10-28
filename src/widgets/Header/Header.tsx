@@ -1,4 +1,11 @@
 import type React from 'react';
+import { LogoUI } from '@shared/ui/Logo';
+import { NavMenu } from '@widgets/NavMenu';
+import { baseNavItems } from '@/shared/config/navigation';
+import { SearchUI } from '@shared/ui/Search';
+import { Icon } from '@shared/ui/Icon';
+import { Actions } from '@shared/ui';
+import { useHeaderActions } from './model/useHeaderActions';
 
 // Описание работы header:
 
@@ -24,28 +31,29 @@ import type React from 'react';
 
 // React.FC — это временная типизация, которую в дальнейшем нужно будет убрать.
 
-export const HeaderWidget: React.FC = () => (
-  <header>
-    <nav>
-      {/* ссылка возвращает на главную страницу */}
-      <div>Логотип</div>
-      <ul>
-        {/* заглушка */}
-        <li>О проекте</li>
+export const HeaderWidget: React.FC = () => {
+  const items = useHeaderActions();
 
-        {/* всплывающее окно */}
-        <li>Все навыки</li>
-      </ul>
-      <div>
-        <input type="text" placeholder="Искать навык" />
-      </div>
-      <div>
-        <button>Тема</button>
-      </div>
-      <div>
-        <button>Войти</button>
-        <button>Зарегистрироваться</button>
-      </div>
-    </nav>
-  </header>
-);
+  return (
+    <header>
+      <nav>
+        {/* ссылка возвращает на главную страницу */}
+        <LogoUI />
+        <NavMenu orientation="row" items={baseNavItems} />
+        <div>
+          <SearchUI
+            placeholder="Искать навык"
+            prefix={<Icon name="search" size={24} title="Поиск" />}
+          />
+        </div>
+        <div>
+          <Actions items={items} />
+        </div>
+        <div>
+          <button>Войти</button>
+          <button>Зарегистрироваться</button>
+        </div>
+      </nav>
+    </header>
+  );
+};
