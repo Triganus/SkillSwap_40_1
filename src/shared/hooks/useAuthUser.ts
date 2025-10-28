@@ -13,4 +13,3 @@ export function useAuthUser(): UseAuthUserResult {
 
   return { user, isAuthenticated };
 }
-

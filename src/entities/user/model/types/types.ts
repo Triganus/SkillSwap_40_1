@@ -32,4 +32,4 @@ export type DbUser = {
   };
 };
 
-export type AuthUser = &DbUser
+export type AuthUser = DbUser;

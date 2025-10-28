@@ -28,4 +28,3 @@ export async function fetchHeaderUsers(): Promise<HeaderUser[]> {
   cache = mapped;
   return mapped;
 }
-
