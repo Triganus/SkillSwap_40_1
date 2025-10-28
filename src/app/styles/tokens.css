@@ -75,4 +75,11 @@
   --text-s: 16px;
   --text-m: 20px;
   --text-l: 32px;
+
+  /* Колонки контентной части */
+  --content-col: 324px;
+  --content-col-gap: 24px;
+
+  /* Подвал */
+  --footer-min-height: 232px;
 }
