@@ -1,8 +1,5 @@
 export default {
-  extends: [
-    "stylelint-config-standard-scss",
-    "stylelint-config-recommended-vue/scss"
-  ],
+  extends: ['stylelint-config-standard'],
   plugins: ['stylelint-order'],
   rules: {
     'no-descending-specificity': null,

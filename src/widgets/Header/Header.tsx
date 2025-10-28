@@ -1,52 +1,47 @@
 import type React from 'react';
 import { LogoUI } from '@shared/ui/Logo';
+import { NavMenu } from '@widgets/NavMenu';
+import { baseNavItems } from '@/shared/config/navigation';
+import { SearchUI } from '@shared/ui/Search';
+import { Icon } from '@shared/ui/Icon';
+import { Actions } from '@shared/ui';
+import { useHeaderActions } from './model/useHeaderActions';
+import { HeaderUserBlock } from './ui/HeaderUserBlock';
+import cls from './Header.module.scss';
+import { useAuth } from '@app/Provider.tsx';
 
-// Описание работы header:
+export const HeaderWidget: React.FC = () => {
+  const { auth } = useAuth();
+  const items = useHeaderActions();
+  const classes = [cls.header, auth.isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
 
-// 1. Логотип: Расположен первым. При нажатии выполняется переход на главную страницу.
-// 2. Навигационные ссылки:
-//     - «О проекте»: Статическая ссылка-заглушка.
-//     - «Все навыки»: Ссылка с иконкой.
-//     При наведении курсора всплывает окно с описанием всех доступных навыков.
-// 3. Поиск.
-// 4. Переключение темы: Иконка для смены светлой темы на темную и обратно.
-// 5. Блок пользователя: Этот блок меняется в зависимости от статуса авторизации.
-//     - Для неавторизованного пользователя:
-//     Отображаются две кнопки — «Войти» и «Зарегистрироваться».
-
-//     - Для авторизованного пользователя: Кнопки заменяются на три иконки:
-//     a) «Звонок»: При нажатии появляется всплывающее окно со списком запросов на обмен.
-//     Если в списке есть новые элементы, на иконке отображается индикатор (красный кружок).
-
-//     b) «Сердце»: Появляется всплывающее окно с избранными навыками.
-
-//     c) Аватар и имя пользователя:
-//     При нажатии осуществляется переход в личный кабинет (профиль пользователя).
-
-// React.FC — это временная типизация, которую в дальнейшем нужно будет убрать.
-
-export const HeaderWidget: React.FC = () => (
-  <header>
-    <nav>
-      {/* ссылка возвращает на главную страницу */}
-      <LogoUI />
-      <ul>
-        {/* заглушка */}
-        <li>О проекте</li>
-
-        {/* всплывающее окно */}
-        <li>Все навыки</li>
-      </ul>
-      <div>
-        <input type="text" placeholder="Искать навык" />
-      </div>
-      <div>
-        <button>Тема</button>
-      </div>
-      <div>
-        <button>Войти</button>
-        <button>Зарегистрироваться</button>
-      </div>
-    </nav>
-  </header>
-);
+  return (
+    <header className={classes}>
+      <nav className={cls.nav} aria-label="Верхняя панель навигации">
+        <div className={cls.left}>
+          <div className={cls.logo}>
+            <LogoUI />
+          </div>
+          <div className={cls.menu}>
+            <NavMenu orientation="row" items={baseNavItems} />
+          </div>
+        </div>
+        <div className={cls.center}>
+          <SearchUI
+            placeholder="Искать навык"
+            prefix={<Icon name="search" size={24} title="Поиск" />}
+            containerProps={{ style: { width: '100%' } }}
+          />
+        </div>
+        <div className={cls.right}>
+          <div className={cls.actions}>
+            <Actions items={items} />
+          </div>
+          <div className={cls.user}>
+            <HeaderUserBlock />
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+};

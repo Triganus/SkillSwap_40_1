@@ -1,0 +1,24 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-inline-size: 1020px;
+}
+
+.section-content {
+  display: flex;
+  justify-content: space-between;
+  inline-size: 1020px;
+}
+
+.look-button {
+  inline-size: 187px;
+  block-size: 48px;
+  gap: 8px;
+}
+
+.section-card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}

@@ -1,5 +1,7 @@
 import { SearchUI } from '@shared/ui/Search';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Icon } from '@shared/ui/Icon';
+import type { SearchUIProps } from '@shared/ui/Search';
 
 const meta: Meta<typeof SearchUI> = {
   title: 'UI/SearchUI',
@@ -21,23 +23,13 @@ const meta: Meta<typeof SearchUI> = {
       control: 'boolean',
       description: 'Whether the search input is disabled',
     },
-    onChange: {
-      action: 'changed',
-      description: 'Callback fired when input value changes',
-    },
-    onKeyDown: {
-      action: 'key pressed',
-      description: 'Callback fired when a key is pressed',
-    },
-    onClick: {
-      action: 'clicked',
-      description: 'Callback fired when search button is clicked',
-    },
+    prefix: { control: false },
+    suffix: { control: false },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+export type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
@@ -63,18 +55,22 @@ export const Disabled: Story = {
   },
 };
 
-export const CustomPlaceholder: Story = {
-  args: {
-    placeholder: 'Поиск по навыкам...',
-    value: '',
-    disabled: false,
-  },
+export const WithPrefix: Story = {
+  render: (args: SearchUIProps) => (
+    <SearchUI
+      {...args}
+      placeholder="Искать навык"
+      prefix={<Icon name="search" size={24} title="Поиск" />}
+    />
+  ),
 };
 
-export const LongPlaceholder: Story = {
-  args: {
-    placeholder: 'Введите название навыка для поиска',
-    value: '',
-    disabled: false,
-  },
+export const WithSuffix: Story = {
+  render: (args: SearchUIProps) => (
+    <SearchUI
+      {...args}
+      placeholder="Искать навык"
+      suffix={<Icon name="cross" size={24} title="Очистить" />}
+    />
+  ),
 };

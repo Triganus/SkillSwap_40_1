@@ -30,6 +30,7 @@
   &:active:not(:disabled) {
     background-color: var(--color-link);
     border-color: var(--color-link);
+    color: var(--color-surface);
   }
 }
 
