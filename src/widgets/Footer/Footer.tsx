@@ -7,18 +7,22 @@ import { baseNavItems, docsNavItems, infoNavItems } from '@/shared/config/naviga
 export const FooterWidget: React.FC = () => (
   <footer className={styles.footer}>
     <div className={styles.footerContent}>
-      <div className={styles.footerBrand}>
+      <div className={styles.footerTop}>
         <LogoUI className={styles.footerLogo} />
-        <span className={styles.footerCopyright}>SkillSwap — 2025</span>
       </div>
+
       <NavMenu
-        className={styles.footerColumn}
+        className={styles.footerMenuCol2}
         orientation="column"
         showMarkers
         items={baseNavItems}
       />
-      <NavMenu className={styles.footerColumn} orientation="column" items={infoNavItems} />
-      <NavMenu className={styles.footerColumn} orientation="column" items={docsNavItems} />
+      <NavMenu className={styles.footerMenuCol3} orientation="column" items={infoNavItems} />
+      <NavMenu className={styles.footerMenuCol4} orientation="column" items={docsNavItems} />
+
+      <div className={styles.footerBottom}>
+        <span className={styles.footerCopyright}>SkillSwap — 2025</span>
+      </div>
     </div>
   </footer>
 );
