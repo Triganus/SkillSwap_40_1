@@ -9,11 +9,11 @@
   gap: var(--grid-gap, 24px);
   width: 100%;
 
-  @media (min-width: 768px) {
+  @media (width >= 768px) {
     grid-template-columns: repeat(var(--grid-columns-tablet, 2), 1fr);
   }
 
-  @media (min-width: 1024px) {
+  @media (width >= 1024px) {
     grid-template-columns: repeat(var(--grid-columns-desktop, 3), 1fr);
   }
 }

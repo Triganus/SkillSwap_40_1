@@ -23,8 +23,5 @@ export type { TCheckBoxUIProps } from './CheckBox';
 export { Actions } from './Actions';
 export type { ActionsProps, ActionItem, IconAction, CustomAction, ActionId } from './Actions';
 
-export { TagUI } from './Tag';
-export type { TTagUIProps } from './Tag';
-
 export { InfiniteGridUI } from './InfiniteGrid';
 export type { TInfiniteGridUIProps } from './InfiniteGrid';
