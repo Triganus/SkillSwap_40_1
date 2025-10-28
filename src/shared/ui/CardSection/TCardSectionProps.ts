@@ -5,5 +5,8 @@ export type TCardSectionProps = {
   title: string;
   onLookClick?: () => void;
   cards: Array<SkillCardProps>;
+  showButton?: boolean;
   className?: string;
+  showAllCards?: boolean; // если не нужно, можно будет удалить
+  maxCards?: number; // если не нужно, можно будет удалить
 };
