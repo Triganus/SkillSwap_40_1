@@ -16,7 +16,7 @@ export const UserBadge: React.FC<UserBadgeProps> = ({ name, avatarSrc, onClick, 
       aria-label={`Открыть профиль пользователя ${name}`}
     >
       <span className={styles.userName}>{name}</span>
-      <AvatarUI src={avatarSrc} fallback={name} size={40} />
+      <AvatarUI src={avatarSrc} fallback={name} size={48} />
     </button>
   );
 };

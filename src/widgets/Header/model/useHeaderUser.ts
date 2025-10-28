@@ -1,32 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useAuth } from '@app/Provider';
+import { useMemo } from 'react';
 import type { HeaderUser } from '../type';
-import { fetchHeaderUsers } from './usersAdapter';
+import { useAuthUser } from '@shared/hooks';
 
 export function useHeaderUser(): { user: HeaderUser | null; isGuest: boolean } {
-  const { auth } = useAuth();
-  const [list, setList] = useState<HeaderUser[] | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    fetchHeaderUsers()
-      .then((u) => {
-        if (mounted) setList(u);
-      })
-      .catch(() => {
-        if (mounted) setList([]);
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { user: authUser, isAuthenticated } = useAuthUser();
 
   return useMemo(() => {
-    if (!auth.isAuthenticated) return { user: null, isGuest: true } as const;
+    if (!isAuthenticated || !authUser) return { user: null, isGuest: true } as const;
 
-    const user =
-      (list ?? []).find((u) => u.id === auth.user?.id) ?? (list && list.length > 0 ? list[0] : null);
+    const mapped: HeaderUser = {
+      id: authUser.id,
+      name: authUser.name,
+      avatarSrc: authUser.avatar_image,
+    };
 
-    return { user, isGuest: false } as const;
-  }, [auth.isAuthenticated, auth.user?.id, list]);
+    return { user: mapped, isGuest: false } as const;
+  }, [isAuthenticated, authUser]);
 }

@@ -20,12 +20,7 @@ export const HeaderUserBlock: React.FC<{ className?: string }> = ({ className })
   }
 
   if (!user) {
-    return (
-      <div className={`${styles.container} ${className || ''}`} aria-busy>
-        <div className={styles.skeletonName} />
-        <div className={styles.skeletonAvatar} />
-      </div>
-    );
+    return;
   }
 
   return (
