@@ -1,0 +1,48 @@
+.container {
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+  justify-items: center;
+  align-content: center;
+  width: 460px;
+  margin: 0 auto;
+}
+
+.illustration {
+  margin: 0;
+
+  img {
+    display: block;
+  }
+}
+
+.page-content {
+  margin-block-start: 52px;
+}
+
+.title {
+  font-family: 'Jost', sans-serif;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  font-weight: 700;
+  color: #2b3a2e;
+  text-align: center;
+}
+
+.description {
+  text-align: center;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  justify-content: stretch;
+}
+
+.actions > * {
+  flex-grow: 1;
+  flex-basis: 0;
+}

@@ -1,0 +1,36 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 6px;
+  line-height: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  outline: none;
+}
+
+.indicator {
+  position: relative;
+}
+
+.indicator::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e53935; /* red dot */
+}
