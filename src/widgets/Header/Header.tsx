@@ -6,6 +6,7 @@ import { SearchUI } from '@shared/ui/Search';
 import { Icon } from '@shared/ui/Icon';
 import { Actions } from '@shared/ui';
 import { useHeaderActions } from './model/useHeaderActions';
+import { HeaderUserBlock } from './ui/HeaderUserBlock';
 
 // Описание работы header:
 
@@ -49,10 +50,7 @@ export const HeaderWidget: React.FC = () => {
         <div>
           <Actions items={items} />
         </div>
-        <div>
-          <button>Войти</button>
-          <button>Зарегистрироваться</button>
-        </div>
+        <HeaderUserBlock />
       </nav>
     </header>
   );
