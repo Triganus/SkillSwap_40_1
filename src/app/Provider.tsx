@@ -3,15 +3,16 @@ import { BrowserRouter } from 'react-router-dom';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { Provider as ReduxProvider, useDispatch, useSelector } from 'react-redux';
+import type { AuthUser } from '@entities/user/model/types/types.ts';
 
 export type AuthState = {
   isAuthenticated: boolean;
-  user?: { id: string; name: string } | null;
+  user?: AuthUser | null;
 };
 
 export type AuthContextValue = {
   auth: AuthState;
-  login: (user?: { id: string; name: string }) => void;
+  login: (user: AuthUser) => void;
   logout: () => void;
 };
 
@@ -31,9 +32,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: readAuthFromStorage() as AuthState,
   reducers: {
-    login: (state, action: PayloadAction<{ id: string; name: string } | undefined>) => {
+    login: (state, action: PayloadAction<AuthUser>) => {
       state.isAuthenticated = true;
-      state.user = action.payload ?? { id: '1', name: 'User' };
+      state.user = action.payload;
     },
     logout: (state) => {
       state.isAuthenticated = false;

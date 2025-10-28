@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { TAvatarUIProps } from './TAvatarUIProps';
+import type { TAvatarUIProps } from '@shared/ui';
 import styles from './AvatarUI.module.scss';
 
 export const AvatarUI: React.FC<TAvatarUIProps> = ({
@@ -7,6 +7,7 @@ export const AvatarUI: React.FC<TAvatarUIProps> = ({
   alt = 'Avatar',
   fallback,
   className,
+  size,
 }) => {
   const [imageError, setImageError] = useState(false);
 
@@ -23,9 +24,10 @@ export const AvatarUI: React.FC<TAvatarUIProps> = ({
   };
 
   const showImage = src && !imageError;
+  const sizeStyle = size ? { width: size, height: size } : undefined;
 
   return (
-    <div className={`${styles.avatar} ${className || ''}`}>
+    <div className={`${styles.avatar} ${className || ''}`} style={sizeStyle}>
       {showImage ? (
         <img src={src} alt={alt} className={styles.avatarImage} onError={handleImageError} />
       ) : (
