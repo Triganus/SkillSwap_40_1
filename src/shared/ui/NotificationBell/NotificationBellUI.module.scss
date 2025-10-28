@@ -1,0 +1,82 @@
+.notification-bell {
+  /* основные */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+
+  /* для плавной анимации */
+  transition: all var(--dur-normal) var(--easing-standard);
+
+  /* Убираем стандартный outline, но добавляем focus-visible для доступности */
+  outline: none;
+
+  /* легкое затемнение фона */
+  &:hover {
+    background-color: var(--color-button-hover);
+  }
+
+  /* уменьшение при нажатии */
+  &:active {
+    transform: scale(0.95);
+  }
+
+  /* при работе с клавиатурой */
+  &:focus-visible {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 2px;
+  }
+}
+
+.icon {
+  /* Иконка наследует цвет через currentColor */
+  color: var(--color-text);
+  display: block;
+  transition: transform var(--dur-normal) var(--easing-standard);
+
+  /* увеличение иконки */
+  .notification-bell:hover & {
+    transform: scale(1.1);
+  }
+}
+
+.badge {
+  /* Позиционирование бейджа относительно кнопки */
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  /* красный круг */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background-color: var(--color-alarm);
+  color: #ffffff;
+  border-radius: var(--radius-pill);
+
+  /* текст в бейдже */
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  line-height: 1;
+
+  /* Убеждаемся, что бейдж всегда поверх иконки */
+  z-index: 1;
+}
+
+/**
+ Модификатор для бейджа с числом "9+"
+ */
+.badge-large {
+  min-width: 20px;
+  padding: 0 5px;
+}

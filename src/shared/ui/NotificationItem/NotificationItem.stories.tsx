@@ -20,14 +20,7 @@ export const New: Story = {
   render: (args) => (
     <NotificationItem
       {...args}
-      icon={
-        <Icon
-          name="idea"
-          size={48}
-          title="24px"
-          svgProps={{ fill: 'none', stroke: 'currentColor' }}
-        />
-      }
+      icon={<Icon name="idea" size={48} title="24px" fill="none" stroke="currentColor" />}
     />
   ),
 };
