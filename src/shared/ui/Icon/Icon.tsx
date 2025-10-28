@@ -8,6 +8,10 @@ export type IconProps = {
   /** доступный заголовок; если указан, role="img" и aria-hidden=false */
   title?: string;
   className?: string;
+  fill?: string;
+  stroke?: string;
+  /** дополнительные SVG-атрибуты  */
+  svgProps?: React.SVGAttributes<SVGSVGElement>;
 };
 
 /**
@@ -16,20 +20,32 @@ export type IconProps = {
  * Пример использования:
  *   <Icon name="shared-add" size={20} />
  */
-export const Icon: React.FC<IconProps> = ({ name, size, title, className }) => {
-  const sizeValue = typeof (size ?? 24) === 'number' ? `${size}` : size;
+export const Icon: React.FC<IconProps> = ({
+  name,
+  size = 24,
+  title,
+  className,
+  fill,
+  stroke,
+  svgProps,
+}) => {
+  const sizeValue = String(size);
   const ariaHidden = title ? undefined : true;
   const role = title ? 'img' : 'presentation';
+  const attrFill = fill ?? (svgProps?.fill as string | undefined) ?? 'currentColor';
+  const attrStroke = stroke ?? (svgProps?.stroke as string | undefined) ?? undefined;
 
   return (
     <svg
+      {...svgProps}
       width={sizeValue}
       height={sizeValue}
       role={role}
       aria-hidden={ariaHidden}
       aria-label={title}
       className={className}
-      fill="currentColor"
+      fill={attrFill}
+      stroke={attrStroke}
     >
       {title ? <title>{title}</title> : null}
       <use href={`#icon-${name}`} />

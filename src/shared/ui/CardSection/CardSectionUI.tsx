@@ -20,7 +20,13 @@ export const CardSectionUI: FC<TCardSectionProps> = memo(({ title, onLookClick, 
         type="button"
       >
         Смотреть все
-        <Icon name="chevron-right" size={24} title="" className={styles.iconChevronRight} />
+        <Icon
+          name="chevron-right"
+          size={24}
+          className={styles.iconChevronRight}
+          fill="#253017"
+          stroke="#253017"
+        />
       </Button>
     </div>
     <div className={styles.sectionCard}>
