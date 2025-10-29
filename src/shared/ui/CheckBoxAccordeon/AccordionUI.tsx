@@ -13,7 +13,6 @@ export function AccordionUI({
   disabled = false,
   onSelectChange,
 }: TAccordionUIProps) {
-
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const open = isOpen ?? internalOpen;
 
