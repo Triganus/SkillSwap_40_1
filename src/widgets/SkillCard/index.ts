@@ -1,1 +1,1 @@
-export { SkillCard } from './SkillCard';
+export { SkillCardWidget } from './SkillCard';

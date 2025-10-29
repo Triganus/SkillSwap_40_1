@@ -2,9 +2,13 @@ import React from 'react';
 
 import styles from './SkillCard.module.scss';
 
-import { Button } from '../Button/Button';
-import { Icon } from '../Icon/Icon';
+import { Button } from '../Button';
 import type { SkillCardProps } from './type';
+import { AvatarUI } from '../AvatarUI';
+import { TitleUI } from '../Title';
+import { TextUI } from '../Text';
+import { LikeButtonUI } from '../LikeButton';
+import { TagUI } from '../Tag';
 
 export const SkillCard: React.FC<SkillCardProps> = ({
   user,
@@ -13,62 +17,50 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   onDetailsClick,
   onLikeClick,
   isLiked = false,
-}) => {
-  return (
-    <article className={styles.card}>
-      <div className={styles.header}>
-        <div className={styles.userInfo}>
-          <img
-            src={user.avatar || '/default-avatar.png'}
-            alt={user.name}
-            className={styles.avatar}
-          />
-          <div className={styles.userDetails}>
-            <h3 className={styles.name}>{user.name}</h3>
-            <p className={styles.location}>{user.bio || 'Город не указан'}</p>
-          </div>
-        </div>
-        <button
-          className={styles.likeButton}
-          onClick={onLikeClick}
-          aria-label={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
-        >
-          <Icon name="heart" className={isLiked ? styles.liked : styles.notLiked} />
-        </button>
+}) => (
+  <article className={styles.card}>
+    <div className={styles.userInfo}>
+      <AvatarUI src={user.avatar || '/default-avatar.png'} alt={user.name} />
+      <div className={styles.userDetails}>
+        {/* TODO: нет расцветки */}
+        <TitleUI size="small">{user.name}</TitleUI>
+        <TextUI variant="caption" color="primary">
+          {user.bio || 'Город не указан'}
+        </TextUI>
       </div>
-
+      <LikeButtonUI
+        onClick={onLikeClick}
+        ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+      />
+    </div>
+    <div className={styles.basicContent}>
       <div className={styles.skillsSection}>
         <div className={styles.skillGroup}>
-          <h4 className={styles.skillLabel}>Может научить:</h4>
+          <TextUI variant="h4" color="primary">
+            Может научить:
+          </TextUI>
           <div className={styles.skillTags}>
             {teachingSkills.map((skill, index) => (
-              <span key={index} className={`${styles.tag} ${styles.teachTag}`}>
-                {skill.title}
-              </span>
+              <TagUI key={index} label={skill.title} />
             ))}
           </div>
         </div>
 
         <div className={styles.skillGroup}>
-          <h4 className={styles.skillLabel}>Хочет научиться:</h4>
+          <TextUI variant="h4" color="primary">
+            Хочет научиться:
+          </TextUI>
           <div className={styles.skillTags}>
             {learningSkills.slice(0, 2).map((skill, index) => (
-              <span key={index} className={`${styles.tag} ${styles.learnTag}`}>
-                {skill.title}
-              </span>
+              <TagUI key={index} label={skill.title} />
             ))}
-            {learningSkills.length > 2 && (
-              <span className={`${styles.tag} ${styles.moreTag}`}>
-                +{learningSkills.length - 2}
-              </span>
-            )}
+            {learningSkills.length > 2 && <TagUI label={`+${learningSkills.length - 2}`} />}
           </div>
         </div>
       </div>
-
-      <Button className={styles.detailsButton} onClick={onDetailsClick}>
+      <Button onClick={onDetailsClick} variant="primary" size="large" type="button">
         Подробнее
       </Button>
-    </article>
-  );
-};
+    </div>
+  </article>
+);

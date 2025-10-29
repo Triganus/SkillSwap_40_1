@@ -60,6 +60,26 @@ const mockLearningSkills: Skill[] = [
     authorId: '1',
     createdAt: '2023-01-15',
   },
+  {
+    id: '3',
+    title: 'Медитация',
+    description: 'Интересуюсь медитацией',
+    type: 'learning',
+    category: 'Здоровье',
+    tags: ['медитация', 'здоровье'],
+    authorId: '1',
+    createdAt: '2023-01-15',
+  },
+  {
+    id: '3',
+    title: 'Медитация',
+    description: 'Интересуюсь медитацией',
+    type: 'learning',
+    category: 'Здоровье',
+    tags: ['медитация', 'здоровье'],
+    authorId: '1',
+    createdAt: '2023-01-15',
+  },
 ];
 
 export const Default: Story = {
