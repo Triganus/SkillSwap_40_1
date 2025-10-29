@@ -5,7 +5,7 @@ import type { SkillCategoriesData } from '@/entities/Skill';
 
 type ComponentProps = React.ComponentProps<typeof AccordionUI>;
 type StoryProps = ComponentProps & {
-  /** Индекс категории из загруженного skills.json */
+
   categoryIndex: number;
 };
 

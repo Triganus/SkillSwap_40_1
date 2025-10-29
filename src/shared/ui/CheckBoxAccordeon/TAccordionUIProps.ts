@@ -11,7 +11,7 @@ export interface TAccordionUIProps {
   defaultOpen?: boolean;
   /** Контролируемое состояние */
   isOpen?: boolean;
-  /** Колбэк при переключении */
+
   onToggle?: (open: boolean) => void;
 
   /** Пропсы для CheckBoxUI */
