@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './app/App.tsx';
 import { Provider } from './app/Provider';
-import { setTheme, THEME_LIGHT } from './shared/lib/theme';
+import { setTheme, THEME_LIGHT } from '@shared/lib';
 
 setTheme(THEME_LIGHT);
 
