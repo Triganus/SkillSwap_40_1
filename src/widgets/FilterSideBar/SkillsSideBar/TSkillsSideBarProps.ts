@@ -1,6 +1,6 @@
 import type { SkillCategoriesData } from '@/entities/Skill';
 // prop
-export interface TSkillsSideBarUIprops {
+export interface TSkillsSideBarProps {
   data: SkillCategoriesData;
   title: string;
   onChange?: (selected: SkillCategoriesData) => void;

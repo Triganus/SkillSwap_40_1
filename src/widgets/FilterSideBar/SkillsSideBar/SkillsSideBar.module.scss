@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
   gap: 20px;
   width: 284px;
   height: 580px;
@@ -12,11 +12,11 @@
   flex-grow: 0;
 }
 
-.skillsList {
+.skills-list {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
   flex: none;
   order: 1;
   align-self: stretch;
@@ -27,7 +27,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0px;
+  padding: 0;
   gap: 4px;
   width: 139px;
   height: 24px;
@@ -39,10 +39,11 @@
 .expand {
   max-height: 200px;
 }
+
 .restricted {
   max-height: 100px;
 }
 
-.hiddenItem {
+.hidden-item {
   display: none;
 }
