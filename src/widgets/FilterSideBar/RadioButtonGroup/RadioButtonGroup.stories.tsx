@@ -52,7 +52,6 @@ export const Simple: Story = {
   ),
 };
 
-
 export const WithTitle: Story = {
   render: () => (
     <WithValueDisplay
