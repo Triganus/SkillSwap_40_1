@@ -9,7 +9,7 @@ const meta: Meta<typeof TextUI> = {
   argTypes: {
     variant: {
       control: 'inline-radio',
-      options: ['h1', 'h2', 'h3', 'h4', 'body', 'caption'] satisfies TextVariant[],
+      options: ['body', 'caption'] satisfies TextVariant[],
       description: 'Тип текстового стиля из дизайн-системы (Figma)',
     },
     color: {
@@ -43,18 +43,6 @@ export const Playground: Story = {
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'grid', gap: 12 }}>
-      <TextUI variant="h1" color="secondary">
-        H1 — Заголовок крупный
-      </TextUI>
-      <TextUI variant="h2" color="secondary">
-        H2 — Подзаголовок
-      </TextUI>
-      <TextUI variant="h3" color="secondary">
-        H3 — Средний заголовок
-      </TextUI>
-      <TextUI variant="h4" color="secondary">
-        H4 — Малый заголовок
-      </TextUI>
       <TextUI variant="body" color="secondary">
         Body — основной текстовый стиль
       </TextUI>
