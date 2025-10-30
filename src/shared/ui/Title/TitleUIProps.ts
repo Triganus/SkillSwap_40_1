@@ -1,4 +1,4 @@
 export interface TTitleUIProps {
   children: React.ReactNode;
-  size: 'small' | 'medium' | 'large';
+  size: 'xsmall' | 'small' | 'medium' | 'large';
 }

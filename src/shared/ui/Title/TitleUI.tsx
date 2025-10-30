@@ -13,6 +13,8 @@ export const TitleUI: React.FC<TTitleUIProps> = ({ children, size = 'medium' }) 
         return 'h2';
       case 'small':
         return 'h3';
+      case 'xsmall':
+        return 'h4';
       default:
         return 'h2';
     }
