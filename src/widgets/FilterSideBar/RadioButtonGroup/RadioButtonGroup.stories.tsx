@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { RadioButtonGroup } from './RadioButtonGroup';
 
-// вспомогательный враппер для отображения значения
 const WithValueDisplay = ({
   title,
   items,
@@ -43,7 +42,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** Вариант 1 — без заголовка, выбран «Хочу научиться» */
 export const Simple: Story = {
   render: () => (
     <WithValueDisplay
@@ -54,7 +52,7 @@ export const Simple: Story = {
   ),
 };
 
-/** Вариант 2 — с заголовком «Пол автора», выбран «Не имеет значения» */
+
 export const WithTitle: Story = {
   render: () => (
     <WithValueDisplay
