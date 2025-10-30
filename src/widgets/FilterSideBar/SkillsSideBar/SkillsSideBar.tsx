@@ -1,21 +1,20 @@
-import { AccordionUI } from '../CheckBoxAccordeon/AccordionUI';
-import styles from './SkillsSideBarUI.module.scss';
-import type { TSkillsSideBarUIprops } from './TSkillsSideBarUIProps';
-import { TextUI } from '../Text';
-import { Icon } from '../Icon';
+import { AccordionUI } from '../../../shared/ui/CheckBoxAccordeon/AccordionUI';
+import styles from './SkillsSideBar.module.scss';
+import type { TSkillsSideBarProps } from './TSkillsSideBarProps';
+import { TextUI, Icon } from '@/shared/ui';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import type { SkillCategoriesData, SkillListItem } from '@/entities/Skill';
-import { TitleUI } from '../Title';
+import { TitleUI } from '@/shared/ui/Title';
 
 type SelectedByCategory = Record<string, string[]>;
 
 const VISIBLE_LIMIT = 6;
 
-export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
+export const SkillsSideBar: React.FC<TSkillsSideBarProps> = ({
   data,
   title,
   onChange,
-}: TSkillsSideBarUIprops) => {
+}: TSkillsSideBarProps) => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
 
   const [selected, setSelected] = useState<SelectedByCategory>({});
@@ -56,14 +55,14 @@ export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
         <TitleUI size="small">{title}</TitleUI>
       </div>
 
-      <div className={styles.skillsList}>
+      <div className={styles['skills-list']}>
         {data.skill_categories.map((item, idx) => {
           const hidden = isCollapsed && idx >= VISIBLE_LIMIT;
           return (
             //  обрнул в  div, чтобы можно было применить display:none, но не размонтировать
             <div
               key={item.category}
-              className={hidden ? styles.hiddenItem : undefined}
+              className={hidden ? styles['hidden-item'] : undefined}
               aria-hidden={hidden}
             >
               <AccordionUI data={item} title={item.category} onSelectChange={handleSelectChange} />
