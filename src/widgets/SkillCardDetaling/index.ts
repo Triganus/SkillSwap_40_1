@@ -1,1 +1,0 @@
-export { SkillCard } from './SkillCard';
