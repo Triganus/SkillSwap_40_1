@@ -1,0 +1,49 @@
+.wrapper {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 20px;
+width: 284px;
+height: 580px;
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+}
+
+.skillsList {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+}
+
+.toggle {
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 4px;
+width: 139px;
+height: 24px;
+flex: none;
+order: 7;
+flex-grow: 0;
+}
+
+.expand {
+  max-height: 200px;
+}
+.restricted {
+   max-height: 100px;
+}
+
+.hiddenItem {
+  display: none; 
+}
