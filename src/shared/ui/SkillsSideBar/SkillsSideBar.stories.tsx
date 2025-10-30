@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import SkillsSideBar from './SkillsSideBarUI';
+import { SkillsSideBarUI as SkillsSideBar }   from './SkillsSideBarUI';
 import type { SkillCategoriesData } from '@/entities/Skill';
 
 type ComponentProps = React.ComponentProps<typeof SkillsSideBar>;
 type StoryProps = ComponentProps & {};
 
-// Meta
 const meta: Meta<StoryProps> = {
   title: 'Shared/SkillsSideBar',
   component: SkillsSideBar,

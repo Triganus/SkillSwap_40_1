@@ -5,17 +5,18 @@ import { TextUI } from '../Text';
 import { Icon } from '../Icon';
 import { useState,useCallback,useMemo, useEffect } from 'react';
 import type { SkillCategoriesData,SkillListItem } from '@/entities/Skill';
+import { TitleUI } from '../Title';
 
 type SelectedByCategory = Record<string, string[]>
 
 
 const VISIBLE_LIMIT = 6;
 
-export default function SkillsSideBar({
+export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
   data,
   title,
   onChange
-}: TSkillsSideBarUIprops ) {
+}: TSkillsSideBarUIprops ) => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
 
   const [selected, setSelected] = useState<SelectedByCategory>({});
@@ -53,7 +54,7 @@ export default function SkillsSideBar({
     <div className={styles.wrapper}>
 
       <div className={styles.skillsSideBarHeader}>
-        <TextUI variant='h3'>{title}</TextUI>
+        <TitleUI size='small'>{title}</TitleUI>
       </div>
 
       <div className={styles.skillsList}>
