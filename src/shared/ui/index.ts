@@ -6,6 +6,7 @@ export type { InputProps } from './Input';
 
 export { AvatarUI } from './AvatarUI';
 export type { TAvatarUIProps } from './AvatarUI';
+
 export { ModalUI } from './Modal';
 export type { TModalUIProps, ModalAction } from './Modal';
 
@@ -17,11 +18,15 @@ export type { TRadioButtonUIProps } from './RadioButton';
 
 export { TextUI } from './Text';
 export type { TTextUIProps } from './Text';
+
 export { CheckBoxUI } from './CheckBox';
 export type { TCheckBoxUIProps } from './CheckBox';
 
 export { Actions } from './Actions';
 export type { ActionsProps, ActionItem, IconAction, CustomAction, ActionId } from './Actions';
+
+export { MediaSlider } from './MediaSlider';
+export type { MediaSliderProps } from './MediaSlider';
 
 export { InfiniteGridUI } from './InfiniteGrid';
 export type { TInfiniteGridUIProps } from './InfiniteGrid';
