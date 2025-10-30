@@ -3,25 +3,24 @@ import styles from './SkillsSideBarUI.module.scss';
 import type { TSkillsSideBarUIprops } from './TSkillsSideBarUIProps';
 import { TextUI } from '../Text';
 import { Icon } from '../Icon';
-import { useState,useCallback,useMemo, useEffect } from 'react';
-import type { SkillCategoriesData,SkillListItem } from '@/entities/Skill';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import type { SkillCategoriesData, SkillListItem } from '@/entities/Skill';
 import { TitleUI } from '../Title';
 
-type SelectedByCategory = Record<string, string[]>
-
+type SelectedByCategory = Record<string, string[]>;
 
 const VISIBLE_LIMIT = 6;
 
 export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
   data,
   title,
-  onChange
-}: TSkillsSideBarUIprops ) => {
+  onChange,
+}: TSkillsSideBarUIprops) => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
 
   const [selected, setSelected] = useState<SelectedByCategory>({});
   const handleSelectChange = useCallback((category: string, selectedIds: (string | number)[]) => {
-    setSelected(prev => ({
+    setSelected((prev) => ({
       ...prev,
       [category]: selectedIds.map(String),
     }));
@@ -36,7 +35,9 @@ export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
     return {
       skill_categories: Object.entries(selected).map(([category, ids]) => ({
         category,
-        skills: ids.map(id => dict[category]?.[id] ?? { skill_id: id, skill_name: id, skill_image: '' }),
+        skills: ids.map(
+          (id) => dict[category]?.[id] ?? { skill_id: id, skill_name: id, skill_image: '' }
+        ),
       })),
     };
   }, [selected, data]);
@@ -45,21 +46,18 @@ export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
     if (onChange) onChange(aggregatedJson);
   }, [aggregatedJson, onChange]);
 
-  const handleToggle = () => setSideBarOpened(v => !v);
-
+  const handleToggle = () => setSideBarOpened((v) => !v);
 
   const isCollapsed = !sideBarOpened;
 
   return (
     <div className={styles.wrapper}>
-
       <div className={styles.skillsSideBarHeader}>
-        <TitleUI size='small'>{title}</TitleUI>
+        <TitleUI size="small">{title}</TitleUI>
       </div>
 
       <div className={styles.skillsList}>
         {data.skill_categories.map((item, idx) => {
-
           const hidden = isCollapsed && idx >= VISIBLE_LIMIT;
           return (
             //  обрнул в  div, чтобы можно было применить display:none, но не размонтировать
@@ -68,11 +66,7 @@ export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
               className={hidden ? styles.hiddenItem : undefined}
               aria-hidden={hidden}
             >
-              <AccordionUI
-                data={item}
-                title={item.category}
-                onSelectChange={handleSelectChange}
-              />
+              <AccordionUI data={item} title={item.category} onSelectChange={handleSelectChange} />
             </div>
           );
         })}
@@ -81,10 +75,10 @@ export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
           type="button"
           className={styles.toggle}
           onClick={handleToggle}
-          aria-expanded={sideBarOpened} 
+          aria-expanded={sideBarOpened}
           aria-controls="skills-list"
         >
-          <TextUI color='link' variant='body'>
+          <TextUI color="link" variant="body">
             {sideBarOpened ? 'Свернуть' : 'Все категории'}
           </TextUI>
           <Icon
@@ -96,4 +90,4 @@ export const SkillsSideBarUI: React.FC<TSkillsSideBarUIprops> = ({
       </div>
     </div>
   );
-}
+};

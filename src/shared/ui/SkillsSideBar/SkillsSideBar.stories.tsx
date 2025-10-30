@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { SkillsSideBarUI as SkillsSideBar }   from './SkillsSideBarUI';
+import { SkillsSideBarUI as SkillsSideBar } from './SkillsSideBarUI';
 import type { SkillCategoriesData } from '@/entities/Skill';
 
 type ComponentProps = React.ComponentProps<typeof SkillsSideBar>;
@@ -29,29 +29,16 @@ const meta: Meta<StoryProps> = {
 export default meta;
 type Story = StoryObj<StoryProps>;
 
-
-function DemoStory({
-  args,
-  skillsData,
-}: {
-  args: StoryProps;
-  skillsData: SkillCategoriesData;
-}) {
+function DemoStory({ args, skillsData }: { args: StoryProps; skillsData: SkillCategoriesData }) {
   const [liveJson, setLiveJson] = useState<SkillCategoriesData | null>(null);
 
   return (
     <div style={{ display: 'grid', gap: 16 }}>
-      <SkillsSideBar
-        {...args}
-        data={skillsData}
-        onChange={(payload) => setLiveJson(payload)}
-      />
+      <SkillsSideBar {...args} data={skillsData} onChange={(payload) => setLiveJson(payload)} />
 
       <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 8 }}>
         <strong>onChange (live) JSON:</strong>
-        <pre style={{ whiteSpace: 'pre-wrap' }}>
-          {JSON.stringify(liveJson, null, 2)}
-        </pre>
+        <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(liveJson, null, 2)}</pre>
       </div>
     </div>
   );

@@ -1,2 +1,2 @@
-export { SkillsSideBarUI } from './SkillsSideBarUI'; 
+export { SkillsSideBarUI } from './SkillsSideBarUI';
 export type { TSkillsSideBarUIprops } from './TSkillsSideBarUIProps';
