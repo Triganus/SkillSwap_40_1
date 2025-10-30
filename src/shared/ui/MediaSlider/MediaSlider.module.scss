@@ -3,7 +3,7 @@
   grid-template-columns: var(--media-main-size, 324px) calc(
       var(--media-main-size, 324px) * var(--media-thumb-scale, 0.285)
     );
-  gap: 16px;
+  gap: var(--space-6);
   align-items: stretch;
 }
 
@@ -11,7 +11,7 @@
   position: relative;
   width: var(--media-main-size, 324px);
   height: var(--media-main-size, 324px);
-  border-radius: 16px;
+  border-radius: var(--radius-m);
   overflow: hidden;
   background: var(--surface-1);
   aspect-ratio: 1 / 1;
@@ -23,12 +23,21 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  will-change: opacity, transform;
+}
+
+.dir-next {
+  animation: media-slide-next var(--media-transition, 260ms) ease;
+}
+
+.dir-prev {
+  animation: media-slide-prev var(--media-transition, 260ms) ease;
 }
 
 .thumbs {
   display: grid;
   grid-template-rows: repeat(3, 1fr);
-  gap: 16px;
+  gap: var(--space-6);
 }
 
 .thumb {
@@ -42,6 +51,17 @@
   outline: none;
   border: none;
   padding: 0;
+}
+
+.thumb-image {
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.thumb:hover .thumb-image,
+.thumb:focus-visible .thumb-image {
+  transform: scale(1.03);
 }
 
 .placeholder {
@@ -62,17 +82,26 @@
   pointer-events: auto;
   width: 32px;
   height: 32px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: none;
   background: var(--color-disabled);
   display: grid;
   place-items: center;
   color: var(--color-caption);
   cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 120ms ease;
 }
 
 .nav-btn:hover {
   background: var(--surface-1);
+  transform: translateY(-1px);
+}
+
+.nav-btn:active {
+  transform: translateY(0);
 }
 
 .disabled {
@@ -90,4 +119,56 @@
   line-height: var(--lh-body);
   display: grid;
   place-items: center;
+}
+
+@keyframes media-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(1.01);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes media-slide-next {
+  from {
+    opacity: 0;
+    transform: translate3d(12px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes media-slide-prev {
+  from {
+    opacity: 0;
+    transform: translate3d(-12px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-image,
+  .thumb-image {
+    animation: none;
+  }
+
+  .dir-next,
+  .dir-prev {
+    animation: none;
+  }
+
+  .nav-btn {
+    transition: none;
+  }
 }

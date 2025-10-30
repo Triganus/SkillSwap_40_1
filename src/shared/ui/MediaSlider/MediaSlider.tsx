@@ -5,6 +5,8 @@ import styles from './MediaSlider.module.scss';
 import type { MediaSliderProps } from './types';
 import { Icon } from '../Icon/Icon.tsx';
 
+const toCssSize = (val: number | string): string => (typeof val === 'number' ? `${val}px` : val);
+
 export const MediaSlider: React.FC<MediaSliderProps> = ({
   items,
   className,
@@ -14,6 +16,7 @@ export const MediaSlider: React.FC<MediaSliderProps> = ({
   thumbScale = 92 / 324,
 }) => {
   const [index, setIndex] = useState(0);
+  const [dir, setDir] = useState<'prev' | 'next' | null>(null);
   const swiperRef = useRef<SwiperCore | null>(null);
 
   const total = items.length;
@@ -35,12 +38,14 @@ export const MediaSlider: React.FC<MediaSliderProps> = ({
   const goPrev = useCallback(() => {
     if (total <= 1 && disableWhenSingle) return;
 
+    setDir('prev');
     setIndex((i) => (i - 1 + total) % total);
   }, [total, disableWhenSingle]);
 
   const goNext = useCallback(() => {
     if (total <= 1 && disableWhenSingle) return;
 
+    setDir('next');
     setIndex((i) => (i + 1) % total);
   }, [total, disableWhenSingle]);
 
@@ -48,6 +53,7 @@ export const MediaSlider: React.FC<MediaSliderProps> = ({
     (thumbIdx: number) => () => {
       if (total === 0) return;
 
+      setDir('next');
       setIndex((i) => (i + thumbIdx) % total);
     },
     [total]
@@ -67,7 +73,7 @@ export const MediaSlider: React.FC<MediaSliderProps> = ({
   const rootCls = [styles.slider, className].filter(Boolean).join(' ');
 
   const sizeStyle: React.CSSProperties = useMemo(() => {
-    const value = typeof mainSize === 'number' ? `${mainSize}px` : mainSize;
+    const value = toCssSize(mainSize as number | string);
 
     return {
       ['--media-main-size' as never]: value,
@@ -77,6 +83,15 @@ export const MediaSlider: React.FC<MediaSliderProps> = ({
 
   const hasThumbs = visible.length > 1;
   const showNav = !(total <= 1 && disableWhenSingle);
+
+  const mainImageCls = useMemo(() => {
+    const cls = [styles.mainImage];
+
+    if (dir === 'next') cls.push(styles.dirNext);
+    if (dir === 'prev') cls.push(styles.dirPrev);
+
+    return cls.join(' ');
+  }, [dir]);
 
   return (
     <div className={rootCls} style={sizeStyle}>
@@ -94,9 +109,10 @@ export const MediaSlider: React.FC<MediaSliderProps> = ({
                 key={visible[0].id}
                 src={visible[0].src}
                 alt={visible[0].alt ?? ''}
-                className={styles.mainImage}
+                className={mainImageCls}
                 loading="lazy"
                 decoding="async"
+                onAnimationEnd={() => setDir(null)}
               />
             </SwiperSlide>
           ) : null}
