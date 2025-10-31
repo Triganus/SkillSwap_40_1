@@ -30,3 +30,6 @@ export type { MediaSliderProps } from './MediaSlider';
 
 export { InfiniteGridUI } from './InfiniteGrid';
 export type { TInfiniteGridUIProps } from './InfiniteGrid';
+
+export { Slider } from './slider';
+export type { SliderProps } from './slider';
