@@ -113,10 +113,12 @@ export const ImageInput: React.FC<ImageInputProps> = ({
         onDragLeave={onDragLeave}
         onDrop={onDrop}
       >
-        <TextUI as="p">Перетащите изображения сюда или нажмите, чтобы выбрать</TextUI>
-        <Button size="small" variant="secondary" style={{ marginTop: 8 }}>
-          Выбрать файл
-        </Button>
+        <TextUI>Перетащите изображения сюда или нажмите, чтобы выбрать</TextUI>
+        <div style={{ marginTop: 8 }}>
+          <Button size="small" variant="secondary">
+            Выбрать файл
+          </Button>
+        </div>
         <input
           ref={inputRef}
           className={styles.hiddenInput}
