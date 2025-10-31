@@ -22,3 +22,5 @@ export const SkillCardWidget = () => {
     />
   );
 };
+
+export { SkillCard };
