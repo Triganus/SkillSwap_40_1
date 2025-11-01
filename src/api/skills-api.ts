@@ -23,7 +23,7 @@ export const fetchSkills = async (): Promise<Skill[]> => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json() as { skill_categories: RawSkillCategory[] };
+    const data = (await response.json()) as { skill_categories: RawSkillCategory[] };
 
     const skills: Skill[] = data.skill_categories.flatMap((cat) =>
       cat.skills.map((skill) => ({

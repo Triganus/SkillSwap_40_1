@@ -10,7 +10,7 @@ export const categoryToTagCategory: Record<string, TagCategory> = {
   'Образование и развитие': 'education',
   'Дом и уют': 'home',
   'Здоровье и образ жизни': 'health',
-  'Прочее': 'other',
+  Прочее: 'other',
 };
 
 /**
