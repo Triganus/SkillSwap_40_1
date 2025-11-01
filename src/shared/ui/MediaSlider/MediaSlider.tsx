@@ -158,7 +158,7 @@ export const MediaSlider = <T extends { id: string; src: string; alt?: string }>
               })),
             }
           : undefined,
-      onSlideChange: (swiper) => {
+      onSlideChange: (swiper: SwiperType) => {
         if (virtualized) {
           const realIndex = swiper.realIndex;
           setIndex(realIndex);
