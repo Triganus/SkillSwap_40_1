@@ -36,7 +36,7 @@ type Story = StoryObj<typeof SkillDetails>;
 // Базовые данные для примеров
 const defaultProps: Partial<SkillDetailsProps> = {
   title: 'Игра на барабанах',
-  subTitle: 'Творчество и искусство / Музыка и звук',
+  category: 'art',
   text: 'Привет! Я играю на барабанах уже больше 10 лет — от репетиций в гараже до выступлений на сцене с живыми группами. Научу основам техники (и как не отбить себе пальцы), играть любимые ритмы и разбирать песни, импровизировать и звучать уверенно даже без партитуры.',
   images: ['/db/avatars/ivan.png', '/public/vite.svg', '/public/vite.svg', '/public/vite.svg'],
 };
