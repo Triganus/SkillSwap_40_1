@@ -10,6 +10,7 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
   title,
   onChange,
   defaultSelected = [],
+  resetToken,
 }: TCitiesSideBarProps) => {
   const [opened, setOpened] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(() => new Set(defaultSelected));
@@ -20,7 +21,10 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
 
   useEffect(() => {
     onChange?.(selectedList);
-  }, [selectedList, onChange]);
+    if (resetToken) {
+      setSelected(new Set());
+    }
+  }, [selectedList, onChange, resetToken]);
 
   const handleCityToggle = useCallback(
     (_e: React.ChangeEvent<HTMLInputElement>, checked: boolean, value?: unknown) => {
@@ -38,9 +42,11 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
   const isCollapsed = !opened;
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} role="group" aria-label={title ?? 'Выбор городов'}>
       <div className={styles.header}>
-        <TitleUI size="small">{title}</TitleUI>
+        <TitleUI size="small" id="cities-label">
+          {title}
+        </TitleUI>
       </div>
 
       <div className={styles.list} id="cities-list">
@@ -61,6 +67,7 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
                 checked={checked}
                 onChange={handleCityToggle}
                 size="lg"
+                aria-checked={checked}
               />
             </div>
           );
@@ -73,11 +80,17 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
             onClick={handleToggle}
             aria-expanded={opened}
             aria-controls="cities-list"
+            aria-label={opened ? 'Свернуть список городов' : 'Показать все города'}
           >
             <TextUI color="link" variant="body">
               {opened ? 'Свернуть' : 'Все города'}
             </TextUI>
-            <Icon name={opened ? 'chevron-up' : 'chevron-down'} size={20} className={styles.icon} />
+            <Icon
+              name={opened ? 'chevron-up' : 'chevron-down'}
+              size={20}
+              className={styles.icon}
+              aria-hidden="true"
+            />
           </button>
         )}
       </div>
