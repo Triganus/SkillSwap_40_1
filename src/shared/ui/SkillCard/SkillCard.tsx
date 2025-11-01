@@ -39,7 +39,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
           <TitleUI size="xsmall">Может научить:</TitleUI>
           <div className={styles.skillTags}>
             {teachingSkills.map((skill, index) => (
-              <TagUI key={index} label={skill.title} />
+              <TagUI key={index} label={skill.title} category={skill.category} />
             ))}
           </div>
         </div>
@@ -48,13 +48,15 @@ export const SkillCard: React.FC<SkillCardProps> = ({
           <TitleUI size="xsmall">Хочет научиться:</TitleUI>
           <div className={styles.skillTags}>
             {learningSkills.slice(0, 2).map((skill, index) => (
-              <TagUI key={index} label={skill.title} />
+              <TagUI key={index} label={skill.title} category={skill.category} />
             ))}
-            {learningSkills.length > 2 && <TagUI label={`+${learningSkills.length - 2}`} />}
+            {learningSkills.length > 2 && (
+              <TagUI label={`+${learningSkills.length - 2}`} category="other" />
+            )}
           </div>
         </div>
       </div>
-      <Button onClick={onDetailsClick} variant="primary" size="large" type="button">
+      <Button onClick={onDetailsClick} variant="primary" size="medium" type="button">
         Подробнее
       </Button>
     </div>

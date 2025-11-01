@@ -4,7 +4,7 @@ import type { SkillCardProps } from '../SkillCard';
 export type TCardSectionProps = {
   title: string;
   onLookClick?: () => void;
-  cards: Array<SkillCardProps>;
+  cards: SkillCardProps[];
   showButton?: boolean;
   className?: string;
   showAllCards?: boolean; // если не нужно, можно будет удалить
