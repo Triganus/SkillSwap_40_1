@@ -12,7 +12,7 @@ export default {
     'property-no-unknown': [
       true,
       {
-        ignoreProperties: ['print-color-adjust'],
+        ignoreProperties: ['print-color-adjust', 'composes'],
       },
     ],
   },

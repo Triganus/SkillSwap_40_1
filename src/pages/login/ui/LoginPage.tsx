@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@app/Provider';
+import { TwoColumnLayout } from '@shared/ui';
 import { login as authLogin } from '@api/auth';
 
 export default function LoginPage() {
@@ -46,10 +47,10 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div style={{ padding: 24 }}>
+  const leftContent = (
+    <div style={{ maxWidth: 400, width: '100%' }}>
       <h1>Login</h1>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 20, maxWidth: 320 }}>
+      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 20 }}>
         <label>
           Email
           <input
@@ -86,5 +87,35 @@ export default function LoginPage() {
         <Link to="/register/1">Зарегистрироваться</Link>
       </p>
     </div>
+  );
+
+  const rightContent = (
+    <div
+      style={{
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+      }}
+    >
+      <div style={{ fontSize: 80, marginBottom: 20 }}> Лампа</div>
+      <h2>С возвращением в SkillSwap!</h2>
+      <p>Обменивайтесь знаниями и навыками с другими людьми</p>
+    </div>
+  );
+
+  return (
+    <TwoColumnLayout
+      leftContent={leftContent}
+      rightContent={rightContent}
+      gap={24}
+      columnPadding={60}
+      containerBackground="var(--color-background)"
+      minHeight={692}
+      columnJustify="center"
+      columnAlign="center"
+    />
   );
 }

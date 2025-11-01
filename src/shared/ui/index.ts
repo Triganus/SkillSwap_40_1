@@ -33,3 +33,6 @@ export type { TInfiniteGridUIProps } from './InfiniteGrid';
 
 export { ImageInput } from './ImageInput';
 export type { ImageInputProps } from './ImageInput';
+
+export { TwoColumnLayout } from './TwoColumnLayout';
+export type { TwoColumnLayoutProps } from './TwoColumnLayout';
