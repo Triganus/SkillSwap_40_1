@@ -8,4 +8,6 @@ export type TRadioButtonGroupProps = {
   defaultValue?: string | null;
 
   onChange?: (value: string) => void;
+
+  resetToken?: number;
 };

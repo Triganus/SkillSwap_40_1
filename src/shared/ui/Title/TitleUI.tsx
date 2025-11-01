@@ -2,7 +2,7 @@ import type { TTitleUIProps } from './TitleUIProps';
 import styles from './TitleUI.module.scss';
 import type { JSX } from 'react';
 
-export const TitleUI: React.FC<TTitleUIProps> = ({ children, size = 'medium' }) => {
+export const TitleUI: React.FC<TTitleUIProps> = ({ children, size = 'medium', id }) => {
   const className = `${styles.title} ${styles[size]}`;
 
   const getTeg = () => {
@@ -22,5 +22,9 @@ export const TitleUI: React.FC<TTitleUIProps> = ({ children, size = 'medium' }) 
 
   const Tag = getTeg() as keyof JSX.IntrinsicElements;
 
-  return <Tag className={className}>{children}</Tag>;
+  return (
+    <Tag className={className} id={id}>
+      {children}
+    </Tag>
+  );
 };

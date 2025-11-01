@@ -12,6 +12,7 @@ export function AccordionUI({
   checkboxProps,
   disabled = false,
   onSelectChange,
+  resetToken,
 }: TAccordionUIProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const open = isOpen ?? internalOpen;
@@ -28,7 +29,8 @@ export function AccordionUI({
   // При смене категории сбрасываем выбор
   useEffect(() => {
     setSelected([]);
-  }, [data?.category]);
+    onSelectChange?.(data?.category || '', []);
+  }, [data?.category, resetToken, onSelectChange]);
 
   const skillIds = useMemo(() => (data ? data.skills.map((s) => s.skill_id) : []), [data]);
 

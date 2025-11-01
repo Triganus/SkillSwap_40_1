@@ -24,4 +24,5 @@ export interface TAccordionUIProps {
   style?: CSSProperties;
   forceChevron?: boolean; //
   id?: string;
+  resetToken?: number;
 }

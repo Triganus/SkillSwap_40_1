@@ -10,6 +10,7 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
   name = 'radio-group',
   defaultValue = null,
   onChange,
+  resetToken,
 }) => {
   const [selected, setSelected] = useState<string | null>(defaultValue);
 
@@ -25,15 +26,22 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
     if (selected !== null) onChange?.(selected);
   }, [selected, onChange]);
 
+  useEffect(() => {
+    setSelected(defaultValue ?? '');
+    onChange?.(defaultValue ?? '');
+  }, [resetToken, defaultValue]);
+
   return (
     <div className={styles.wrapper}>
       {title && (
         <div className={styles.header}>
-          <TitleUI size="small">{title}</TitleUI>
+          <TitleUI size="small" id={`${name}-label`}>
+            {title}
+          </TitleUI>
         </div>
       )}
 
-      <div className={styles.list}>
+      <div className={styles.list} aria-labelledby={title ? `${name}-label` : undefined}>
         {items.map((item) => (
           <RadioButtonUI
             key={item}
@@ -42,6 +50,7 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
             label={item}
             checked={selected === item}
             onChange={handleRadioChange}
+            aria-checked={selected === item}
             size="md"
           />
         ))}
