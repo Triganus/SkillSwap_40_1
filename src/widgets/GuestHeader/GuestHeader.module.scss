@@ -1,0 +1,46 @@
+.header {
+  position: relative;
+  width: 100%;
+  padding: 41px 0;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.logo {
+  flex: 0 0 auto;
+}
+
+.close-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.close-text {
+  white-space: nowrap;
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-block-start: 4px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .header {
+    padding: 16px 0;
+  }
+
+  .center-content {
+    margin-top: 24px;
+    font-size: 20px;
+  }
+}

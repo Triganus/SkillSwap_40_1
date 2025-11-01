@@ -53,6 +53,26 @@
   }
 }
 
+.tertiary {
+  background-color: var(--surface-1);
+  color: var(--text-primary, #253017);
+  border: none;
+  border-radius: 0;
+
+  &:disabled {
+    color: var(--color-disabled);
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.7;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.5;
+  }
+}
+
 /* Sizes */
 .small {
   padding: 6px 12px;
