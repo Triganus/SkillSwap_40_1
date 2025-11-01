@@ -1,10 +1,13 @@
 import { type FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@app/Provider';
+import { useGuestHeaderContent } from '@app/layouts';
 import { TwoColumnLayout } from '@shared/ui';
 import { login as authLogin } from '@api/auth';
 
 export default function LoginPage() {
+  useGuestHeaderContent(<h1>Вход</h1>);
+
   const { auth, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation() as unknown as { state?: { from?: Location } };
