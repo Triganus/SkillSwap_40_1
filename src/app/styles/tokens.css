@@ -20,11 +20,15 @@
   --fs-body: 16px;
   --fs-caption: 12px;
   --lh-h1: 40px;
-  --lh-h2: 32px;
+  --lh-h2: 28px;
   --lh-h3: 24px;
   --lh-h4: 24px;
   --lh-body: 24px;
   --lh-caption: 16px;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
 
   /* Радиусы */
   --radius-s: 8px;
