@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useEffect, useId } from 'react';
 import type { TDropDownUIProps } from './types';
 import { Icon } from '@shared/ui/Icon';
 import styles from './DropDownUI.module.scss';
@@ -23,6 +23,12 @@ export const DropDownUI: React.FC<TDropDownUIProps> = ({
   isOpen = false,
   onToggle,
 }) => {
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[DropDownUI] Компонент устарел. Используйте новый compound-компонент `Dropdown` из `@shared/ui/Dropdown`.');
+    }
+  }, []);
+
   const reactId = useId();
   const dropdownId = id ?? `dropdown-${reactId}`;
   const triggerId = `${dropdownId}-trigger`;

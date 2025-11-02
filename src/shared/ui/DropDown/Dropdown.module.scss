@@ -1,0 +1,24 @@
+// filepath: /Users/dcrawe/Projects/Corses/YPracticum/SkillSwap_40_11/src/shared/ui/Dropdown/Dropdown.module.scss
+.root { position: relative; display: inline-block; font-family: var(--font-sans); }
+.fullWidth { width: 100%; display: block; }
+.label { display:block; font-size: var(--fs-body); font-weight:500; color:var(--color-text); margin-bottom: var(--space-2); }
+.required::after { content:' *'; color: var(--color-error); }
+.trigger { width: 100%; min-height: 40px; padding: 8px 40px 8px 12px; border:1px solid var(--color-caption); border-radius: var(--radius-s); background: var(--color-surface); color: var(--color-text); cursor: pointer; display:flex; align-items:center; justify-content:space-between; transition: all var(--dur-normal) var(--easing-standard); }
+.placeholder { color: var(--color-caption); }
+.error { border-color: var(--color-error); }
+.icon { position:absolute; right:12px; top:50%; transform: translateY(-50%); color: var(--color-caption); transition: transform var(--dur-normal) var(--easing-standard); }
+.iconOpen { transform: translateY(-50%) rotate(180deg); }
+.menu { position:absolute; top: calc(100% + var(--space-1)); left:0; right:0; z-index: var(--z-dropdown); background: var(--color-surface); border:1px solid var(--color-caption); border-radius: var(--radius-s); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%); max-height: 260px; overflow: auto; }
+.option { padding: 10px 12px; cursor: pointer; color: var(--color-text); display:flex; align-items:center; gap: 8px; }
+.option[aria-selected="true"] { background: var(--color-button-hover); font-weight: 500; }
+.option[aria-disabled="true"] { color: var(--color-text-disabled); cursor: not-allowed; }
+.search { padding: 8px 12px; border-bottom: 1px solid var(--color-caption); }
+.input { width: 100%; outline: none; border: 1px solid var(--color-caption); border-radius: var(--radius-s); padding: 8px 12px; }
+.hint { margin-top: 6px; font-size: var(--fs-caption); color: var(--color-caption); }
+.errorMsg { margin-top: 6px; font-size: var(--fs-caption); color: var(--color-error); }
+.small .trigger { min-height: 32px; padding: 6px 36px 6px 10px; font-size: var(--fs-h4); }
+.large .trigger { min-height: 48px; padding: 10px 44px 10px 14px; font-size: var(--fs-h3); }
+.countBadge { color: var(--color-caption); }
+.checkbox { width: 16px; height: 16px; border: 1px solid var(--color-caption); border-radius: 4px; display:inline-flex; align-items:center; justify-content:center; }
+.checkboxChecked { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+
