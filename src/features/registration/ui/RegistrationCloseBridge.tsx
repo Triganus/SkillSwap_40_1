@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, type NavigateFunction } from 'react-router-dom';
 import { exitRegistration } from '../lib/storage';
 import { GUEST_HEADER_CLOSE_EVENT } from '@widgets/GuestHeader/GuestHeader';
 
@@ -8,7 +8,7 @@ import { GUEST_HEADER_CLOSE_EVENT } from '@widgets/GuestHeader/GuestHeader';
  * только на маршрутах /register* и выполняет exitRegistration
  */
 export function RegistrationCloseBridge() {
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export function RegistrationCloseBridge() {
         e.preventDefault?.();
       }
 
-      exitRegistration(navigate as any);
+      exitRegistration(navigate);
     };
 
     window.addEventListener(GUEST_HEADER_CLOSE_EVENT, handler as EventListener);

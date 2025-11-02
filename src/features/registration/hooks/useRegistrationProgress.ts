@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   getRegistrationData,
   saveRegistrationData,
@@ -70,17 +70,12 @@ export function useRegistrationProgress(): RegistrationProgress {
     setState(getRegistrationData());
   }, []);
 
-  const memo = useMemo<RegistrationProgress>(
-    () => ({
-      currentStep: state.currentStep,
-      completedSteps: state.completedSteps,
-      data: state.stepData,
-      goToStep,
-      completeStep,
-      reset,
-    }),
-    [state, goToStep, completeStep, reset]
-  );
-
-  return memo;
+  return {
+    currentStep: state.currentStep,
+    completedSteps: state.completedSteps,
+    data: state.stepData,
+    goToStep,
+    completeStep,
+    reset,
+  };
 }
