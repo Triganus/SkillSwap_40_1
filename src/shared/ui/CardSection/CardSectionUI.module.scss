@@ -3,17 +3,17 @@
   flex-direction: column;
   gap: 32px;
   max-inline-size: 1020px;
+  width: 100%;
 }
 
 .section-content {
   display: flex;
   justify-content: space-between;
-  inline-size: 1020px;
+  inline-size: 100%;
 }
 
 .look-button {
   inline-size: 187px;
-  block-size: 48px;
   gap: 8px;
 }
 

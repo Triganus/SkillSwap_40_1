@@ -1,5 +1,5 @@
 .button {
-  border: 1px solid;
+  border: none;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -8,40 +8,44 @@
   justify-content: center;
   text-decoration: none;
   outline: none;
+  padding: 12px 24px;
+  font-size: var(--fs-body);
+  min-height: 48px;
 
   &:disabled {
     cursor: not-allowed;
-    color: var(--color-caption);
-    background-color: var(--color-disabled);
-    border-color: var(--color-disabled);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
   }
 }
 
 /* Variants */
 .primary {
   background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  color: var(--color-text);
 
   &:hover:not(:disabled) {
     background-color: var(--color-button-hover);
-    border-color: var(--color-text);
   }
 
   &:active:not(:disabled) {
     background-color: var(--color-link);
-    border-color: var(--color-link);
     color: var(--color-surface);
+  }
+
+  &:disabled {
+    background-color: var(--color-disabled);
+    color: var(--color-caption);
   }
 }
 
 .secondary {
   background-color: var(--color-surface);
   color: var(--color-text);
-  border-color: var(--color-accent);
-
-  &:disabled {
-    color: var(--color-disabled);
-  }
+  border: 1px solid var(--color-accent);
 
   &:hover:not(:disabled) {
     border-color: var(--color-button-hover);
@@ -51,48 +55,14 @@
   &:active:not(:disabled) {
     border-color: var(--color-link);
   }
+
+  &:disabled {
+    border-color: var(--color-disabled);
+    color: var(--color-disabled);
+  }
 }
 
 .tertiary {
-  background-color: var(--surface-1);
-  color: var(--text-primary, #253017);
-  border: none;
-  border-radius: 0;
-
-  &:disabled {
-    color: var(--color-disabled);
-    opacity: 0.5;
-  }
-
-  &:hover:not(:disabled) {
-    opacity: 0.7;
-  }
-
-  &:active:not(:disabled) {
-    opacity: 0.5;
-  }
-}
-
-/* Sizes */
-.small {
-  padding: 6px 12px;
-  font-size: var(--font-size-small);
-  min-height: 32px;
-}
-
-.medium {
-  padding: 8px 16px;
-  font-size: 16px;
-  min-height: 40px;
-}
-
-.large {
-  padding: 7px 24px;
-  font-size: var(--fs-body);
-  min-height: 48px;
-}
-
-.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  background-color: var(--color-surface);
+  color: var(--color-text);
 }

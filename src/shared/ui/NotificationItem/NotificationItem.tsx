@@ -46,7 +46,7 @@ export function NotificationItem({
 
       {showCta && (
         <div className={styles.ctaRow}>
-          <Button onClick={handleClick} variant="primary" size="medium">
+          <Button onClick={handleClick} variant="primary">
             {ctaLabel}
           </Button>
         </div>
