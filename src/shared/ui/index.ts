@@ -47,3 +47,4 @@ export { AuthMethodsSeparator } from './AuthMethodsSeparator';
 export type { AuthMethodsSeparatorProps } from './AuthMethodsSeparator';
 
 export * from './Form';
+export * from './DropDown';
