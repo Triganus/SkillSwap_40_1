@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.separator {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  color: var(--color-text);
+  font-size: var(--fs-body);
+  gap: var(--space-1);
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  height: 1px;
+  background-color: var(--color-disabled);
+}

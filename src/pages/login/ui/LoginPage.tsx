@@ -1,12 +1,19 @@
-import { type FormEvent, useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { type FormEvent, useState, useMemo } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@app/Provider';
 import { useGuestHeaderContent } from '@app/layouts';
 import { TwoColumnLayout } from '@shared/ui';
+import { SocialAuthGroup } from '@shared/ui/AuthButton';
+import { AuthMethodsSeparator } from '@shared/ui';
+import { AuthForm, InfoBlock } from '@features/auth';
 import { login as authLogin } from '@api/auth';
+import lightBulb from '@shared/assets/images/light-bulb.svg';
+import styles from './LoginPage.module.scss';
 
 export default function LoginPage() {
-  useGuestHeaderContent(<h1>Вход</h1>);
+  const headerContent = useMemo(() => <h1 className={styles.title}>Вход</h1>, []);
+
+  useGuestHeaderContent(headerContent);
 
   const { auth, login } = useAuth();
   const navigate = useNavigate();
@@ -22,7 +29,7 @@ export default function LoginPage() {
     return <Navigate to={from} replace />;
   }
 
-  const onSubmit = async (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
@@ -51,62 +58,31 @@ export default function LoginPage() {
   };
 
   const leftContent = (
-    <div style={{ maxWidth: 400, width: '100%' }}>
-      <h1>Login</h1>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 20 }}>
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            autoComplete="email"
-            required
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Your password"
-            autoComplete="current-password"
-            required
-          />
-        </label>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing in…' : 'Sign in'}
-        </button>
-        {error && (
-          <div role="alert" style={{ color: 'crimson' }}>
-            {error}
-          </div>
-        )}
-      </form>
-
-      <p>
-        <Link to="/register/1">Зарегистрироваться</Link>
-      </p>
+    <div style={{ maxWidth: 460, width: '100%' }}>
+      <AuthMethodsSeparator>
+        <SocialAuthGroup gap={32} />
+        <AuthForm
+          email={email}
+          password={password}
+          onSubmit={onSubmit}
+          onEmailChange={setEmail}
+          onPasswordChange={setPassword}
+          loading={loading}
+          error={error}
+          submitText="Войти"
+          registerLinkTo="/register/1"
+          registerLinkText="Зарегистрироваться"
+        />
+      </AuthMethodsSeparator>
     </div>
   );
 
   const rightContent = (
-    <div
-      style={{
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-      }}
-    >
-      <div style={{ fontSize: 80, marginBottom: 20 }}> Лампа</div>
-      <h2>С возвращением в SkillSwap!</h2>
-      <p>Обменивайтесь знаниями и навыками с другими людьми</p>
-    </div>
+    <InfoBlock
+      image={lightBulb}
+      title="С возвращением в SkillSwap!"
+      description="Обменивайтесь знаниями и навыками с другими людьми"
+    />
   );
 
   return (
