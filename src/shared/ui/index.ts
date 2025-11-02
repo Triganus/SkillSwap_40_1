@@ -36,3 +36,6 @@ export type { ImageInputProps } from './ImageInput';
 
 export { TwoColumnLayout } from './TwoColumnLayout';
 export type { TwoColumnLayoutProps } from './TwoColumnLayout';
+
+export { StandaloneStepIndicator } from './StepIndicator';
+export type { StandaloneStepIndicatorProps } from './StepIndicator';
