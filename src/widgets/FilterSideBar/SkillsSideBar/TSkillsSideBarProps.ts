@@ -4,4 +4,5 @@ export interface TSkillsSideBarProps {
   data: SkillCategoriesData;
   title: string;
   onChange?: (selected: SkillCategoriesData) => void;
+  resetToken?: number;
 }

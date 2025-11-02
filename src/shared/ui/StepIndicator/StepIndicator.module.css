@@ -1,0 +1,45 @@
+.step-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.text {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-medium);
+  color: var(--color-text);
+  text-align: center;
+}
+
+.progress-container {
+  display: flex;
+  gap: var(--space-4);
+  width: 100%;
+  height: 4px;
+  justify-content: center;
+}
+
+.progress-segment {
+  width: 60px;
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--color-disabled);
+  transition: background-color 0.3s ease;
+}
+
+.progress-segment.completed {
+  background-color: var(--color-accent);
+}
+
+.progress-segment.current {
+  background-color: var(--color-accent);
+}
+
+/* Адаптивность */
+@media (width <= 768px) {
+  .progress-container {
+    gap: 4px;
+    height: 3px;
+  }
+}

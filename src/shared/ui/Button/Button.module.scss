@@ -1,6 +1,6 @@
 .button {
   border: 1px solid;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   display: inline-flex;
@@ -50,6 +50,26 @@
 
   &:active:not(:disabled) {
     border-color: var(--color-link);
+  }
+}
+
+.tertiary {
+  background-color: var(--surface-1);
+  color: var(--text-primary, #253017);
+  border: none;
+  border-radius: 0;
+
+  &:disabled {
+    color: var(--color-disabled);
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.7;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.5;
   }
 }
 

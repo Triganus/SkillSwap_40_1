@@ -14,6 +14,7 @@ export const SkillsSideBar: React.FC<TSkillsSideBarProps> = ({
   data,
   title,
   onChange,
+  resetToken,
 }: TSkillsSideBarProps) => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
 
@@ -50,12 +51,16 @@ export const SkillsSideBar: React.FC<TSkillsSideBarProps> = ({
   const isCollapsed = !sideBarOpened;
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={styles.wrapper}
+      role="region"
+      aria-label={`${title}. Выберите навыки по категориям.`}
+    >
       <div className={styles.skillsSideBarHeader}>
         <TitleUI size="small">{title}</TitleUI>
       </div>
 
-      <div className={styles['skills-list']}>
+      <div className={styles['skills-list']} aria-labelledby="skills-sidebar-title">
         {data.skill_categories.map((item, idx) => {
           const hidden = isCollapsed && idx >= VISIBLE_LIMIT;
           return (
@@ -65,7 +70,13 @@ export const SkillsSideBar: React.FC<TSkillsSideBarProps> = ({
               className={hidden ? styles['hidden-item'] : undefined}
               aria-hidden={hidden}
             >
-              <AccordionUI data={item} title={item.category} onSelectChange={handleSelectChange} />
+              <AccordionUI
+                data={item}
+                title={item.category}
+                onSelectChange={handleSelectChange}
+                resetToken={resetToken}
+                aria-label={`Категория ${item.category}`}
+              />
             </div>
           );
         })}
@@ -76,6 +87,7 @@ export const SkillsSideBar: React.FC<TSkillsSideBarProps> = ({
           onClick={handleToggle}
           aria-expanded={sideBarOpened}
           aria-controls="skills-list"
+          aria-label={sideBarOpened ? 'Свернуть категории' : 'Показать все категории'}
         >
           <TextUI color="link" variant="body">
             {sideBarOpened ? 'Свернуть' : 'Все категории'}

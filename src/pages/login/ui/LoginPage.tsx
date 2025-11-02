@@ -1,15 +1,20 @@
 import { type FormEvent, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@app/Provider';
-import type { DbUser } from '@entities/user/model/types/types.ts';
+import { useGuestHeaderContent } from '@app/layouts';
+import { TwoColumnLayout } from '@shared/ui';
+import { login as authLogin } from '@api/auth';
 
 export default function LoginPage() {
+  useGuestHeaderContent(<h1>Вход</h1>);
+
   const { auth, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation() as unknown as { state?: { from?: Location } };
   const from = location.state?.from?.pathname ?? '/profile';
 
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -20,24 +25,23 @@ export default function LoginPage() {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const emailTrimmed = email.trim();
+    const passwordTrimmed = password.trim();
+
+    if (!emailTrimmed || !passwordTrimmed) {
+      setError('Введите email и пароль');
+
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await fetch('/db/users.json');
+      const result = await authLogin({ email: emailTrimmed, password: passwordTrimmed });
 
-      if (!res.ok) throw new Error(`Failed to load users.json: ${res.status}`);
+      login(result.user);
 
-      const data: { users: DbUser[] } = await res.json();
-      const list = data?.users ?? [];
-      const normalized = name.trim();
-      // Ищем по точному совпадению имени; если не найден, берём первого пользователя как дефолт
-      const found = list.find((u) => u.name.toLowerCase() === normalized.toLowerCase()) ?? list[0];
-
-      if (!found) {
-        throw new Error('Список пользователей пуст');
-      }
-
-      login(found);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось выполнить вход');
@@ -46,17 +50,30 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div style={{ padding: 24 }}>
+  const leftContent = (
+    <div style={{ maxWidth: 400, width: '100%' }}>
       <h1>Login</h1>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 20, maxWidth: 320 }}>
+      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 20 }}>
         <label>
-          Name
+          Email
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            autoComplete="username"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            autoComplete="email"
+            required
+          />
+        </label>
+        <label>
+          Password
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Your password"
+            autoComplete="current-password"
+            required
           />
         </label>
         <button type="submit" disabled={loading}>
@@ -73,5 +90,35 @@ export default function LoginPage() {
         <Link to="/register/1">Зарегистрироваться</Link>
       </p>
     </div>
+  );
+
+  const rightContent = (
+    <div
+      style={{
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+      }}
+    >
+      <div style={{ fontSize: 80, marginBottom: 20 }}> Лампа</div>
+      <h2>С возвращением в SkillSwap!</h2>
+      <p>Обменивайтесь знаниями и навыками с другими людьми</p>
+    </div>
+  );
+
+  return (
+    <TwoColumnLayout
+      leftContent={leftContent}
+      rightContent={rightContent}
+      gap={24}
+      columnPadding={60}
+      containerBackground="var(--color-background)"
+      minHeight={692}
+      columnJustify="center"
+      columnAlign="center"
+    />
   );
 }

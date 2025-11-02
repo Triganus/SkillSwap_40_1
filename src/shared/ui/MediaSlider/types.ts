@@ -4,8 +4,8 @@ export type MediaItem = {
   alt?: string;
 };
 
-export interface MediaSliderProps {
-  items: MediaItem[];
+export interface MediaSliderProps<T extends MediaItem = MediaItem> {
+  items: T[];
   className?: string;
   /**
    * Вызывается при изменении текущего индекса
@@ -23,4 +23,14 @@ export interface MediaSliderProps {
    * Масштаб миниатюры относительно mainSize. По умолчанию ~92/324 ≈ 0.285
    */
   thumbScale?: number;
+  /**
+   * Функция для получения уникального идентификатора элемента.
+   * Если не передана, используется item.id или индекс элемента.
+   */
+  getItemId?: (item: T) => string | number;
+  /**
+   * Включить виртуализацию слайдов для оптимизации производительности.
+   * Полезно при работе с большим количеством элементов.
+   */
+  virtualized?: boolean;
 }

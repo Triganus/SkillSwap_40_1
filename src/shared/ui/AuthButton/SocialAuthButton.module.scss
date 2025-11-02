@@ -1,0 +1,45 @@
+.social-button {
+  width: 100%;
+  border-color: var(--color-text, #253017);
+  background-color: var(--color-surface, #ffffff);
+  color: var(--color-text, #253017);
+  gap: var(--space-3, 12px);
+  justify-content: center;
+  padding: var(--space-3, 12px) var(--space-5, 20px);
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-text, #253017);
+    background-color: var(--color-button-hover, #deebc5);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--color-disabled, #e4e8df);
+  }
+}
+
+.social-button-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.apple-icon {
+    color: var(--color-text, #253017);
+
+    svg {
+      fill: var(--color-text, #253017);
+
+      path {
+        fill: var(--color-text, #253017);
+      }
+    }
+  }
+}
+
+.label {
+  font-size: var(--fs-body, 16px);
+  font-weight: var(--fw-regular, 400);
+  white-space: nowrap;
+}

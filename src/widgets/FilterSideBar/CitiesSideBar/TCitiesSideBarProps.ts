@@ -3,4 +3,5 @@ export type TCitiesSideBarProps = {
   cities: string[];
   onChange?: (selected: string[]) => void;
   defaultSelected?: string[];
+  resetToken?: number;
 };

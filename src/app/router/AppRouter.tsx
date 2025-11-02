@@ -32,13 +32,13 @@ export default function AppRouter() {
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route element={<GuestLayout />}>
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/register/:step" element={<RegisterPage />} />
         </Route>
 
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<ProfilePage />} />
