@@ -1,9 +1,11 @@
+import type { TagCategory } from '@/shared/ui/Tag';
+
 export type SkillDetailsVariant = 'can' | 'want';
 
 export interface SkillDetailsProps {
   // Основной контент
   title: string; // Название навыка
-  subTitle: string; // Категория / Подкатегория
+  category: TagCategory; // Категория / Подкатегория (было subTitle: string)
   text: string; // Описание навыка
   images: string[]; // Массив URL изображений
   // Режим отображения
