@@ -1,0 +1,55 @@
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  display: block;
+  text-align: left;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.submit {
+  width: 100%;
+}
+
+.inline-input {
+  position: relative;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-caption);
+}
+
+.bottom-link {
+  text-align: center;
+}
+
+.link {
+  color: var(--color-link);
+}

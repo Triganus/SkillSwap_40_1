@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../Button/Button';
+import { Button } from '@shared/ui';
 import type { AuthButtonProps } from './types';
 import styles from './SocialAuthButton.module.scss';
 import { Icon } from '../Icon/Icon';
@@ -26,15 +26,13 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
       size="large"
       onClick={onClick}
       disabled={disabled}
-      className={`${styles['social-button']} ${className || ''}`}
+      className={`${styles.socialButton} ${className || ''}`}
       type="button"
     >
       <Icon
         name={iconNames[provider]}
         size={24}
-        className={`${styles['social-button-icon']} ${
-          provider === 'apple' ? styles['apple-icon'] : ''
-        }`}
+        className={`${styles.socialButtonIcon} ${provider === 'apple' ? styles.appleIcon : ''}`}
         fill={provider === 'apple' ? '#253017' : undefined}
       />
       <span className={styles.label}>{labels[provider]}</span>
