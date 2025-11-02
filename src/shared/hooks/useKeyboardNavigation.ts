@@ -34,7 +34,7 @@ export function useKeyboardNavigation({
       if (!loop) return Math.max(0, Math.min(itemCount - 1, i));
       return (i + itemCount) % itemCount;
     },
-    [itemCount, loop],
+    [itemCount, loop]
   );
 
   const onKeyDown = useCallback(
@@ -49,7 +49,7 @@ export function useKeyboardNavigation({
         setActiveIndex((i) => clamp(i < 0 ? itemCount - 1 : i - 1));
       }
     },
-    [clamp, disabled, itemCount],
+    [clamp, disabled, itemCount]
   );
 
   useEffect(() => {
@@ -62,4 +62,3 @@ export function useKeyboardNavigation({
 }
 
 export default useKeyboardNavigation;
-

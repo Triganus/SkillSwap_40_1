@@ -1,16 +1,20 @@
 # Dropdown (Compound)
 
-Полнофункциональный выпадающий список с одним и множественным выбором, поиском, клавиатурной навигацией и виртуализацией.
+Полнофункциональный выпадающий список с одним и множественным выбором, поиском,
+клавиатурной навигацией и виртуализацией.
 
 - Controlled/Uncontrolled режимы
 - Подкомпоненты: Trigger, Menu, Item, Search, Checkbox
-- a11y: combobox, listbox, aria-activedescendant, клавиши Enter/Space/Escape/ArrowUp/ArrowDown
+- a11y: combobox, listbox, aria-activedescendant, клавиши
+  Enter/Space/Escape/ArrowUp/ArrowDown
 - Производительность: debounce 300ms, react-window для списков >100
 
 ## API
 
 ### <Dropdown />
+
 Props:
+
 - id?: string
 - label?: string
 - ariaLabel?: string
@@ -37,6 +41,7 @@ Props:
 - menuMaxHeight?: number
 
 ### Compound
+
 - Dropdown.Trigger
 - Dropdown.Menu
 - Dropdown.Item
@@ -44,5 +49,5 @@ Props:
 - Dropdown.Checkbox
 
 ## Примеры
-См. `Dropdown.stories.tsx` — 4 варианта из макетов.
 
+См. `Dropdown.stories.tsx` — 4 варианта из макетов.

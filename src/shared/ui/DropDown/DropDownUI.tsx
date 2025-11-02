@@ -25,7 +25,9 @@ export const DropDownUI: React.FC<TDropDownUIProps> = ({
 }) => {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('[DropDownUI] Компонент устарел. Используйте новый compound-компонент `Dropdown` из `@shared/ui/Dropdown`.');
+      console.warn(
+        '[DropDownUI] Компонент устарел. Используйте новый compound-компонент `Dropdown` из `@shared/ui/Dropdown`.'
+      );
     }
   }, []);
 
