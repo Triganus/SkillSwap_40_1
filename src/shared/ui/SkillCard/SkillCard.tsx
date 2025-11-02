@@ -19,6 +19,12 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   isLiked = false,
 }) => (
   <article className={styles.card}>
+    <LikeButtonUI
+      isActive={isLiked}
+      onClick={onLikeClick}
+      ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+      className={styles.likeButton}
+    />
     <div className={styles.userInfo}>
       <AvatarUI src={user.avatar || '/default-avatar.png'} alt={user.name} />
       <div className={styles.userDetails}>
@@ -28,10 +34,6 @@ export const SkillCard: React.FC<SkillCardProps> = ({
           {user.bio || 'Город не указан'}
         </TextUI>
       </div>
-      <LikeButtonUI
-        onClick={onLikeClick}
-        ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
-      />
     </div>
     <div className={styles.basicContent}>
       <div className={styles.skillsSection}>

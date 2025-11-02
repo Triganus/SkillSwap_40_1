@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import type { TLikeButtonUIProps } from './TLikeButtonUIProps';
 import styles from './LikeButtonUI.module.scss';
 
@@ -7,6 +8,7 @@ export const LikeButtonUI: React.FC<TLikeButtonUIProps> = ({
   onClick,
   ariaLabel = 'Нравится',
   disabled = false,
+  className,
 }) => {
   const handleClick = () => {
     if (!disabled && onClick) {
@@ -16,7 +18,7 @@ export const LikeButtonUI: React.FC<TLikeButtonUIProps> = ({
 
   return (
     <button
-      className={styles.likeButton}
+      className={clsx(styles.likeButton, className)}
       onClick={handleClick}
       disabled={disabled}
       aria-label={ariaLabel}
