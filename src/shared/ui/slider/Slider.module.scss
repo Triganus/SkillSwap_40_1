@@ -1,0 +1,76 @@
+.slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.swiper {
+  width: 100%;
+}
+
+.slide {
+  height: 100%;
+}
+
+.track {
+  display: flex;
+  gap: 16px;
+}
+
+.skeleton {
+  flex: 0 0 240px;
+  height: 160px;
+  background: #e5e7eb;
+  border-radius: 12px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 32px; /* Figma: Hug(32) */
+  height: 32px; /* Figma: Hug(32) */
+  padding: 8px; /* Figma: padding 8 */
+  border-radius: 100px; /* Figma: Radius 100 */
+  background: #eef3e8; /* light green from design */
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.nav:hover {
+  background: #e2e9d8;
+}
+
+.prev {
+  left: -12px;
+}
+.next {
+  right: -12px;
+}
+
+.chevron-left {
+  transform: rotate(180deg); /* Figma: Rotation -180 */
+}
+
+@media (width <= 640px) {
+  .nav {
+    display: none;
+  }
+}
