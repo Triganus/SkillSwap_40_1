@@ -4,12 +4,7 @@ import type { AuthButtonProps } from './types';
 import styles from './SocialAuthButton.module.scss';
 import { Icon } from '../Icon/Icon';
 
-export const AuthButton: React.FC<AuthButtonProps> = ({
-  provider,
-  onClick,
-  disabled = false,
-  className,
-}) => {
+export const AuthButton: React.FC<AuthButtonProps> = ({ provider, onClick, className }) => {
   const labels = {
     google: 'Продолжить с Google',
     apple: 'Продолжить с Apple',
@@ -23,9 +18,7 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
   return (
     <Button
       variant="secondary"
-      size="large"
       onClick={onClick}
-      disabled={disabled}
       className={`${styles.socialButton} ${className || ''}`}
       type="button"
     >

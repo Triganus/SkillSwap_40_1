@@ -99,20 +99,13 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
         {variant === 'want' && (
           <div className={styles.cta}>
             {isRequestSent ? (
-              <Button
-                variant="primary"
-                size="large"
-                disabled
-                type="button"
-                className={styles.exchangeButton}
-              >
+              <Button variant="primary" type="button" className={styles.exchangeButton}>
                 <Icon name="clock" size={20} title="Ожидание" />
                 Обмен предложен
               </Button>
             ) : (
               <Button
                 variant="primary"
-                size="large"
                 onClick={onExchangeClick}
                 type="button"
                 className={styles.exchangeButton}
@@ -128,7 +121,6 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
           <div className={styles.editActions}>
             <Button
               variant="secondary"
-              size="medium"
               onClick={onEditClick}
               type="button"
               className={styles.editButton}
@@ -138,7 +130,6 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
             </Button>
             <Button
               variant="primary"
-              size="medium"
               onClick={onDoneClick}
               type="submit"
               className={styles.doneButton}

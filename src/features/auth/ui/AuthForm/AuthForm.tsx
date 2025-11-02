@@ -39,7 +39,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   onPasswordChange,
   register,
   errors,
-  isValid,
   forceAllFieldsError,
   submitText = 'Войти',
   registerLinkTo = '/register/1',
@@ -82,7 +81,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   }
 
   const rootError = error ?? null;
-  const disableSubmit = Boolean(loading) || isValid === false;
 
   return (
     <form className={styles.form} onSubmit={onSubmit} noValidate>
@@ -161,7 +159,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       <div className={styles.actions}>
         {actionsSlot ?? (
           <>
-            <Button type="submit" size="large" className={styles.submit} disabled={disableSubmit}>
+            <Button type="submit" className={styles.submit}>
               {loading ? 'Входим…' : submitText}
             </Button>
             {showRegisterLink && (
