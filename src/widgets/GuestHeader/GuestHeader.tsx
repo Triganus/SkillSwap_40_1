@@ -6,11 +6,18 @@ import { Button } from '@shared/ui/Button';
 import cls from './GuestHeader.module.scss';
 import type { GuestHeaderProps } from './types';
 
+export const GUEST_HEADER_CLOSE_EVENT = 'app:guest-header:close';
+
 export const GuestHeader: React.FC<GuestHeaderProps> = ({ children, centerContent }) => {
   const navigate = useNavigate();
 
   const handleClose = () => {
-    navigate(-1);
+    const evt = new CustomEvent(GUEST_HEADER_CLOSE_EVENT, { cancelable: true });
+    const notCancelled = window.dispatchEvent(evt);
+
+    if (notCancelled) {
+      navigate(-1);
+    }
   };
 
   return (
