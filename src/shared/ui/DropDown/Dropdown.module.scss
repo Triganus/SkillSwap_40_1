@@ -2,6 +2,9 @@
   position: relative;
   display: inline-block;
   font-family: var(--font-sans);
+  // высота триггера по умолчанию (medium)
+  --trigger-h: 40px;
+  --shell-pad: 3px;
 }
 
 .container {
@@ -10,10 +13,11 @@
 }
 
 .container-open {
-  border: 1px solid var(--color-caption);
-  border-radius: var(--radius-s);
-  background: var(--color-surface);
-  overflow: hidden;
+  // убираем внутреннюю рамку контейнера, рамка будет у меню
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
 }
 
 .full-width {
@@ -47,18 +51,18 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  transform: translate(0, -1px);
   transition:
     background-color var(--dur-normal) var(--easing-standard),
-    box-shadow var(--dur-normal) var(--easing-standard),
     color var(--dur-normal) var(--easing-standard),
     transform var(--dur-normal) var(--easing-standard);
 }
 
 .container-open .trigger {
-  margin: -1px -1px 0;
-  width: calc(100% + 2px);
-  border-radius: 0 0 var(--radius-s) var(--radius-s);
-  border-color: var(--color-disabled);
+  border-radius: var(--radius-s);
+  border-color: var(--color-caption);
+  border-bottom-color: var(--color-disabled);
+  z-index: 11;
 }
 
 .placeholder {
@@ -90,9 +94,6 @@
   background: var(--color-surface);
   border: 1px solid var(--color-caption);
   border-radius: var(--radius-s);
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 10%),
-    0 2px 4px -1px rgb(0 0 0 / 6%);
   max-height: 260px;
   overflow: auto;
   width: max-content;
@@ -100,12 +101,14 @@
 }
 
 .menu-open {
-  position: static;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  width: 100%;
-  min-width: 100%;
+  position: absolute;
+  display: block;
+  top: calc(100% - var(--trigger-h) - var(--shell-pad));
+  padding-top: calc(var(--trigger-h) + var(--shell-pad));
+  padding-left: var(--shell-pad);
+  padding-right: var(--shell-pad);
+  border-color: var(--color-caption);
+  border-radius: var(--radius-s);
 }
 
 .option {
@@ -157,14 +160,9 @@
   color: var(--color-error);
 }
 
-.small .trigger {
-  min-height: 32px;
-  padding: 6px 36px 6px 10px;
-  font-size: var(--fs-h4);
-}
+.small { --trigger-h: 32px; }
+.large { --trigger-h: 48px; }
 
-.large .trigger {
-  min-height: 48px;
-  padding: 10px 44px 10px 14px;
-  font-size: var(--fs-h3);
+.fit-trigger {
+  width: 100%;
 }
