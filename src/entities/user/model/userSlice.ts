@@ -38,4 +38,3 @@ export const { actions: usersActions, reducer: usersReducer } = userSlice;
 import type { RootState } from '@app/Provider';
 export const selectUsersState = (s: RootState) => s.users;
 export const selectUserById = (id: string) => (s: RootState) => s.users.byId[id];
-

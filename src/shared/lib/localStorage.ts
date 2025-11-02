@@ -71,4 +71,3 @@ export function useLocalStorage<T>(key: string, initialValue: T, version = DEFAU
 
   return [value, set] as const;
 }
-

@@ -13,4 +13,3 @@ export function useAuthFacade() {
 
   return { auth, login, logout } as const;
 }
-

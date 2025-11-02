@@ -26,4 +26,3 @@ export function createLocalStorageMiddleware(config: Record<string, number> = {}
     return result;
   };
 }
-
