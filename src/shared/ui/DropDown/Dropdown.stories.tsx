@@ -105,6 +105,33 @@ function MultiSelectExample() {
   );
 }
 
+function OverlayWithTextExample() {
+  const [value, setValue] = useState('');
+  const [open, setOpen] = useState(false);
+  const options: Option[] = [
+    { value: 'sel', label: 'Выбранный' },
+    { value: 'hover', label: 'Hover' },
+    { value: 'simple', label: 'Просто' },
+  ];
+  return (
+    <div style={{ width: 360 }}>
+      <Dropdown
+        label="Дропдаун"
+        placeholder="Выберите опцию"
+        options={options}
+        value={value}
+        onChange={(v) => setValue(String(v))}
+        open={open}
+        onOpenChange={setOpen}
+      />
+      <div style={{ marginTop: 12, padding: 12, background: '#f7f7f7', border: '1px dashed #cfcfcf', borderRadius: 8 }}>
+        <p>Это тестовый блок под дропдауном. При открытии список должен перекрывать этот блок и не смещать его.</p>
+        <p>Добавлен для визуальной проверки поведения наложения.</p>
+      </div>
+    </div>
+  );
+}
+
 export const BasicStates: Story = {
   name: 'Базовые состояния',
   render: () => <BasicStatesExample />,
@@ -120,4 +147,9 @@ export const SingleChoice: Story = {
 export const MultiSelect: Story = {
   name: 'Мультиселект с чекбоксами',
   render: () => <MultiSelectExample />,
+};
+
+export const OverlayWithText: Story = {
+  name: 'Перекрытие контента (не смещает)',
+  render: () => <OverlayWithTextExample />,
 };
