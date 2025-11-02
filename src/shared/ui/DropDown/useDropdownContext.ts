@@ -7,4 +7,3 @@ export const useDropdownContext = () => {
   if (!ctx) throw new Error('Dropdown compound components must be used within <Dropdown>');
   return ctx;
 };
-

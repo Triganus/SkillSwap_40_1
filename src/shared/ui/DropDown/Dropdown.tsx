@@ -16,7 +16,11 @@ const normalize = (val?: DropdownValue, multiple?: boolean): string[] => {
   return typeof val === 'string' ? (val ? [val] : []) : Array.isArray(val) ? val.slice(0, 1) : [];
 };
 
-const useControllable = <T,>(controlled: T | undefined, defaultValue: T, onChange?: (v: T) => void) => {
+const useControllable = <T,>(
+  controlled: T | undefined,
+  defaultValue: T,
+  onChange?: (v: T) => void
+) => {
   const [state, setState] = useState<T>(defaultValue);
   const isControlled = controlled !== undefined;
   const value = isControlled ? (controlled as T) : state;
@@ -25,7 +29,7 @@ const useControllable = <T,>(controlled: T | undefined, defaultValue: T, onChang
       if (!isControlled) setState(v);
       onChange?.(v);
     },
-    [isControlled, onChange],
+    [isControlled, onChange]
   );
   return [value, set] as const;
 };
@@ -34,8 +38,7 @@ export const Dropdown: React.FC<DropdownProps> & {
   Trigger: React.FC<React.HTMLAttributes<HTMLButtonElement>>;
   Menu: React.FC<React.HTMLAttributes<HTMLDivElement>>;
   Item: React.FC<{ option: Option; index?: number }>;
-  Search: React.FC<{ placeholder?: string }>;
-  Checkbox: React.FC<{ checked: boolean; 'aria-hidden'?: boolean }>; // внутренний чекбокс
+  Checkbox: React.FC<{ checked: boolean; 'aria-hidden'?: boolean }>;
 } = ({
   id,
   label,
@@ -61,6 +64,9 @@ export const Dropdown: React.FC<DropdownProps> & {
   virtualizeThreshold = 100,
   itemSize = 36,
   menuMaxHeight = 260,
+  enableSearch = false,
+  searchDebounceMs = 300,
+  fit = 'content',
   children,
 }) => {
   const reactId = useId();
@@ -72,7 +78,7 @@ export const Dropdown: React.FC<DropdownProps> & {
   const [internal, setInternal] = useControllable<string[]>(
     normalize(valueProp, multiple),
     normalize(defaultValue, multiple),
-    (v) => onChange?.(multiple ? v : v[0] ?? ''),
+    (v) => onChange?.(multiple ? v : (v[0] ?? ''))
   );
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -81,28 +87,36 @@ export const Dropdown: React.FC<DropdownProps> & {
   useClickOutside([rootRef, menuRef], () => setOpen(false), isOpen);
 
   const [query, setQuery] = useState('');
-  const debouncedQuery = useDebounce(query, 300);
+  const debouncedQuery = useDebounce(query, searchDebounceMs);
 
   const filtered = useMemo(() => {
+    if (!enableSearch) return options; // если поиск выключен, показываем все
     if (!debouncedQuery) return options;
     const q = debouncedQuery.toLowerCase();
     return options.filter((o) => String(o.label).toLowerCase().includes(q));
-  }, [debouncedQuery, options]);
+  }, [debouncedQuery, enableSearch, options]);
 
-  const selectedOptions = useMemo(() => options.filter((o) => internal.includes(o.value)), [internal, options]);
+  const selectedOptions = useMemo(
+    () => options.filter((o) => internal.includes(o.value)),
+    [internal, options]
+  );
 
   const onItemSelect = useCallback(
     (val: string) => {
       if (multiple) {
-        const next = internal.includes(val) ? internal.filter((v) => v !== val) : [...internal, val];
+        const next = internal.includes(val)
+          ? internal.filter((v) => v !== val)
+          : [...internal, val];
         setInternal(next);
+        setQuery('');
         // список остаётся открытым при мультиселекте
       } else {
         setInternal([val]);
+        setQuery('');
         setOpen(false);
       }
     },
-    [internal, multiple, setInternal, setOpen],
+    [internal, multiple, setInternal, setOpen]
   );
 
   // Клавиатурная навигация по видимым (фильтрованным) элементам
@@ -173,20 +187,41 @@ export const Dropdown: React.FC<DropdownProps> & {
       setValue: setInternal,
       onItemSelect,
       options,
-      query,
-      setQuery,
       highlightedIndex: activeIndex,
       setHighlightedIndex: setActiveIndex,
       getItemId,
     }),
-    [rootId, triggerId, menuId, size, disabled, required, multiple, isOpen, setOpen, placeholder, internal, setInternal, onItemSelect, options, query, activeIndex, setActiveIndex, getItemId],
+    [
+      rootId,
+      triggerId,
+      menuId,
+      size,
+      disabled,
+      required,
+      multiple,
+      isOpen,
+      setOpen,
+      placeholder,
+      internal,
+      setInternal,
+      onItemSelect,
+      options,
+      activeIndex,
+      setActiveIndex,
+      getItemId,
+    ]
   );
 
   const displayContent = useMemo(() => {
     if (renderDisplay) return renderDisplay(selectedOptions, placeholder);
-    if (multiple) return selectedOptions.length ? `Выбрано: ${selectedOptions.length}` : placeholder;
+    if (multiple)
+      return selectedOptions.length ? `Выбрано: ${selectedOptions.length}` : placeholder;
     return selectedOptions[0]?.label ?? placeholder;
   }, [multiple, placeholder, renderDisplay, selectedOptions]);
+  const placeholderText = useMemo(
+    () => (typeof displayContent === 'string' ? displayContent : String(displayContent)),
+    [displayContent]
+  );
 
   // Ленивая загрузка виртуализатора только при необходимости
   type VirtualRowProps = { index: number; style: React.CSSProperties };
@@ -198,17 +233,33 @@ export const Dropdown: React.FC<DropdownProps> & {
     style?: React.CSSProperties;
     children: (props: VirtualRowProps) => React.ReactNode;
   }> | null;
+  type ReactWindowModule = { FixedSizeList: VirtualListCmp };
   const [VirtualList, setVirtualList] = useState<VirtualListCmp>(null);
   useEffect(() => {
     if (isOpen && filtered.length > virtualizeThreshold && !VirtualList) {
       import('react-window')
-        .then((m: { FixedSizeList: VirtualListCmp }) => setVirtualList(() => m.FixedSizeList))
+        .then((mod: unknown) => {
+          const m = mod as ReactWindowModule;
+          setVirtualList(() => m.FixedSizeList);
+        })
         .catch(() => setVirtualList(null));
     }
   }, [VirtualList, filtered.length, isOpen, virtualizeThreshold]);
 
-  const rootCls = clsx(styles.root, fullWidth && styles.fullWidth, className, styles[size]);
-  const triggerCls = clsx(styles.trigger, internal.length === 0 && styles.placeholder, error && styles.error);
+  const rootCls = clsx(
+    styles.root,
+    fullWidth && styles.fullWidth,
+    className,
+    styles[size],
+    isOpen && styles.open
+  );
+  const triggerCls = clsx(
+    styles.trigger,
+    internal.length === 0 && styles.placeholder,
+    error && styles.error
+  );
+
+  const menuCls = clsx(styles.menu, fit === 'trigger' && styles.fitTrigger);
 
   return (
     <div
@@ -227,62 +278,99 @@ export const Dropdown: React.FC<DropdownProps> & {
         </label>
       )}
 
-      <button
-        id={triggerId}
-        type="button"
-        className={triggerCls}
-        aria-label={ariaLabel || label}
-        aria-controls={menuId}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        disabled={disabled}
-        onClick={() => setOpen(!isOpen)}
-        onKeyDown={handleTriggerKeyDown}
-      >
-        <span>{displayContent}</span>
-        <Icon name="chevron-down" size={20} className={clsx(styles.icon, isOpen && styles.iconOpen)} aria-hidden="true" />
-      </button>
-
-      <DropdownProvider value={ctxValue}>
-        {isOpen && (
-          <div
-            id={menuId}
-            ref={menuRef}
-            className={styles.menu}
-            role="listbox"
-            aria-labelledby={triggerId}
-            aria-activedescendant={activeIndex >= 0 ? getItemId(activeIndex) : undefined}
-            style={{ maxHeight: menuMaxHeight }}
-            onKeyDown={handleMenuKeyDown}
-            tabIndex={-1}
-          >
-            {children ? (
-              children
-            ) : (
-              <>
-                <Dropdown.Search placeholder="Поиск..." />
-                <Dropdown.Menu>
-                  {filtered.length === 0 ? (
-                    <div className={styles.option} aria-disabled>
-                      Ничего не найдено
-                    </div>
-                  ) : filtered.length > virtualizeThreshold && VirtualList ? (
-                    <VirtualList height={Math.min(menuMaxHeight, itemSize * virtualizeThreshold)} width="100%" itemCount={filtered.length} itemSize={itemSize} style={{ overflowX: 'hidden' }}>
-                      {({ index, style }: VirtualRowProps) => (
-                        <div style={style}>
-                          <Dropdown.Item option={filtered[index]} index={index} />
-                        </div>
-                      )}
-                    </VirtualList>
-                  ) : (
-                    filtered.map((o, i) => <Dropdown.Item key={o.value} option={o} index={i} />)
-                  )}
-                </Dropdown.Menu>
-              </>
-            )}
+      <div className={clsx(styles.container, isOpen && styles.containerOpen)}>
+        {enableSearch ? (
+          <div className={triggerCls} role="presentation">
+            <input
+              id={triggerId}
+              className={styles.input}
+              placeholder={placeholderText}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setOpen(true)}
+              aria-controls={menuId}
+              aria-expanded={isOpen}
+              aria-haspopup="listbox"
+            />
+            <button
+              type="button"
+              aria-label="Открыть список"
+              className={clsx(styles.icon, isOpen && styles.iconOpen)}
+              onMouseDown={(e: React.MouseEvent) => e.preventDefault()}
+              onClick={() => setOpen(!isOpen)}
+            >
+              <Icon name="chevron-down" size={20} aria-hidden="true" />
+            </button>
           </div>
+        ) : (
+          <button
+            id={triggerId}
+            type="button"
+            className={triggerCls}
+            aria-label={ariaLabel || label}
+            aria-controls={menuId}
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
+            disabled={disabled}
+            onClick={() => setOpen(!isOpen)}
+            onKeyDown={handleTriggerKeyDown}
+          >
+            <span>{placeholderText}</span>
+            <Icon
+              name="chevron-down"
+              size={20}
+              className={clsx(styles.icon, isOpen && styles.iconOpen)}
+              aria-hidden="true"
+            />
+          </button>
         )}
-      </DropdownProvider>
+
+        {isOpen && (
+          <DropdownProvider value={ctxValue}>
+            <div
+              id={menuId}
+              ref={menuRef}
+              className={clsx(menuCls, styles.menuOpen)}
+              role="listbox"
+              aria-labelledby={triggerId}
+              aria-activedescendant={activeIndex >= 0 ? getItemId(activeIndex) : undefined}
+              style={{ maxHeight: menuMaxHeight }}
+              onKeyDown={handleMenuKeyDown}
+              tabIndex={-1}
+            >
+              {children ? (
+                children
+              ) : (
+                <>
+                  <Dropdown.Menu>
+                    {filtered.length === 0 ? (
+                      <div className={styles.option} aria-disabled>
+                        Ничего не найдено
+                      </div>
+                    ) : filtered.length > virtualizeThreshold && VirtualList ? (
+                      <VirtualList
+                        height={Math.min(menuMaxHeight, itemSize * virtualizeThreshold)}
+                        width="100%"
+                        itemCount={filtered.length}
+                        itemSize={itemSize}
+                        style={{ overflowX: 'hidden' }}
+                      >
+                        {({ index, style }: VirtualRowProps) => (
+                          <div style={style}>
+                            <Dropdown.Item option={filtered[index]} index={index} />
+                          </div>
+                        )}
+                      </VirtualList>
+                    ) : (
+                      filtered.map((o, i) => <Dropdown.Item key={o.value} option={o} index={i} />)
+                    )}
+                  </Dropdown.Menu>
+                </>
+              )}
+            </div>
+          </DropdownProvider>
+        )}
+      </div>
 
       {hint && !error && <div className={styles.hint}>{hint}</div>}
       {error && errorMessage && (
@@ -297,7 +385,15 @@ export const Dropdown: React.FC<DropdownProps> & {
 const Trigger: React.FC<React.HTMLAttributes<HTMLButtonElement>> = (props) => {
   const { triggerId, menuId, isOpen, disabled } = useDropdownContext();
   return (
-    <button id={triggerId} type="button" aria-haspopup="listbox" aria-expanded={isOpen} aria-controls={menuId} disabled={disabled} {...props} />
+    <button
+      id={triggerId}
+      type="button"
+      aria-haspopup="listbox"
+      aria-expanded={isOpen}
+      aria-controls={menuId}
+      disabled={disabled}
+      {...props}
+    />
   );
 };
 
@@ -310,7 +406,21 @@ const Item: React.FC<{ option: Option; index?: number }> = ({ option, index }) =
   const selected = value.includes(option.value);
   const disabled = !!option.disabled;
 
-  const onClick = () => {
+  const cbAreaRef = useRef<HTMLSpanElement | null>(null);
+
+  const onRowClick = (e?: React.MouseEvent) => {
+    if (multiple) {
+      const target = e?.target as Node | undefined;
+      if (target && cbAreaRef.current && cbAreaRef.current.contains(target)) {
+        // клик пришёл из области чекбокса/лейбла — уже обработается через onChange
+        return;
+      }
+    }
+    if (!disabled) onItemSelect(option.value);
+  };
+
+  const onCheckboxChange: TCheckBoxUIProps['onChange'] = (e) => {
+    e.stopPropagation();
     if (!disabled) onItemSelect(option.value);
   };
 
@@ -321,16 +431,18 @@ const Item: React.FC<{ option: Option; index?: number }> = ({ option, index }) =
       aria-selected={selected}
       aria-disabled={disabled}
       className={styles.option}
-      onClick={onClick}
+      onClick={onRowClick}
     >
       {multiple ? (
-        <CheckBoxUI
-          label={String(option.label)}
-          checked={selected}
-          disabled={disabled}
-          onChange={() => onItemSelect(option.value)}
-          size="md"
-        />
+        <span ref={cbAreaRef}>
+          <CheckBoxUI
+            label={String(option.label)}
+            checked={selected}
+            disabled={disabled}
+            onChange={onCheckboxChange}
+            size="md"
+          />
+        </span>
       ) : (
         <span>{option.label}</span>
       )}
@@ -338,23 +450,15 @@ const Item: React.FC<{ option: Option; index?: number }> = ({ option, index }) =
   );
 };
 
-const Search: React.FC<{ placeholder?: string }> = ({ placeholder = 'Поиск' }) => {
-  const { query, setQuery } = useDropdownContext();
-  return (
-    <div className={styles.search}>
-      <input className={styles.input} placeholder={placeholder} value={query} onChange={(e) => setQuery(e.target.value)} />
-    </div>
-  );
-};
-
 Dropdown.Trigger = Trigger;
 Dropdown.Menu = Menu;
 Dropdown.Item = Item;
-Dropdown.Search = Search;
 // Экспортируем Checkbox как подкомпонент (обёртка)
-Dropdown.Checkbox = ((props: Pick<TCheckBoxUIProps, 'checked' | 'label' | 'onChange' | 'disabled'>) => (
-  <CheckBoxUI size="md" {...props} />
-)) as React.FC<Pick<TCheckBoxUIProps, 'checked' | 'label' | 'onChange' | 'disabled'>>;
+Dropdown.Checkbox = ((
+  props: Pick<TCheckBoxUIProps, 'checked' | 'label' | 'onChange' | 'disabled'>
+) => <CheckBoxUI size="md" {...props} />) as React.FC<
+  Pick<TCheckBoxUIProps, 'checked' | 'label' | 'onChange' | 'disabled'>
+>;
 
 Dropdown.propTypes = {
   id: PropTypes.string,
@@ -368,8 +472,8 @@ Dropdown.propTypes = {
   className: PropTypes.string,
   multiple: PropTypes.bool,
   options: PropTypes.array,
-  value: PropTypes.any,
-  defaultValue: PropTypes.any,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   onChange: PropTypes.func,
   open: PropTypes.bool,
   defaultOpen: PropTypes.bool,
@@ -378,6 +482,9 @@ Dropdown.propTypes = {
   error: PropTypes.bool,
   errorMessage: PropTypes.string,
   renderDisplay: PropTypes.func,
+  enableSearch: PropTypes.bool,
+  searchDebounceMs: PropTypes.number,
+  fit: PropTypes.oneOf(['content', 'trigger'] as const),
 };
 
 // Удаляем дефолтный экспорт во избежание дубликатов экспортов

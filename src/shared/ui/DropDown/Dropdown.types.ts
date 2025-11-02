@@ -39,6 +39,18 @@ export type DropdownProps = {
   virtualizeThreshold?: number; // порог включения виртуализации
   itemSize?: number; // высота строки для react-window
   menuMaxHeight?: number;
+  /**
+   * Включить встроенный поиск в поле (вместо поиска внутри меню).
+   * По умолчанию: false
+   */
+  enableSearch?: boolean;
+  /** debounce для поиска (мс). По умолчанию 300 */
+  searchDebounceMs?: number;
+  /**
+   * Выравнивание меню по ширине: `content` — под содержимое, `trigger` — по ширине поля.
+   * По умолчанию: 'content'
+   */
+  fit?: 'content' | 'trigger';
   children?: React.ReactNode;
 };
 
@@ -57,8 +69,6 @@ export type DropdownContextValue = {
   setValue: (next: string[]) => void;
   onItemSelect: (val: string) => void;
   options: Option[];
-  query: string;
-  setQuery: (q: string) => void;
   highlightedIndex: number;
   setHighlightedIndex: (i: number) => void;
   getItemId: (i: number) => string;
