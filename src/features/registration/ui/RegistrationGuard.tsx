@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getFirstIncompleteStep, isStepAccessible, saveRegistrationData } from '../lib/storage';
-import { StandaloneStepIndicator } from '@shared/ui';
 import { PreloaderUI } from '@shared/ui/Preloader';
 
 interface RegistrationGuardProps {
@@ -26,37 +25,25 @@ export const RegistrationGuard: React.FC<RegistrationGuardProps> = ({ totalSteps
   useEffect(() => {
     if (!Number.isFinite(current) || current < 1 || current > totalSteps) {
       setRedirecting(true);
-
       navigate('/register/1', { replace: true });
-
       return;
     }
 
     const firstIncomplete = getFirstIncompleteStep(totalSteps);
-
     if (current > firstIncomplete) {
       setRedirecting(true);
-
       navigate(`/register/${firstIncomplete}`, { replace: true });
-
       return;
     }
 
     if (current > 1 && !isStepAccessible(current)) {
       setRedirecting(true);
-
       navigate(`/register/${firstIncomplete}`, { replace: true });
-
       return;
     }
 
     saveRegistrationData({ currentStep: current });
   }, [current, totalSteps, navigate]);
-
-  const header = useMemo(
-    () => <StandaloneStepIndicator currentStep={current} totalSteps={totalSteps} />,
-    [current, totalSteps]
-  );
 
   if (redirecting) {
     return (
@@ -66,5 +53,5 @@ export const RegistrationGuard: React.FC<RegistrationGuardProps> = ({ totalSteps
     );
   }
 
-  return React.cloneElement(children, { header } as any);
+  return children;
 };

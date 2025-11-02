@@ -1,4 +1,5 @@
 import { loadState, saveState, namespacedKey } from '@shared/lib/localStorage';
+import type { NavigateFunction } from 'react-router-dom';
 
 export type RegistrationStep1Data = {
   email: string;
@@ -137,16 +138,16 @@ export function clearEntryPath(): void {
   }
 }
 
-export function exitRegistration(navigate: (to: string | number, opts?: unknown) => void) {
+export function exitRegistration(navigate: NavigateFunction) {
   const to = getEntryPath() ?? '/';
 
   clearRegistrationData();
   clearEntryPath();
 
   try {
-    navigate(String(to), { replace: true } as any);
+    navigate(to, { replace: true });
   } catch {
-    navigate(-1 as any);
+    navigate(-1);
   }
 }
 
