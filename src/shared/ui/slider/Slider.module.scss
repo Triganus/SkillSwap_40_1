@@ -28,9 +28,11 @@
   0% {
     opacity: 0.7;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     opacity: 0.7;
   }
@@ -61,6 +63,7 @@
 .prev {
   left: -12px;
 }
+
 .next {
   right: -12px;
 }
