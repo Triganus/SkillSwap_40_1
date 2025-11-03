@@ -267,16 +267,10 @@ export const DatePickerUI = ({
           </div>
 
           <div className={styles.buttons}>
-            <Button
-              className={styles.cancelButton}
-              onClick={() => setIsOpen(false)}
-            >
+            <Button className={styles.cancelButton} onClick={() => setIsOpen(false)}>
               Отменить
             </Button>
-            <Button
-              className={styles.selectButton}
-              onClick={() => setIsOpen(false)}
-            >
+            <Button className={styles.selectButton} onClick={() => setIsOpen(false)}>
               Выбрать
             </Button>
           </div>
