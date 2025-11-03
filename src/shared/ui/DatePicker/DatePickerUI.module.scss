@@ -1,4 +1,4 @@
-.datePickerWrapper {
+.date-picker-wrapper {
   position: relative;
   display: inline-block;
   width: 208px;
@@ -8,9 +8,9 @@
     position: relative;
     display: flex;
     align-items: center;
-    border: 1px solid var(--border-color, #ccc);
+    border: 1px solid var(--border-color, #cccccc);
     border-radius: var(--radius-m, 12px);
-    background: var(--color-surface, #fff);
+    background: var(--color-surface, #ffffff);
     overflow: hidden;
     margin-bottom: 4px;
   }
@@ -21,14 +21,15 @@
     font-size: 16px;
     border: none;
     background: transparent;
-    color: var(--color-text, #000);
+    color: var(--color-text, #000000);
     outline: none;
+
     &::placeholder {
-      color: var(--color-caption, #666);
+      color: var(--color-caption, #666666);
     }
   }
 
-  .iconButtonInside {
+  .icon-button-inside {
     position: absolute;
     right: 12px;
     top: 50%;
@@ -45,7 +46,7 @@
     height: 24px;
 
     svg {
-      fill: currentColor;
+      fill: currentcolor;
     }
 
     &:hover {
@@ -66,9 +67,9 @@
   align-items: center;
   width: 280px;
   height: 360px;
-  border: 1px solid var(--border-color, #ccc);
+  border: 1px solid var(--border-color, #cccccc);
   border-radius: var(--radius-m, 12px);
-  background-color: var(--color-surface, #fff);
+  background-color: var(--color-surface, #ffffff);
   padding: 15px 16px 0;
   font-family: var(--font-sans, system-ui);
   font-size: 14px;
@@ -86,7 +87,7 @@
       align-items: center;
       gap: 0;
       font-size: 16px;
-      color: var(--color-text, #000);
+      color: var(--color-text, #000000);
       text-transform: capitalize;
 
       .dropdown {
@@ -98,15 +99,15 @@
         text-align: center;
         width: 92px;
 
-        .monthButton,
-        .yearButton {
+        .month-button,
+        .year-button {
           background: none;
           border: none;
           width: 57px;
           height: 24px;
           padding: 0 0 0 8px;
           font-size: 16px;
-          color: var(--color-text, #000);
+          color: var(--color-text, #000000);
           text-transform: capitalize;
           text-align: center;
           min-width: 80px;
@@ -115,7 +116,7 @@
           text-overflow: ellipsis;
         }
 
-        .chevronButton {
+        .chevron-button {
           background: none;
           border: none;
           padding: 0;
@@ -129,7 +130,7 @@
           svg {
             width: 24px;
             height: 24px;
-            fill: var(--color-text, #000);
+            fill: var(--color-text, #000000);
             display: block;
             transform-origin: center;
             overflow: visible;
@@ -143,17 +144,17 @@
         }
       }
 
-      .monthNames {
+      .month-names {
         text-transform: capitalize;
       }
 
-      .yearSelect {
+      .year-select {
         width: 85px;
       }
     }
   }
 
-  .weekNames {
+  .week-names {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     width: 224px;
@@ -162,8 +163,7 @@
     font-size: 14px;
   }
 
-  .calendarField {
-    width: 100%;
+  .calendar-field {
     height: calc(100% - 120px);
     width: 224px;
     overflow: hidden;
@@ -186,7 +186,7 @@
     overflow: visible;
   }
 
-  .dayButton {
+  .day-button {
     border: none;
     background: none;
     color: inherit;
@@ -201,28 +201,28 @@
     margin: -2px;
   }
 
-  .dayOutside {
-    color: var(--color-caption, #666);
+  .day-outside {
+    color: var(--color-caption, #666666);
     opacity: 0.6;
     pointer-events: none;
   }
 
-  .selectedDay {
-    .dayButton {
+  .selected-day {
+    .day-button {
       background-color: var(--color-accent, #9cd36a);
       color: white;
     }
   }
 
-  .dropdownMenu {
+  .dropdown-menu {
     position: absolute;
     top: 100%;
     left: 0;
     z-index: 1001;
-    background: var(--color-surface, #fff);
-    border: 1px solid var(--border-color, #ccc);
+    background: var(--color-surface, #ffffff);
+    border: 1px solid var(--border-color, #cccccc);
     border-radius: var(--radius-m, 12px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
     max-height: 200px;
     overflow-y: auto;
 
@@ -268,7 +268,7 @@
     button:first-child {
       width: 125px;
       background-color: white;
-      color: var(--color-text, #000);
+      color: var(--color-text, #000000);
       border: 1px solid var(--color-accent, #9cd36a);
     }
 
