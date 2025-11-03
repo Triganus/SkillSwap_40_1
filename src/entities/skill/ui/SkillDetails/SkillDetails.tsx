@@ -5,13 +5,15 @@ import { MediaSlider } from '@/shared/ui/MediaSlider/MediaSlider';
 import { LikeButtonUI } from '@/shared/ui/LikeButton/LikeButtonUI';
 import { Icon } from '@/shared/ui/Icon/Icon';
 import { Button } from '@/shared/ui/Button/Button';
+import { TagUI } from '@/shared/ui/Tag'; //для отображения категории как тега
+import { tagCategoryToLabel } from '@/shared/lib/categoryMapper'; //для преобразования TagCategory -> человекочитаемые названия категорий
 import type { MediaItem } from '@/shared/ui/MediaSlider/types';
 import type { SkillDetailsProps } from './types';
 import styles from './SkillDetails.module.scss';
 
 export const SkillDetails: React.FC<SkillDetailsProps> = ({
   title,
-  subTitle,
+  category,
   text,
   images,
   variant,
@@ -84,9 +86,7 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
       {/* Заголовок и подзаголовок - слева */}
       <div className={styles.header}>
         <TitleUI size="large">{title}</TitleUI>
-        <TextUI variant="caption" color="secondary" className={styles.subTitle}>
-          {subTitle}
-        </TextUI>
+        <TagUI label={tagCategoryToLabel[category]} category={category} className={styles.tag} />
       </div>
 
       {/* Описание - слева */}
@@ -99,20 +99,13 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
         {variant === 'want' && (
           <div className={styles.cta}>
             {isRequestSent ? (
-              <Button
-                variant="primary"
-                size="large"
-                disabled
-                type="button"
-                className={styles.exchangeButton}
-              >
+              <Button variant="primary" type="button" className={styles.exchangeButton}>
                 <Icon name="clock" size={20} title="Ожидание" />
                 Обмен предложен
               </Button>
             ) : (
               <Button
                 variant="primary"
-                size="large"
                 onClick={onExchangeClick}
                 type="button"
                 className={styles.exchangeButton}
@@ -128,7 +121,6 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
           <div className={styles.editActions}>
             <Button
               variant="secondary"
-              size="medium"
               onClick={onEditClick}
               type="button"
               className={styles.editButton}
@@ -138,7 +130,6 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
             </Button>
             <Button
               variant="primary"
-              size="medium"
               onClick={onDoneClick}
               type="submit"
               className={styles.doneButton}

@@ -27,10 +27,10 @@ export default function ServerErrorPage() {
       </div>
 
       <div className={styles.actions} role="group" aria-label="Действия на странице 500">
-        <Button variant="secondary" size="large" onClick={handleReport}>
+        <Button variant="secondary" onClick={handleReport}>
           Сообщить об ошибке
         </Button>
-        <Button variant="primary" size="large" onClick={handleGoHome}>
+        <Button variant="primary" onClick={handleGoHome}>
           На главную
         </Button>
       </div>

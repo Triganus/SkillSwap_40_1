@@ -115,9 +115,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
       >
         <TextUI>Перетащите изображения сюда или нажмите, чтобы выбрать</TextUI>
         <div style={{ marginTop: 8 }}>
-          <Button size="small" variant="secondary">
-            Выбрать файл
-          </Button>
+          <Button variant="secondary">Выбрать файл</Button>
         </div>
         <input
           ref={inputRef}

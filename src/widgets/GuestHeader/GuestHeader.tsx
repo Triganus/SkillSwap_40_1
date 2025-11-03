@@ -20,7 +20,6 @@ export const GuestHeader: React.FC<GuestHeaderProps> = ({ children, centerConten
           <LogoUI />
         </div>
         <Button
-          size="large"
           type="button"
           variant="tertiary"
           className={cls.closeButton}

@@ -55,3 +55,38 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.wrapper {
+  position: relative;
+  display: block;
+}
+
+.suffix-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--color-caption, #69735d);
+  cursor: pointer;
+}
+
+.input.large.with-suffix {
+  padding-right: 48px;
+}
+
+.input.medium.with-suffix {
+  padding-right: 40px;
+}
+
+.input.small.with-suffix {
+  padding-right: 36px;
+}

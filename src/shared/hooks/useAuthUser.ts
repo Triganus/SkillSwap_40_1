@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@shared/hooks/redux';
 import type { RootState } from '@app/Provider';
 import type { AuthUser } from '@entities/user/model/types/types.ts';
 
@@ -8,8 +8,8 @@ export type UseAuthUserResult = {
 };
 
 export function useAuthUser(): UseAuthUserResult {
-  const isAuthenticated = useSelector((s: RootState) => s.auth.isAuthenticated);
-  const user = useSelector((s: RootState) => s.auth.user ?? null);
+  const isAuthenticated = useAppSelector((s: RootState) => s.auth.isAuthenticated);
+  const user = useAppSelector((s: RootState) => s.auth.user ?? null);
 
   return { user, isAuthenticated };
 }

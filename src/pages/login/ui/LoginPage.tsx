@@ -1,112 +1,95 @@
-import { type FormEvent, useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@app/Provider';
 import { useGuestHeaderContent } from '@app/layouts';
 import { TwoColumnLayout } from '@shared/ui';
+import { SocialAuthGroup } from '@shared/ui/AuthButton';
+import { AuthMethodsSeparator } from '@shared/ui';
+import { AuthForm, InfoBlock } from '@features/auth';
 import { login as authLogin } from '@api/auth';
+import lightBulb from '@shared/assets/images/light-bulb.svg';
+import styles from './LoginPage.module.scss';
+import { useLoginForm } from '@features/auth/model/hooks/useLoginForm';
 
 export default function LoginPage() {
-  useGuestHeaderContent(<h1>Вход</h1>);
+  const headerContent = useMemo(() => <h1 className={styles.title}>Вход</h1>, []);
+
+  useGuestHeaderContent(headerContent);
 
   const { auth, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation() as unknown as { state?: { from?: Location } };
   const from = location.state?.from?.pathname ?? '/profile';
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setServerErrorForAllFields,
+    clearServerError,
+    errors,
+    canSubmit,
+    rootErrorMessage,
+    forceAllFieldsError,
+    emailUI,
+    passwordUI,
+  } = useLoginForm();
 
   if (auth.isAuthenticated) {
     return <Navigate to={from} replace />;
   }
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    const emailTrimmed = email.trim();
-    const passwordTrimmed = password.trim();
-
-    if (!emailTrimmed || !passwordTrimmed) {
-      setError('Введите email и пароль');
-
-      return;
-    }
-
-    setLoading(true);
+  const onSubmit = handleSubmit(async (values) => {
+    clearServerError();
 
     try {
-      const result = await authLogin({ email: emailTrimmed, password: passwordTrimmed });
+      const result = await authLogin({
+        email: values.email.trim(),
+        password: values.password.trim(),
+      });
 
       login(result.user);
 
       navigate(from, { replace: true });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось выполнить вход');
-    } finally {
-      setLoading(false);
+    } catch {
+      const message =
+        'Email или пароль введён неверно. Пожалуйста проверьте правильность введённых данных';
+
+      setServerErrorForAllFields(message);
     }
-  };
+  });
 
   const leftContent = (
-    <div style={{ maxWidth: 400, width: '100%' }}>
-      <h1>Login</h1>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 20 }}>
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            autoComplete="email"
-            required
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Your password"
-            autoComplete="current-password"
-            required
-          />
-        </label>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing in…' : 'Sign in'}
-        </button>
-        {error && (
-          <div role="alert" style={{ color: 'crimson' }}>
-            {error}
-          </div>
-        )}
-      </form>
-
-      <p>
-        <Link to="/register/1">Зарегистрироваться</Link>
-      </p>
+    <div style={{ maxWidth: 460, width: '100%' }}>
+      <AuthMethodsSeparator>
+        <SocialAuthGroup gap={32} />
+        <AuthForm
+          email=""
+          password=""
+          onSubmit={onSubmit}
+          onEmailChange={() => {}}
+          onPasswordChange={() => {}}
+          loading={false}
+          error={rootErrorMessage}
+          submitText="Войти"
+          registerLinkTo="/register/1"
+          registerLinkText="Зарегистрироваться"
+          register={register}
+          errors={errors}
+          isValid={canSubmit}
+          forceAllFieldsError={forceAllFieldsError}
+          emailField={emailUI}
+          passwordField={passwordUI}
+        />
+      </AuthMethodsSeparator>
     </div>
   );
 
   const rightContent = (
-    <div
-      style={{
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-      }}
-    >
-      <div style={{ fontSize: 80, marginBottom: 20 }}> Лампа</div>
-      <h2>С возвращением в SkillSwap!</h2>
-      <p>Обменивайтесь знаниями и навыками с другими людьми</p>
-    </div>
+    <InfoBlock
+      image={lightBulb}
+      title="С возвращением в SkillSwap!"
+      description="Обменивайтесь знаниями и навыками с другими людьми"
+    />
   );
 
   return (
