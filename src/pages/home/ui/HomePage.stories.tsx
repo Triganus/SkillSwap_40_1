@@ -15,7 +15,9 @@ const meta: Meta<typeof HomePage> = {
   decorators: [
     (Story) => (
       <WithReduxProvider>
-        <Story />
+        <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-background, #ffffff)' }}>
+          <Story />
+        </div>
       </WithReduxProvider>
     ),
   ],
@@ -24,6 +26,9 @@ const meta: Meta<typeof HomePage> = {
     router: {
       initialEntries: ['/'],
     },
+    viewport: {
+      defaultViewport: 'desktop',
+    },
   },
   tags: ['autodocs'],
 };
@@ -31,20 +36,50 @@ const meta: Meta<typeof HomePage> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Основная история - обычный режим отображения
+// Основная история - обычный режим отображения (с фильтрами и всеми блоками)
 export const Default: Story = {
   parameters: {
     router: {
       initialEntries: ['/'],
     },
+    viewport: {
+      defaultViewport: 'desktop',
+    },
   },
 };
 
-// История с поиском
+// История для планшета (фильтры скрыты)
+export const TabletView: Story = {
+  parameters: {
+    router: {
+      initialEntries: ['/'],
+    },
+    viewport: {
+      defaultViewport: 'tablet',
+    },
+  },
+};
+
+// История для мобильного (фильтры скрыты)
+export const MobileView: Story = {
+  parameters: {
+    router: {
+      initialEntries: ['/'],
+    },
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+};
+
+// История с поиском (с фильтрами и результатами)
 export const SearchMode: Story = {
   parameters: {
     router: {
       initialEntries: ['/?search=английский'],
+    },
+    viewport: {
+      defaultViewport: 'desktop',
     },
   },
 };
@@ -55,6 +90,9 @@ export const EmptySearch: Story = {
     router: {
       initialEntries: ['/?search=несуществующийнавык'],
     },
+    viewport: {
+      defaultViewport: 'desktop',
+    },
   },
 };
 
@@ -63,6 +101,9 @@ export const SearchByName: Story = {
   parameters: {
     router: {
       initialEntries: ['/?search=Иван'],
+    },
+    viewport: {
+      defaultViewport: 'desktop',
     },
   },
 };
