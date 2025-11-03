@@ -9,4 +9,5 @@ export interface SkillCardProps {
   onDetailsClick?: () => void;
   onLikeClick?: () => void;
   isLiked?: boolean;
+  ariaLabel?: string;
 }
