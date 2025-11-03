@@ -198,13 +198,6 @@ const userSlice = createSlice({
 
 export const { setUser, clearUser, setError, clearError } = userSlice.actions;
 
-// Временные mock-экспорты для совместимости с SkillPage (TODO: удалить после рефакторинга)
-export const usersActions = {
-  upsertMany: (payload: unknown) => ({ type: 'users/upsertMany', payload }),
-};
-
-export const selectUsersState = (): { byId: Record<string, DbUser> } => ({ byId: {} });
-
 // Селекторы
 export const selectCurrentUser = (state: RootState) => state.user.data;
 export const selectIsAuth = (state: RootState) => state.user.isAuth;
