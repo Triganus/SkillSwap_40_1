@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchSkills, getSkills, getSkillsError, getSkillsLoading } from '@entities/skill/model';
-import { usersActions, selectUsersState } from '@entities/user/model/userSlice';
+import { usersActions, selectUsersState } from '@entities/user/model/usersSlice';
 import type { RootState, AppDispatch } from '@app/Provider';
 import { fetchUsers } from '@/api/users-api';
 import type { User } from '@entities/user/model/types/types';
