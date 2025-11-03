@@ -48,3 +48,6 @@ export type { AuthMethodsSeparatorProps } from './AuthMethodsSeparator';
 
 export * from './Form';
 export * from './DropDown';
+
+export { UserAvatarUpload } from './UserAvatarUpload';
+export type { UserAvatarUploadProps, UserAvatarUploadHandle } from './UserAvatarUpload';
