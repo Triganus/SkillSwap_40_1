@@ -9,6 +9,7 @@ const LoginPage = lazy(() => import('@pages/login/ui/LoginPage'));
 const RegisterPage = lazy(() => import('@pages/register/ui/RegisterPage'));
 const ProfilePage = lazy(() => import('@pages/profile/ui/ProfilePage'));
 const FavoritesPage = lazy(() => import('@pages/favorites/ui/FavoritesPage'));
+const SkillPage = lazy(() => import('@pages/skill-page'));
 const NotFoundPage = lazy(() =>
   import('@pages/not-found404').then((m) => ({ default: m.NotFoundPage }))
 );
@@ -39,6 +40,7 @@ export default function AppRouter() {
 
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/skill/:id" element={<SkillPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<ProfilePage />} />
