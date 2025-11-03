@@ -1,1 +1,0 @@
-export { SkillCardWidget } from './SkillCard';
