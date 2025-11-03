@@ -70,7 +70,7 @@ export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUpl
       return () => {
         URL.revokeObjectURL(url);
       };
-    }, [file, previewUrl]);
+    }, [file]);
 
     useImperativeHandle(
       ref,

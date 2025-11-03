@@ -1,0 +1,41 @@
+.form {
+  max-width: 460px;
+  width: 100%
+}
+
+.header {
+  margin-bottom: 16px
+}
+
+.row {
+  display: grid;
+  grid-template-columns:1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px
+}
+
+.actions {
+  display: grid;
+  grid-template-columns:1fr 1fr;
+  gap: 16px;
+  margin-top: 16px
+}
+
+.avatar-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px
+}
+
+.full-width {
+  width: 100%;
+  display: block
+}
+
+.fluid-btn {
+  width: 100%
+}
+
+.field {
+  margin-bottom: 16px
+}

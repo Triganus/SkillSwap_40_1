@@ -39,7 +39,11 @@ export const FormField: React.FC<FormFieldProps> = ({
           })()
         : children}
       {error ? (
-        <div id={describedById} role="alert" style={{ color: 'var(--color-error, #bf3920)' }}>
+        <div
+          id={describedById}
+          role="alert"
+          style={{ color: 'var(--color-error, #bf3920)', textAlign: 'left', marginTop: 6 }}
+        >
           {error}
         </div>
       ) : null}

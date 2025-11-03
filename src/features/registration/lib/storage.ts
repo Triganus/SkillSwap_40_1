@@ -1,9 +1,20 @@
 import { loadState, saveState, namespacedKey } from '@shared/lib/localStorage';
 import type { NavigateFunction } from 'react-router-dom';
+import type { TagCategory } from '@shared/ui/Tag';
 
 export type RegistrationStep1Data = {
   email: string;
   passwordHash: string;
+};
+
+export type RegistrationStep2Data = {
+  avatarDataUrl: string | null;
+  name: string;
+  birthDate: string; // формат: дд.мм.гггг
+  gender: string; // см. константы GENDER_OPTIONS
+  city: string; // см. константы CITIES
+  categories: TagCategory[]; // идентификаторы категорий
+  subcategories: string[]; // названия навыков/подкатегорий
 };
 
 export type RegistrationData = {
@@ -11,6 +22,7 @@ export type RegistrationData = {
   completedSteps: number[];
   stepData: {
     step1?: RegistrationStep1Data;
+    step2?: RegistrationStep2Data;
   };
   expiresAt: number;
 };

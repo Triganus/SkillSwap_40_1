@@ -1,10 +1,10 @@
 .root {
+  --trigger-h: 40px;
+  --shell-pad: 3px;
+
   position: relative;
   display: inline-block;
   font-family: var(--font-sans);
-  // высота триггера по умолчанию (medium)
-  --trigger-h: 40px;
-  --shell-pad: 3px;
 }
 
 .container {
@@ -13,7 +13,6 @@
 }
 
 .container-open {
-  // убираем внутреннюю рамку контейнера, рамка будет у меню
   border: none;
   border-radius: 0;
   background: transparent;
