@@ -11,6 +11,7 @@ export interface User {
 export type DbUser = {
   id: string;
   name: string;
+  email: string;
   date_of_birth?: string;
   age?: number;
   date_of_registration?: string;

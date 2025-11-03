@@ -2,23 +2,50 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  max-inline-size: 1020px;
+  max-inline-size: 100%;
+  width: 100%;
+
+  @media (max-width: 767px) {
+    gap: 20px;
+  }
 }
 
 .section-content {
   display: flex;
   justify-content: space-between;
-  inline-size: 1020px;
+  align-items: center;
+  inline-size: 100%;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 }
 
 .look-button {
   inline-size: 187px;
-  block-size: 48px;
   gap: 8px;
+
+  @media (max-width: 767px) {
+    inline-size: 100%;
+  }
 }
 
 .section-card {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+
+  @media (width >= 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  @media (width >= 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
 }

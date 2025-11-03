@@ -29,7 +29,7 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
   useEffect(() => {
     setSelected(defaultValue ?? '');
     onChange?.(defaultValue ?? '');
-  }, [resetToken, defaultValue]);
+  }, [resetToken, defaultValue, onChange]);
 
   return (
     <div className={styles.wrapper}>

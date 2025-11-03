@@ -3,7 +3,7 @@ import styles from './CitiesSideBar.module.scss';
 import type { TCitiesSideBarProps } from './TCitiesSideBarProps';
 import { TextUI, Icon, CheckBoxUI } from '@/shared/ui';
 import { TitleUI } from '@/shared/ui/Title';
-const VISIBLE_LIMIT = 6;
+const VISIBLE_LIMIT = 5;
 
 export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
   cities,
@@ -19,6 +19,7 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
 
   const selectedList = useMemo(() => Array.from(selected), [selected]);
 
+  // Сброс при изменении resetToken
   useEffect(() => {
     onChange?.(selectedList);
   }, [selectedList, onChange]);
@@ -61,6 +62,7 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
               key={city}
               className={hidden ? styles['hidden-item'] : undefined}
               aria-hidden={hidden || undefined}
+              style={hidden ? { display: 'none' } : undefined}
             >
               <CheckBoxUI
                 name="cities"

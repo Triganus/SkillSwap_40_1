@@ -13,16 +13,14 @@ export const CardSectionUI: FC<TCardSectionProps> = memo(
     return (
       <section className={styles.section}>
         <div className={styles.sectionContent}>
-          {/* TODO: Добавить в типизацию TitleUI className? */}
           <TitleUI size="large">{title}</TitleUI>
-          {/* TODO: Добавить правильные стили в компонент Button, а потом добавить данные сюда. Не забыть радиус */}
           {showButton && onLookClick && (
             <Button
               className={styles.lookButton}
               onClick={onLookClick}
-              variant="primary"
-              size="medium"
+              variant="tertiary"
               type="button"
+              aria-label={`Показать все карточки в разделе ${title}`}
             >
               Смотреть все
               <Icon
@@ -31,6 +29,7 @@ export const CardSectionUI: FC<TCardSectionProps> = memo(
                 className={styles.iconChevronRight}
                 fill="#253017"
                 stroke="#253017"
+                aria-hidden="true"
               />
             </Button>
           )}

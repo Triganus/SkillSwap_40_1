@@ -30,3 +30,20 @@ export type { MediaSliderProps } from './MediaSlider';
 
 export { InfiniteGridUI } from './InfiniteGrid';
 export type { TInfiniteGridUIProps } from './InfiniteGrid';
+
+export { Slider } from './Slider';
+export type { SliderProps } from './Slider';
+
+export { ImageInput } from './ImageInput';
+export type { ImageInputProps } from './ImageInput';
+
+export { TwoColumnLayout } from './TwoColumnLayout';
+export type { TwoColumnLayoutProps } from './TwoColumnLayout';
+
+export { StandaloneStepIndicator } from './StepIndicator';
+export type { StandaloneStepIndicatorProps } from './StepIndicator';
+
+export { AuthMethodsSeparator } from './AuthMethodsSeparator';
+export type { AuthMethodsSeparatorProps } from './AuthMethodsSeparator';
+
+export * from './Form';

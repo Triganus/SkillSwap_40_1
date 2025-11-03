@@ -3,4 +3,5 @@ export interface TLikeButtonUIProps {
   onClick?: () => void;
   ariaLabel?: string;
   disabled?: boolean;
+  className?: string;
 }

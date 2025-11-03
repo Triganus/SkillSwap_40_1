@@ -1,77 +1,107 @@
-import { type FormEvent, useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@app/Provider';
-import type { DbUser } from '@entities/user/model/types/types.ts';
+import { useGuestHeaderContent } from '@app/layouts';
+import { TwoColumnLayout } from '@shared/ui';
+import { SocialAuthGroup } from '@shared/ui/AuthButton';
+import { AuthMethodsSeparator } from '@shared/ui';
+import { AuthForm, InfoBlock } from '@features/auth';
+import { login as authLogin } from '@api/auth';
+import lightBulb from '@shared/assets/images/light-bulb.svg';
+import styles from './LoginPage.module.scss';
+import { useLoginForm } from '@features/auth/model/hooks/useLoginForm';
 
 export default function LoginPage() {
+  const headerContent = useMemo(() => <h1 className={styles.title}>Вход</h1>, []);
+
+  useGuestHeaderContent(headerContent);
+
   const { auth, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation() as unknown as { state?: { from?: Location } };
   const from = location.state?.from?.pathname ?? '/profile';
 
-  const [name, setName] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setServerErrorForAllFields,
+    clearServerError,
+    errors,
+    canSubmit,
+    rootErrorMessage,
+    forceAllFieldsError,
+    emailUI,
+    passwordUI,
+  } = useLoginForm();
 
   if (auth.isAuthenticated) {
     return <Navigate to={from} replace />;
   }
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  const onSubmit = handleSubmit(async (values) => {
+    clearServerError();
 
     try {
-      const res = await fetch('/db/users.json');
+      const result = await authLogin({
+        email: values.email.trim(),
+        password: values.password.trim(),
+      });
 
-      if (!res.ok) throw new Error(`Failed to load users.json: ${res.status}`);
+      login(result.user);
 
-      const data: { users: DbUser[] } = await res.json();
-      const list = data?.users ?? [];
-      const normalized = name.trim();
-      // Ищем по точному совпадению имени; если не найден, берём первого пользователя как дефолт
-      const found = list.find((u) => u.name.toLowerCase() === normalized.toLowerCase()) ?? list[0];
-
-      if (!found) {
-        throw new Error('Список пользователей пуст');
-      }
-
-      login(found);
       navigate(from, { replace: true });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось выполнить вход');
-    } finally {
-      setLoading(false);
+    } catch {
+      const message =
+        'Email или пароль введён неверно. Пожалуйста проверьте правильность введённых данных';
+
+      setServerErrorForAllFields(message);
     }
-  };
+  });
+
+  const leftContent = (
+    <div style={{ maxWidth: 460, width: '100%' }}>
+      <AuthMethodsSeparator>
+        <SocialAuthGroup gap={32} />
+        <AuthForm
+          email=""
+          password=""
+          onSubmit={onSubmit}
+          onEmailChange={() => {}}
+          onPasswordChange={() => {}}
+          loading={false}
+          error={rootErrorMessage}
+          submitText="Войти"
+          registerLinkTo="/register/1"
+          registerLinkText="Зарегистрироваться"
+          register={register}
+          errors={errors}
+          isValid={canSubmit}
+          forceAllFieldsError={forceAllFieldsError}
+          emailField={emailUI}
+          passwordField={passwordUI}
+        />
+      </AuthMethodsSeparator>
+    </div>
+  );
+
+  const rightContent = (
+    <InfoBlock
+      image={lightBulb}
+      title="С возвращением в SkillSwap!"
+      description="Обменивайтесь знаниями и навыками с другими людьми"
+    />
+  );
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Login</h1>
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 20, maxWidth: 320 }}>
-        <label>
-          Name
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            autoComplete="username"
-          />
-        </label>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing in…' : 'Sign in'}
-        </button>
-        {error && (
-          <div role="alert" style={{ color: 'crimson' }}>
-            {error}
-          </div>
-        )}
-      </form>
-
-      <p>
-        <Link to="/register/1">Зарегистрироваться</Link>
-      </p>
-    </div>
+    <TwoColumnLayout
+      leftContent={leftContent}
+      rightContent={rightContent}
+      gap={24}
+      columnPadding={60}
+      containerBackground="var(--color-background)"
+      minHeight={692}
+      columnJustify="center"
+      columnAlign="center"
+    />
   );
 }

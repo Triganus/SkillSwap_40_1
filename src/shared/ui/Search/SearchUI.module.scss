@@ -7,6 +7,8 @@
   border-radius: 16px;
   padding: 8px 14px;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 
   &.disabled {
     background: var(--color-disabled);
@@ -45,6 +47,8 @@
   font-size: 16px;
   color: var(--color-text-primary, #333333);
   padding: 4px 0;
+  min-width: 0;
+  width: 100%;
 
   &::placeholder {
     color: var(--color-caption);
