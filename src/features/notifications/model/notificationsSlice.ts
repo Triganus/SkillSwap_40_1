@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { INotificationList } from '@/entities/notification/model/types/types';
 import type { RootState } from '@/app/store';
+import type { DbUser } from '@/entities/user/model/types/types';
 
 // Состояние только для уведомлений
 interface NotificationsState {
@@ -18,6 +19,26 @@ const initialState: NotificationsState = {
   error: null,
 };
 
+const createMockUser = (id: string, name: string, email: string): DbUser => ({
+  id,
+  name,
+  email,
+  location: 'Москва',
+  avatar_image: '',
+  gender: 'Мужской',
+  about_me: '',
+  my_skills: {
+    teach: [],
+    learn: [],
+  },
+  offers: {
+    incoming: [],
+    outgoing: [],
+    archived: [],
+  },
+  date_of_registration: '2025-01-01',
+});
+
 export const fetchNotifications = createAsyncThunk(
   'notifications/fetchNotifications',
   async (_, { rejectWithValue }) => {
@@ -29,8 +50,8 @@ export const fetchNotifications = createAsyncThunk(
             id: 'n1',
             type: 'exchange_request',
             date: 'сегодня',
-            from: { id: 'u2', name: 'Иван', email: 'ivan@example.com' } as any,
-            to: { id: 'u1', name: 'Анна', email: 'anna@example.com' } as any,
+            from: createMockUser('u2', 'Иван', 'ivan@example.com'),
+            to: createMockUser('u1', 'Анна', 'anna@example.com'),
             isViewed: false,
             link: '/profile/u2',
           },
@@ -40,15 +61,15 @@ export const fetchNotifications = createAsyncThunk(
             id: 'n2',
             type: 'exchange_accepted',
             date: 'вчера',
-            from: { id: 'u3', name: 'Мария', email: 'maria@example.com' } as any,
-            to: { id: 'u1', name: 'Анна', email: 'anna@example.com' } as any,
+            from: createMockUser('u3', 'Мария', 'maria@example.com'),
+            to: createMockUser('u1', 'Анна', 'anna@example.com'),
             isViewed: true,
             link: '/profile/u3',
           },
         ],
       };
       return mock;
-    } catch (err) {
+    } catch {
       return rejectWithValue('Не удалось загрузить уведомления');
     }
   }
@@ -62,8 +83,8 @@ export const viewNotification = createAsyncThunk(
       const notification = state.notifications.data.new.find((n) => n.id === notificationId);
       if (!notification) throw new Error('Уведомление не найдено');
       return { ...notification, isViewed: true };
-    } catch (err) {
-      return rejectWithValue((err as Error).message || 'Не удалось отметить уведомление');
+    } catch {
+      return rejectWithValue('Не удалось отметить уведомление');
     }
   }
 );
@@ -73,9 +94,9 @@ export const viewAllNotifications = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState() as RootState;
-      return state.notifications.data.new.map(n => ({ ...n, isViewed: true }));
-    } catch (err) {
-      return rejectWithValue((err as Error).message || 'Не удалось отметить все уведомления');
+      return state.notifications.data.new.map((n) => ({ ...n, isViewed: true }));
+    } catch {
+      return rejectWithValue('Не удалось отметить все уведомления');
     }
   }
 );
@@ -86,8 +107,8 @@ export const removeViewedNotifications = createAsyncThunk(
     try {
       // Мок: удаляем всё
       return [];
-    } catch (err) {
-      return rejectWithValue((err as Error).message || 'Не удалось удалить уведомления');
+    } catch {
+      return rejectWithValue('Не удалось удалить уведомления');
     }
   }
 );
@@ -107,7 +128,7 @@ const notificationsSlice = createSlice({
       })
       .addCase(viewNotification.fulfilled, (state, action) => {
         const viewed = action.payload;
-        state.data.new = state.data.new.filter(n => n.id !== viewed.id);
+        state.data.new = state.data.new.filter((n) => n.id !== viewed.id);
         state.data.viewed.push(viewed);
       })
       .addCase(viewAllNotifications.fulfilled, (state, action) => {

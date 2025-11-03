@@ -18,7 +18,7 @@ export const store = configureStore({
     users: usersReducer,
     skills: skillsReducer,
     user: userReducer,
-    notifications: notificationsReducer
+    notifications: notificationsReducer,
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>

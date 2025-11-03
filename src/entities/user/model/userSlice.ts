@@ -112,7 +112,7 @@ const userSlice = createSlice({
         state.error = action.payload as string;
         state.isAuth = false;
         state.isInit = true;
-      })
+      });
   },
 });
 
