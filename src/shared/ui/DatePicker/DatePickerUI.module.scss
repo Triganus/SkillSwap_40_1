@@ -267,6 +267,9 @@
 
     button:first-child {
       width: 125px;
+      background-color: white;
+      color: var(--color-text, #000);
+      border: 1px solid var(--color-accent, #9cd36a);
     }
 
     button:last-child {

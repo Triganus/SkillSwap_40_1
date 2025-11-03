@@ -268,16 +268,12 @@ export const DatePickerUI = ({
 
           <div className={styles.buttons}>
             <Button
-              variant="secondary"
-              size="small"
               className={styles.cancelButton}
               onClick={() => setIsOpen(false)}
             >
               Отменить
             </Button>
             <Button
-              variant="primary"
-              size="small"
               className={styles.selectButton}
               onClick={() => setIsOpen(false)}
             >
