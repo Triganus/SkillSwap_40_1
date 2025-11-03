@@ -36,6 +36,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
         ariaLabel={
           isLiked ? `Убрать ${user.name} из избранного` : `Добавить ${user.name} в избранное`
         }
+        className={styles.likeButton}
       />
     </div>
     <div className={styles.basicContent}>

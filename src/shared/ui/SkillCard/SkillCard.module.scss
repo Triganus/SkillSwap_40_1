@@ -7,6 +7,7 @@
   padding: 20px;
   box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
   max-inline-size: 324px;
+  position: relative;
 
   &:focus-visible {
     outline: 2px solid var(--color-text);
@@ -16,13 +17,13 @@
 
 .user-info {
   display: grid;
-  grid-template-columns: 100px 1fr auto;
-  grid-template-rows: auto auto;
+  grid-template-columns: 100px 1fr;
   gap: 4px 12px;
   align-items: start;
   max-inline-size: 284px;
   block-size: 100px;
   min-height: 100px;
+  position: static;
 }
 
 .user-details {
@@ -31,6 +32,16 @@
   gap: 4px;
   grid-column: 2;
   margin-block: 28px;
+}
+
+.like-button {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 10;
+  margin: 0 !important;
 }
 
 .basic-content {
