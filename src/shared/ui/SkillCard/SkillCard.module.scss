@@ -2,27 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-
-  /* background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-  max-width: 324px;
-  width: 100%;
-  position: relative;
-  height: 100%;
-  flex: 1;
-
-  &:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: 2px;
-  }
-} */
   background: var(--color-surface);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
   max-inline-size: 324px;
+  position: relative;
 
   &:focus-visible {
     outline: 2px solid var(--color-text);
@@ -33,13 +18,12 @@
 .user-info {
   display: grid;
   grid-template-columns: 100px 1fr;
-  grid-template-rows: auto auto;
   gap: 4px 12px;
   align-items: start;
-  max-width: 284px;
-  width: 100%;
+  max-inline-size: 284px;
   block-size: 100px;
   min-height: 100px;
+  position: static;
 }
 
 .user-details {
@@ -48,6 +32,16 @@
   gap: 4px;
   grid-column: 2;
   margin-block: 28px;
+}
+
+.like-button {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 10;
+  margin: 0 !important;
 }
 
 .basic-content {
@@ -70,15 +64,7 @@
 
 .skill-tags {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   align-items: center;
   flex-wrap: wrap;
-}
-
-.like-button {
-  position: absolute !important;
-  top: 20px;
-  right: 20px;
-  left: auto !important;
-  z-index: 10;
 }

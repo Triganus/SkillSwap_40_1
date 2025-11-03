@@ -9,63 +9,7 @@ import { TitleUI } from '../Title';
 import { TextUI } from '../Text';
 import { LikeButtonUI } from '../LikeButton';
 import { TagUI } from '../Tag';
-/*
-export const SkillCard: React.FC<SkillCardProps> = ({
-  user,
-  teachingSkills,
-  learningSkills,
-  onDetailsClick,
-  onLikeClick,
-  isLiked = false,
-  ariaLabel,
-}) => (
-  <article className={styles.card} aria-label={ariaLabel || `Карточка пользователя ${user.name}`}>
-    <LikeButtonUI
-      isActive={isLiked}
-      onClick={onLikeClick}
-      ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
-      className={styles.likeButton}
-    />
-    <div className={styles.userInfo}>
-      <AvatarUI src={user.avatar || '/default-avatar.png'} alt={user.name} />
-      <div className={styles.userDetails}>
-        
-        <TitleUI size="small">{user.name}</TitleUI>
-        <TextUI variant="caption" color="primary">
-          {user.bio || 'Город не указан'}
-        </TextUI>
-      </div>
-    </div>
-    <div className={styles.basicContent}>
-      <div className={styles.skillsSection}>
-        <div className={styles.skillGroup}>
-          <TitleUI size="xsmall">Может научить:</TitleUI>
-          <div className={styles.skillTags}>
-            {teachingSkills.map((skill, index) => (
-              <TagUI key={index} label={skill.title} category={skill.category} />
-            ))}
-          </div>
-        </div>
 
-        <div className={styles.skillGroup}>
-          <TitleUI size="xsmall">Хочет научиться:</TitleUI>
-          <div className={styles.skillTags}>
-            {learningSkills.slice(0, 2).map((skill, index) => (
-              <TagUI key={index} label={skill.title} category={skill.category} />
-            ))}
-            {learningSkills.length > 2 && (
-              <TagUI label={`+${learningSkills.length - 2}`} category="other" />
-            )}
-          </div>
-        </div>
-      </div>
-      <Button onClick={onDetailsClick} variant="primary" size="medium" type="button">
-        Подробнее
-      </Button>
-    </div>
-  </article>
-);
-*/
 export const SkillCard: React.FC<SkillCardProps> = ({
   user,
   teachingSkills,
@@ -76,14 +20,6 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   ariaLabel,
 }) => (
   <article className={styles.card} aria-label={ariaLabel || `Карточка пользователя ${user.name}`}>
-    <LikeButtonUI
-      isActive={isLiked}
-      onClick={onLikeClick}
-      ariaLabel={
-        isLiked ? `Убрать ${user.name} из избранного` : `Добавить ${user.name} в избранное`
-      }
-      className={styles.likeButton}
-    />
     <div className={styles.userInfo}>
       <AvatarUI
         src={user.avatar || '/default-avatar.png'}
@@ -95,6 +31,13 @@ export const SkillCard: React.FC<SkillCardProps> = ({
           {user.bio || 'Город не указан'}
         </TextUI>
       </div>
+      <LikeButtonUI
+        onClick={onLikeClick}
+        ariaLabel={
+          isLiked ? `Убрать ${user.name} из избранного` : `Добавить ${user.name} в избранное`
+        }
+        className={styles.likeButton}
+      />
     </div>
     <div className={styles.basicContent}>
       <div className={styles.skillsSection}>
