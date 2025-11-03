@@ -1,4 +1,4 @@
-@import '@/shared/ui/Button/Button.module.scss';
+@import url('@/shared/ui/Button/Button.module.scss');
 
 .container {
   display: flex;
@@ -10,17 +10,17 @@
   min-width: 0;
   box-sizing: border-box;
 
-  @media (max-width: 1024px) {
+  @media (width <= 1024px) {
     flex-direction: column;
     padding: 24px 16px;
     gap: 0;
   }
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     padding: 16px 12px;
   }
 
-  @media (max-width: 480px) {
+  @media (width <= 480px) {
     padding: 12px 8px;
   }
 }
@@ -30,7 +30,7 @@
   width: 280px;
   align-self: flex-start;
 
-  @media (max-width: 1024px) {
+  @media (width <= 1024px) {
     display: none; /* Скрываем фильтры на планшетах и мобильных */
   }
 }
@@ -44,44 +44,44 @@
   width: 100%;
   max-width: 100%;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     gap: 32px;
   }
 }
 
-.newSection {
+.new-section {
   margin-top: 0;
 }
 
-.recommendedSection {
+.recommended-section {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.sectionTitle {
+.section-title {
   margin: 0;
   padding: 0;
   text-align: left;
 }
 
-.searchResults {
+.search-results {
   display: flex;
   flex-direction: column;
   gap: 32px;
 }
 
-.searchTitle {
+.search-title {
   margin: 0;
   padding: 0;
 }
 
-.searchGrid {
+.search-grid {
   width: 100%;
 }
 
 /* Адаптивность для мобильных устройств */
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .container {
     gap: 16px;
     padding: 12px;
@@ -91,11 +91,11 @@
     gap: 24px;
   }
 
-  .recommendedSection {
+  .recommended-section {
     gap: 16px;
   }
 
-  .searchResults {
+  .search-results {
     gap: 24px;
   }
 }

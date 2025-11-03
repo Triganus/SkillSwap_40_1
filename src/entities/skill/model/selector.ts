@@ -4,7 +4,7 @@ import type { Skill } from './types/types';
 
 // Вспомогательная функция: преобразует skill_id → полный Skill
 const getSkillsByIds = (skillsMap: Record<string, Skill>, ids: string[]) => {
-  return ids.map(id => skillsMap[id]).filter(Boolean);
+  return ids.map((id) => skillsMap[id]).filter(Boolean);
 };
 
 export const selectSkillWithAuthor = createSelector(
@@ -15,7 +15,7 @@ export const selectSkillWithAuthor = createSelector(
   ],
   (skills, usersById, skillId) => {
     // Находим навык
-    const skill = skills.find(s => s.id === skillId);
+    const skill = skills.find((s) => s.id === skillId);
     if (!skill) return { skill: null, author: null, teachingSkills: [], learningSkills: [] };
 
     // Находим автора
@@ -24,13 +24,13 @@ export const selectSkillWithAuthor = createSelector(
 
     // Создаём мапу навыков для быстрого поиска
     const skillsMap: Record<string, Skill> = {};
-    skills.forEach(s => {
+    skills.forEach((s) => {
       skillsMap[s.id] = s;
     });
 
     // Извлекаем IDs из my_skills
-    const teachingIds = author.my_skills?.teach?.map(t => t.skill_id) || [];
-    const learningIds = author.my_skills?.learn?.map(l => l.skill_id) || [];
+    const teachingIds = author.my_skills?.teach?.map((t) => t.skill_id) || [];
+    const learningIds = author.my_skills?.learn?.map((l) => l.skill_id) || [];
 
     // Преобразуем в полные навыки
     const teachingSkills = getSkillsByIds(skillsMap, teachingIds);
