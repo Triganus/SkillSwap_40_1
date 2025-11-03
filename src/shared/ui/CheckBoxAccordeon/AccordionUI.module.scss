@@ -1,5 +1,6 @@
 .wrapper {
-  max-width: 284px;
+  max-width: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -9,6 +10,7 @@
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 
   &:hover .toggle {
     opacity: 1;
@@ -52,6 +54,9 @@
     'Segoe UI Emoji'
   );
   color: var(--text-primary, #111827);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .chevron {
@@ -81,7 +86,7 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
 
 .item {

@@ -1,0 +1,100 @@
+@import '@/shared/ui/Button/Button.module.scss';
+
+.container {
+  display: flex;
+  gap: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  width: 100%;
+  min-width: 0;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 8px;
+  }
+}
+
+.sidebar {
+  flex-shrink: 0;
+  width: 280px;
+  align-self: flex-start;
+
+  @media (max-width: 1024px) {
+    display: none; /* Скрываем фильтры на планшетах и мобильных */
+  }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+
+  @media (max-width: 768px) {
+    gap: 32px;
+  }
+}
+
+.newSection {
+  margin-top: 0;
+}
+
+.recommendedSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sectionTitle {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.searchResults {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.searchTitle {
+  margin: 0;
+  padding: 0;
+}
+
+.searchGrid {
+  width: 100%;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 480px) {
+  .container {
+    gap: 16px;
+    padding: 12px;
+  }
+
+  .content {
+    gap: 24px;
+  }
+
+  .recommendedSection {
+    gap: 16px;
+  }
+
+  .searchResults {
+    gap: 24px;
+  }
+}
