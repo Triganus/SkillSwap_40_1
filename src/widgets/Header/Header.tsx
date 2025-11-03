@@ -1,5 +1,6 @@
 import type React from 'react';
-import { useState, useCallback, KeyboardEvent } from 'react';
+import { useState, useCallback } from 'react';
+import type { KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogoUI } from '@shared/ui/Logo';
 import { NavMenu } from '@widgets/NavMenu';

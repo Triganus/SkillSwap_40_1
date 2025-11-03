@@ -765,9 +765,6 @@ export default function HomePage() {
   const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
 
-  // Состояние фильтров
-  const [appliedFilters, setAppliedFilters] = useState<FilterPayload | null>(null);
-
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
   const isSearching = searchFromUrl.trim().length > 0;
@@ -787,7 +784,6 @@ export default function HomePage() {
 
   // Обработчик изменения фильтров
   const handleFiltersChange = useCallback((filters: FilterPayload) => {
-    setAppliedFilters(filters);
     console.log('Filters applied:', filters);
     // TODO: применить фильтры к данным после готовности API
   }, []);

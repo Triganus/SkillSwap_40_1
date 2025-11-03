@@ -42,7 +42,7 @@ export default function SkillPage() {
         id: authorRaw.id,
         name: authorRaw.name,
         email: authorRaw.email,
-        avatar: authorRaw.avatar,
+        avatar: authorRaw.avatar_image,
         bio: (authorRaw as ExtendedUserRecord).bio,
         skills: (authorRaw as ExtendedUserRecord).skills ?? [],
         createdAt: (authorRaw as ExtendedUserRecord).createdAt ?? '',
