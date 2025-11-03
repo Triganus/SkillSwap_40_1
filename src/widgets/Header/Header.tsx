@@ -55,7 +55,7 @@ export const HeaderWidget: React.FC = () => {
             containerProps={{ style: { width: '100%' } }}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            onKeyDown={handleSearchKeyDown as any}
+            onKeyDown={handleSearchKeyDown}
           />
         </div>
         <div className={cls.right}>
