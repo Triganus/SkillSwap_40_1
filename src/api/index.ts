@@ -1,2 +1,2 @@
-export { fetchSkills } from './skills-api';
-export { fetchUsers } from './users-api';
+export { fetchSkills, fetchSkillsCatalog } from './skills-api';
+export { fetchUsers, fetchUsersAsSkillCards } from './users-api';
