@@ -27,7 +27,7 @@
 
 .sidebar {
   flex-shrink: 0;
-  width: 280px;
+  width: 324px;
   align-self: flex-start;
 
   @media (width <= 1024px) {
@@ -77,6 +77,14 @@
 }
 
 .search-grid {
+  width: 100%;
+}
+
+.preloader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
   width: 100%;
 }
 
