@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { TextUI } from '@/shared/ui/Text';
 import { Icon } from '@/shared/ui';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { TFilterSideBarProps } from './TFilterSideBarProps';
 import styles from './FilterSideBar.module.scss';
 import { TitleUI } from '@/shared/ui/Title';
@@ -21,6 +21,10 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const [genderValue, setGenderValue] = useState<string>('Не указан');
   const [citiesSelected, setCitiesSelected] = useState<string[]>([]);
   const [filterCount, setFilterCount] = useState(0);
+  const handleGeneralChange = useCallback((val: string) => setGeneralFilterValue(val), []);
+  const handleGenderChange = useCallback((val: string) => setGenderValue(val), []);
+  const handleCitiesChange = useCallback((val: string[]) => setCitiesSelected(val), []);
+  const handleSkillsChange = useCallback((val: SkillCategoriesData) => setSkillsData(val), []);
 
   const EMPTY_SKILLS: SkillCategoriesData = { skill_categories: [] };
 
@@ -101,7 +105,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
           items={GENERAL_RB_FILTER_OPTIONS.map((opt) => opt.label)}
           name="Общий фильтр"
           defaultValue={GENERAL_RB_FILTER_OPTIONS[0].label}
-          onChange={(val) => setGeneralFilterValue(val)}
+          onChange={handleGeneralChange}
           resetToken={resetToken}
         />
       </div>
@@ -109,7 +113,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
       <SkillsSideBar
         title="Навыки"
         data={skillsCatalog ?? EMPTY_SKILLS}
-        onChange={(val) => setSkillsData(val)}
+        onChange={handleSkillsChange}
         resetToken={resetToken}
       />
 
@@ -119,14 +123,14 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
           items={GENDER_OPTIONS.map((opt) => opt.label)}
           name="Пол автора"
           defaultValue={GENDER_OPTIONS[0].label}
-          onChange={(val) => setGenderValue(val)}
+          onChange={handleGenderChange}
           resetToken={resetToken}
         />
 
         <CitiesSideBar
           title="Города"
           cities={CITIES.map((city) => city)}
-          onChange={(val) => setCitiesSelected(val)}
+          onChange={handleCitiesChange}
           resetToken={resetToken}
         />
       </div>

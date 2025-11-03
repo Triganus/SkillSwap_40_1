@@ -21,14 +21,16 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
 
   useEffect(() => {
     onChange?.(selectedList);
-    if (resetToken) {
-      setSelected(new Set());
-    }
-  }, [selectedList, onChange, resetToken]);
+  }, [selectedList, onChange]);
+
+  useEffect(() => {
+    setSelected(new Set());
+  }, [resetToken]);
 
   const handleCityToggle = useCallback(
     (_e: React.ChangeEvent<HTMLInputElement>, checked: boolean, value?: unknown) => {
       const city = String(value ?? '');
+
       setSelected((prev) => {
         const next = new Set(prev);
         if (checked) next.add(city);
