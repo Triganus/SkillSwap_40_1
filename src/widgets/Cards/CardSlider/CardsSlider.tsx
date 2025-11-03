@@ -3,7 +3,7 @@ import { TitleUI } from '@/shared/ui/Title/TitleUI';
 import { SkillCardWidget } from '@/widgets/SkillCard/SkillCard';
 import { TextUI } from '@/shared/ui/Text/TextUI';
 import styles from './CardsSlider.module.scss';
-import { Slider } from '@shared/ui/Slider';
+import { Slider } from '@shared/ui';
 import type { SkillCardProps } from '@shared/ui/SkillCard/type';
 import type { CardsSliderProps } from './types';
 
