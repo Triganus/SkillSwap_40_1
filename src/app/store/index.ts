@@ -5,6 +5,7 @@ import { skillsReducer } from '@entities/skill/model';
 import { createLocalStorageMiddleware } from '@shared/lib/redux/localStorageMiddleware';
 import { loadState } from '@shared/lib/localStorage';
 import userReducer from '@/entities/user/model/userSlice';
+import notificationsReducer from '@/features/notifications/model/notificationsSlice';
 
 const PERSIST_VERSION = 1;
 const PRELOADED = {
@@ -17,6 +18,7 @@ export const store = configureStore({
     users: usersReducer,
     skills: skillsReducer,
     user: userReducer,
+    notifications: notificationsReducer
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>
