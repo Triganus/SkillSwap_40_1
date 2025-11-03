@@ -18,7 +18,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const [resetToken, setResetToken] = useState(0);
   const [skillsData, setSkillsData] = useState<SkillCategoriesData | null>(null);
   const [generalFilterValue, setGeneralFilterValue] = useState<string>('Всё');
-  const [genderValue, setGenderValue] = useState<string>('Не указан');
+  const [genderValue, setGenderValue] = useState<string>('Не имеет значения');
   const [citiesSelected, setCitiesSelected] = useState<string[]>([]);
   const [filterCount, setFilterCount] = useState(0);
 
@@ -45,14 +45,14 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   useEffect(() => {
     const nextApplied =
       generalFilterValue !== 'Всё' ||
-      genderValue !== 'Не указан' ||
+      genderValue !== 'Не имеет значения' ||
       skillsData?.skill_categories?.some((cat) => cat.skills.length > 0) ||
       citiesSelected.length > 0;
 
     setFiltersApplied(nextApplied);
     setFilterCount(
       (generalFilterValue !== 'Всё' ? 1 : 0) +
-        (genderValue !== 'Не указан' ? 1 : 0) +
+        (genderValue !== 'Не имеет значения' ? 1 : 0) +
         (skillsData?.skill_categories?.some((cat) => cat.skills.length > 0) ? 1 : 0) +
         (citiesSelected.length > 0 ? 1 : 0)
     );
@@ -122,14 +122,15 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
           onChange={(val) => setGenderValue(val)}
           resetToken={resetToken}
         />
-
-        <CitiesSideBar
-          title="Города"
-          cities={CITIES.map((city) => city)}
-          onChange={(val) => setCitiesSelected(val)}
-          resetToken={resetToken}
-        />
       </div>
+
+      <CitiesSideBar
+        key={`cities-${resetToken}`}
+        title="Город"
+        cities={CITIES.map((city) => city)}
+        onChange={(val) => setCitiesSelected(val)}
+        resetToken={resetToken}
+      />
     </div>
   );
 };
