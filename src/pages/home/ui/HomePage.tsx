@@ -11,13 +11,15 @@ import {
   filterSkills,
   // fetchSkills, // TODO: будет использоваться после готовности API
 } from '@entities/skill/model';
+import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
+import { getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { CardSectionUI } from '@shared/ui/CardSection';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { SkillCard } from '@shared/ui/SkillCard';
 import type { SkillCardProps } from '@shared/ui/SkillCard';
 import { TitleUI } from '@shared/ui/Title';
 import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
-import type { FilterPayload } from '@widgets/FilterSideBar/TFilterSideBarProps';
+import type { FilterPayload } from '@/entities/filterSideBar/model';
 import type { SkillCategoriesData } from '@entities/Skill';
 import styles from './HomePage.module.scss';
 
@@ -756,11 +758,14 @@ export default function HomePage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
+  
+// const [filters, setFilters] = useState<FilterPayload>(EMPTY_FILTERS);
 
+   
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
   const loading = useAppSelector(getSkillsLoading);
-
+  const currentFilters = useAppSelector(getSideBarFilters);
   // Локальное состояние для бесконечного скролла
   const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
@@ -780,13 +785,16 @@ export default function HomePage() {
   // Загрузка навыков при монтировании (можно будет использовать после готовности API)
   useEffect(() => {
     // dispatch(fetchSkills());
+  
   }, [dispatch]);
 
   // Обработчик изменения фильтров
   const handleFiltersChange = useCallback((filters: FilterPayload) => {
     console.log('Filters applied:', filters);
+    dispatch(setFilter(filters));
+
     // TODO: применить фильтры к данным после готовности API
-  }, []);
+  }, [ dispatch]);
 
   // Обработчики для CardSection
   const handleViewAllPopular = useCallback(() => {
@@ -814,7 +822,7 @@ export default function HomePage() {
   const popularCards = MOCK_USERS_DATA.slice(0, 3); // Первые 3
   const newCards = MOCK_USERS_DATA.slice(3, 6); // Следующие 3
   const recommendedCards = MOCK_USERS_DATA.slice(0, displayedRecommendedCount);
-
+ 
   // Для поиска - фильтруем по имени или навыкам
   const searchResultCards = isSearching
     ? MOCK_USERS_DATA.filter(

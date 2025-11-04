@@ -12,6 +12,7 @@ import { RadioButtonGroup } from './RadioButtonGroup';
 import { GENDER_OPTIONS } from '@/shared/lib';
 import { GENERAL_RB_FILTER_OPTIONS } from '@/shared/lib/constants/GeneralRbFilter';
 import { CITIES } from '@/shared/lib';
+
 export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, onChange }) => {
   const [resetFilters, setResetFilters] = useState(false);
   const [filtersApplied, setFiltersApplied] = useState(false);

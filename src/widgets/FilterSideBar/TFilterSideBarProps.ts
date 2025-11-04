@@ -1,11 +1,5 @@
 import type { SkillCategoriesData } from '@/entities/Skill';
-export type FilterPayload = {
-  general: string | null;
-  gender: string | null;
-  skills: SkillCategoriesData | null;
-  cities: string[];
-  filtersApplied: boolean;
-};
+import type { FilterPayload } from '@/entities/filterSideBar/model/types/types';
 
 export interface TFilterSideBarProps {
   skillsCatalog: SkillCategoriesData;

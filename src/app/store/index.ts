@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { authReducer } from '@features/auth/model/authSlice';
 import { usersReducer } from '@/entities/user/model/usersSlice';
 import { skillsReducer } from '@entities/skill/model';
+import { filterSideBarReducer } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { createLocalStorageMiddleware } from '@shared/lib/redux/localStorageMiddleware';
 import { loadState } from '@shared/lib/localStorage';
 import userReducer from '@/entities/user/model/userSlice';
@@ -17,6 +18,7 @@ export const store = configureStore({
     users: usersReducer,
     skills: skillsReducer,
     user: userReducer,
+    filterSideBar: filterSideBarReducer,
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>
