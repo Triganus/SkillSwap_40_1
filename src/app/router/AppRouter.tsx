@@ -16,6 +16,7 @@ const NotFoundPage = lazy(() =>
 const ServerErrorPage = lazy(() =>
   import('@pages/server-error500').then((m) => ({ default: m.ServerErrorPage }))
 );
+const NotificationsPage = lazy(() => import('@pages/notifications/ui/NotificationsPage'));
 
 function RequireAuth() {
   const { auth } = useAuth();
@@ -45,6 +46,7 @@ export default function AppRouter() {
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
           </Route>
 
           {/* Страницы ошибок */}

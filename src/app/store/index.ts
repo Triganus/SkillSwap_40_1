@@ -6,6 +6,7 @@ import { filterSideBarReducer } from '@/entities/filterSideBar/model/filterSideB
 import { createLocalStorageMiddleware } from '@shared/lib/redux/localStorageMiddleware';
 import { loadState } from '@shared/lib/localStorage';
 import userReducer from '@/entities/user/model/userSlice';
+import notificationsReducer from '@/features/notifications/model/notificationsSlice';
 
 const PERSIST_VERSION = 1;
 const PRELOADED = {
@@ -18,7 +19,11 @@ export const store = configureStore({
     users: usersReducer,
     skills: skillsReducer,
     user: userReducer,
+<<<<<<< HEAD
     filterSideBar: filterSideBarReducer,
+=======
+    notifications: notificationsReducer,
+>>>>>>> develop
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>

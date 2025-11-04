@@ -1,11 +1,9 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { DbUser } from './types/types';
-import type { INotificationList } from '@/entities/notification/model/types/types';
 import type { RootState } from '@/app/store';
 
 export interface UserState {
   data: DbUser | null;
-  notifications: INotificationList;
   isAuth: boolean;
   isInit: boolean;
   loading: boolean;
@@ -58,64 +56,8 @@ export const fetchCurrentUser = createAsyncThunk(
   }
 );
 
-// Просмотр одного уведомления
-export const viewNotification = createAsyncThunk(
-  'user/viewNotification',
-  async (notificationId: string, { getState, rejectWithValue }) => {
-    try {
-      const state = getState() as RootState;
-      const notification = state.user.notifications.new.find((n) => n.id === notificationId);
-      if (!notification) {
-        throw new Error('Уведомление не найдено');
-      }
-
-      // Здесь будет вызов API: await api.post(`/notifications/${notificationId}/view`)
-      // Пока — просто возвращаем обновлённое уведомление
-      return { ...notification, isViewed: true };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Не удалось отметить уведомление';
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
-// Просмотр всех уведомлений
-export const viewAllNotifications = createAsyncThunk(
-  'user/viewAllNotifications',
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const state = getState() as RootState;
-      const notifications = state.user.notifications.new;
-
-      // API: await api.post('/notifications/view-all')
-      return notifications.map((n) => ({ ...n, isViewed: true }));
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Не удалось отметить уведомления';
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
-// Удаление просмотренных уведомлений
-export const removeViewedNotifications = createAsyncThunk(
-  'user/removeViewedNotifications',
-  async (_, { rejectWithValue }) => {
-    try {
-      // API: await api.delete('/notifications/viewed')
-      return []; // возвращаем пустой массив
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Не удалось удалить уведомления';
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
 const initialState: UserState = {
   data: null,
-  notifications: {
-    new: [],
-    viewed: [],
-  },
   isAuth: false,
   isInit: false,
   loading: false,
@@ -138,7 +80,6 @@ const userSlice = createSlice({
     clearUser(state) {
       state.data = null;
       state.isAuth = false;
-      state.notifications = { new: [], viewed: [] };
       state.isInit = true;
       state.error = null;
     },
@@ -171,27 +112,6 @@ const userSlice = createSlice({
         state.error = action.payload as string;
         state.isAuth = false;
         state.isInit = true;
-      })
-
-      // Просмотр одного уведомления
-      .addCase(viewNotification.fulfilled, (state, action) => {
-        const viewedNotification = action.payload;
-        state.notifications.new = state.notifications.new.filter(
-          (n) => n.id !== viewedNotification.id
-        );
-        state.notifications.viewed.push(viewedNotification);
-      })
-
-      // Просмотр всех уведомлений
-      .addCase(viewAllNotifications.fulfilled, (state, action) => {
-        const viewedNotifications = action.payload;
-        state.notifications.viewed.push(...viewedNotifications);
-        state.notifications.new = [];
-      })
-
-      // Удаление просмотренных
-      .addCase(removeViewedNotifications.fulfilled, (state) => {
-        state.notifications.viewed = [];
       });
   },
 });
@@ -204,7 +124,5 @@ export const selectIsAuth = (state: RootState) => state.user.isAuth;
 export const selectIsInit = (state: RootState) => state.user.isInit;
 export const selectUserLoading = (state: RootState) => state.user.loading;
 export const selectUserError = (state: RootState) => state.user.error;
-export const selectNewNotifications = (state: RootState) => state.user.notifications.new;
-export const selectViewedNotifications = (state: RootState) => state.user.notifications.viewed;
 
 export default userSlice.reducer;
