@@ -4,6 +4,7 @@ import styles from './SkillCard.module.scss';
 
 import { Button } from '../Button';
 import type { SkillCardProps } from './type';
+import type { Skill } from '@entities/skill/model/types/types';
 import { AvatarUI } from '../AvatarUI';
 import { TitleUI } from '../Title';
 import { TextUI } from '../Text';
@@ -45,7 +46,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
         <div className={styles.skillGroup}>
           <TitleUI size="xsmall">Может научить:</TitleUI>
           <div className={styles.skillTags} aria-label="Может научить">
-            {teachingSkills.map((skill) => (
+            {teachingSkills.map((skill: Skill) => (
               <TagUI key={skill.id} label={skill.title} category={skill.category} />
             ))}
           </div>
@@ -54,7 +55,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
         <div className={styles.skillGroup}>
           <TitleUI size="xsmall">Хочет научиться:</TitleUI>
           <div className={styles.skillTags} aria-label="Хочет научиться">
-            {learningSkills.slice(0, 2).map((skill) => (
+            {learningSkills.slice(0, 2).map((skill: Skill) => (
               <TagUI key={skill.id} label={skill.title} category={skill.category} />
             ))}
             {learningSkills.length > 2 && (
