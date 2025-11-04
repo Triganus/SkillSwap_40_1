@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import type { SkillCardProps } from '@shared/ui/SkillCard';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { FilterPayload } from '@/entities/filterSideBar/model';
 
 export function useSidebarFilter(currentFilters: FilterPayload) {

@@ -2,10 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import type { User } from '@entities/user/model/types/types';
 import type { Skill } from '@entities/skill/model/types/types';
-import { SkillCard } from '@shared/ui/SkillCard/SkillCard';
+import { SkillCard } from './SkillCard';
 
 const meta: Meta<typeof SkillCard> = {
-  title: 'Shared/UI/SkillCard',
+  title: 'Widgets/Cards/SkillCard',
   component: SkillCard,
   parameters: {
     layout: 'centered',
@@ -77,11 +77,36 @@ const mockLearningSkills: Skill[] = [
   },
 ];
 
-export const Default: Story = {
+export const Compact: Story = {
   args: {
     user: mockUser,
     teachingSkills: mockTeachingSkills,
     learningSkills: mockLearningSkills,
+    mode: 'compact',
+  },
+};
+
+export const Full: Story = {
+  args: {
+    user: mockUser,
+    teachingSkills: mockTeachingSkills,
+    learningSkills: mockLearningSkills,
+    mode: 'full',
+    title: 'Игра на барабанах',
+    category: 'art',
+    description:
+      'Привет! Я играю на барабанах уже больше 10 лет. Начал с простых репетиций в гараже, а теперь участвую в живых выступлениях. Готов поделиться своим опытом и научить тебя основам, правильной технике, игре разных ритмов и импровизации. Главное — почувствовать ритм и уверенно играть без нот.',
+    images: [
+      'https://images.unsplash.com/photo-1519892300165-cb5582e58f6f?w=800',
+      'https://images.unsplash.com/photo-1586370434639-0fe43b2d32c6?w=800',
+      'https://images.unsplash.com/photo-1511497584788-876760111969?w=800',
+      'https://images.unsplash.com/photo-1514320291840-2e0a9bf29a8e?w=800',
+    ],
+    onExchangeClick: () => console.log('Exchange clicked'),
+    onLikeClick: () => console.log('Like clicked'),
+    onShareClick: () => console.log('Share clicked'),
+    onMoreClick: () => console.log('More clicked'),
+    isLiked: false,
   },
 };
 
@@ -110,5 +135,6 @@ export const WithManyLearningSkills: Story = {
         createdAt: '2023-01-15',
       },
     ],
+    mode: 'compact',
   },
 };

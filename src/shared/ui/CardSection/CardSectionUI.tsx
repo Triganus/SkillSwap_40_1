@@ -2,7 +2,7 @@ import { memo, type FC } from 'react';
 import styles from './CardSectionUI.module.scss';
 import type { TCardSectionProps } from './TCardSectionProps';
 import { Icon } from '../Icon';
-import { SkillCard } from '../SkillCard';
+import { SkillCard } from '@widgets/Cards/SkillCard';
 import { Button } from '../Button';
 import { TitleUI } from '../Title';
 

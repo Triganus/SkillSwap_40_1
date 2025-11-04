@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import React from 'react';
-import type { SkillCardProps } from '@/shared/ui/SkillCard/type';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { TagCategory } from '@/shared/ui/Tag';
 import { CardSlider } from './CardsSlider';
 import type { CardsSliderProps } from './types';

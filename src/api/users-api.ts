@@ -1,5 +1,5 @@
 import type { User } from '../entities/user/model/types/types';
-import type { SkillCardProps } from '@/shared/ui/SkillCard';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { Skill } from '@/entities/skill/model/types/types';
 import type { SkillCategoriesData } from '@/entities/Skill';
 import type { DbUser } from '@/entities/user/model/types/types';

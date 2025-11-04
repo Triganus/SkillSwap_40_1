@@ -1,0 +1,232 @@
+import React from 'react';
+
+import styles from './SkillCard.module.scss';
+
+import { Button } from '@/shared/ui/Button';
+import type { SkillCardProps } from './type';
+import { AvatarUI } from '@/shared/ui/AvatarUI';
+import { TitleUI } from '@/shared/ui/Title';
+import { TextUI } from '@/shared/ui/Text';
+import { LikeButtonUI } from '@/shared/ui/LikeButton';
+import { TagUI } from '@/shared/ui/Tag';
+import { MediaSlider } from '@/shared/ui/MediaSlider';
+import { Icon } from '@/shared/ui/Icon';
+import { tagCategoryToLabel } from '@/shared/lib/categoryMapper';
+import type { MediaItem } from '@/shared/ui/MediaSlider/types';
+
+export const SkillCard: React.FC<SkillCardProps> = ({
+  user,
+  teachingSkills,
+  learningSkills,
+  onDetailsClick,
+  onLikeClick,
+  onExchangeClick,
+  onShareClick,
+  onMoreClick,
+  isLiked = false,
+  ariaLabel,
+  mode = 'compact',
+  description,
+  images = [],
+  title,
+  category,
+}) => {
+  // Преобразуем images в формат MediaItem
+  const mediaItems: MediaItem[] = React.useMemo(
+    () =>
+      images.map((src, idx) => ({
+        id: `img-${idx}`,
+        src,
+        alt: `${title || 'Навык'} - изображение ${idx + 1}`,
+      })),
+    [images, title]
+  );
+
+  // Полный режим
+  if (mode === 'full') {
+    return (
+      <article
+        className={styles.card}
+        aria-label={ariaLabel || `Карточка навыка ${title || user.name}`}
+      >
+        {/* Блок действий (лайк, поделиться, ещё) - сверху справа */}
+        <div className={styles.actionbar}>
+          {onLikeClick && (
+            <LikeButtonUI
+              isActive={isLiked}
+              onClick={onLikeClick}
+              ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+            />
+          )}
+          {onShareClick && (
+            <button
+              type="button"
+              className={styles.actionButton}
+              onClick={onShareClick}
+              aria-label="Поделиться"
+              title="Поделиться"
+            >
+              <Icon name="share" size={24} title="Поделиться" />
+            </button>
+          )}
+          {onMoreClick && (
+            <button
+              type="button"
+              className={styles.actionButton}
+              onClick={onMoreClick}
+              aria-label="Ещё"
+              title="Дополнительные действия"
+            >
+              <Icon name="more-square" size={24} title="Ещё" />
+            </button>
+          )}
+        </div>
+
+        <div className={styles.fullContent}>
+          {/* Левая колонка - информация о пользователе и навыке */}
+          <div className={styles.leftColumn}>
+            {/* Информация о пользователе */}
+            <div className={styles.userInfo}>
+              <AvatarUI
+                src={user.avatar || '/default-avatar.png'}
+                alt={`Аватар пользователя ${user.name}`}
+              />
+              <div className={styles.userDetails}>
+                <TitleUI size="small">{user.name}</TitleUI>
+                <TextUI variant="caption" color="primary">
+                  {user.bio || 'Город не указан'}
+                </TextUI>
+              </div>
+            </div>
+
+            {/* Заголовок навыка */}
+            {title && (
+              <div className={styles.skillHeader}>
+                <TitleUI size="large">{title}</TitleUI>
+                {category && (
+                  <TagUI
+                    label={tagCategoryToLabel[category] || category}
+                    category={category}
+                    className={styles.categoryTag}
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Описание навыка */}
+            {description && (
+              <div className={styles.description}>
+                <TextUI variant="body">{description}</TextUI>
+              </div>
+            )}
+
+            {/* Теги навыков (полностью, без сокращения) - только если есть навыки для обучения */}
+            {(teachingSkills.length > 0 || learningSkills.length > 0) && (
+              <div className={styles.skillsSection}>
+                {teachingSkills.length > 0 && (
+                  <div className={styles.skillGroup}>
+                    <TitleUI size="xsmall">Может научить:</TitleUI>
+                    <div className={styles.skillTags} aria-label="Может научить">
+                      {teachingSkills.map((skill) => (
+                        <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {learningSkills.length > 0 && (
+                  <div className={styles.skillGroup}>
+                    <TitleUI size="xsmall">Хочет научиться:</TitleUI>
+                    <div className={styles.skillTags} aria-label="Хочет научиться">
+                      {learningSkills.map((skill) => (
+                        <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Кнопка "Предложить обмен" */}
+            {onExchangeClick && (
+              <Button
+                onClick={onExchangeClick}
+                variant="primary"
+                type="button"
+                className={styles.exchangeButton}
+                aria-label="Предложить обмен навыками"
+              >
+                Предложить обмен
+              </Button>
+            )}
+          </div>
+
+          {/* Правая колонка - галерея изображений */}
+          {images.length > 0 && (
+            <div className={styles.rightColumn}>
+              <MediaSlider items={mediaItems} mainSize={480} />
+            </div>
+          )}
+        </div>
+      </article>
+    );
+  }
+
+  // Компактный режим (по умолчанию)
+  return (
+    <article className={styles.card} aria-label={ariaLabel || `Карточка пользователя ${user.name}`}>
+      <div className={styles.userInfo}>
+        <AvatarUI
+          src={user.avatar || '/default-avatar.png'}
+          alt={`Аватар пользователя ${user.name}`}
+        />
+        <div className={styles.userDetails}>
+          <TitleUI size="small">{user.name}</TitleUI>
+          <TextUI variant="caption" color="primary">
+            {user.bio || 'Город не указан'}
+          </TextUI>
+        </div>
+        <LikeButtonUI
+          isActive={isLiked}
+          onClick={onLikeClick}
+          ariaLabel={
+            isLiked ? `Убрать ${user.name} из избранного` : `Добавить ${user.name} в избранное`
+          }
+          className={styles.likeButton}
+        />
+      </div>
+      <div className={styles.basicContent}>
+        <div className={styles.skillsSection}>
+          <div className={styles.skillGroup}>
+            <TitleUI size="xsmall">Может научить:</TitleUI>
+            <div className={styles.skillTags} aria-label="Может научить">
+              {teachingSkills.map((skill) => (
+                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.skillGroup}>
+            <TitleUI size="xsmall">Хочет научиться:</TitleUI>
+            <div className={styles.skillTags} aria-label="Хочет научиться">
+              {learningSkills.slice(0, 2).map((skill) => (
+                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+              ))}
+              {learningSkills.length > 2 && (
+                <TagUI label={`+${learningSkills.length - 2}`} category="other" />
+              )}
+            </div>
+          </div>
+        </div>
+        <Button
+          onClick={onDetailsClick}
+          variant="primary"
+          type="button"
+          aria-label={`Подробнее о пользователе ${user.name}`}
+        >
+          Подробнее
+        </Button>
+      </div>
+    </article>
+  );
+};
