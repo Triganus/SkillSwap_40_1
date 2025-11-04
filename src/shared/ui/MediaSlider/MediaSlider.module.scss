@@ -5,6 +5,10 @@
     );
   gap: var(--space-6);
   align-items: stretch;
+
+  &.single-image {
+    grid-template-columns: var(--media-main-size, 324px);
+  }
 }
 
 .main {
@@ -15,6 +19,20 @@
   overflow: hidden;
   background: var(--surface-1);
   aspect-ratio: 1 / 1;
+
+  :global(.swiper) {
+    width: 100%;
+    height: 100%;
+  }
+
+  :global(.swiper-slide) {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
 }
 
 .main-image,
@@ -22,6 +40,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
   will-change: opacity, transform;
 }
@@ -51,6 +70,10 @@
   outline: none;
   border: none;
   padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-1);
 }
 
 .thumb-image {
@@ -106,11 +129,11 @@
 }
 
 .nav-prev {
-  // Класс для CSS-селектора навигации Swiper
+  /* Класс для CSS-селектора навигации Swiper */
 }
 
 .nav-next {
-  // Класс для CSS-селектора навигации Swiper
+  /* Класс для CSS-селектора навигации Swiper */
 }
 
 .nav-btn:hover {

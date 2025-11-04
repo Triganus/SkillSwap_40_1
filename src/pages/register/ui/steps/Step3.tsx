@@ -7,12 +7,17 @@ import {
   TwoColumnLayout,
   Dropdown,
   ImageInput,
-  ModalUI,
   Textarea,
 } from '@shared/ui';
 import { InfoBlock } from '@features/auth';
 import schoolBoardImage from '@shared/assets/images/school-board.svg';
-import { useRegistrationProgress, saveRegistrationData } from '@features/registration';
+import {
+  useRegistrationProgress,
+  saveRegistrationData,
+  clearRegistrationData,
+  getRegistrationData,
+  SkillConfirmModal,
+} from '@features/registration';
 import type { RegistrationData } from '@features/registration';
 import {
   useRegisterStep3Form,
@@ -21,11 +26,14 @@ import {
   type RegisterStep3Values,
 } from '@features/registration/hooks/useRegisterStep3Form';
 import type { TagCategory } from '@shared/ui/Tag';
+import { completeRegistration } from '@api/registration';
+import { useAuth } from '@app/Provider';
 import styles from './Step3.module.scss';
 
 export default function Step3() {
   const navigate = useNavigate();
   const { completeStep, data } = useRegistrationProgress();
+  const { login } = useAuth();
 
   const initial: Partial<RegisterStep3Values> | undefined = data.step3
     ? {
@@ -60,7 +68,11 @@ export default function Step3() {
   const [descriptionTouched, setDescriptionTouched] = useState(false);
   const [imagesTouched, setImagesTouched] = useState(false);
   const [triedSubmit, setTriedSubmit] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(() => {
+    const stored = getRegistrationData();
+    return stored.confirmModalOpen || false;
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const sub = form.watch((_, { name }) => {
@@ -90,11 +102,73 @@ export default function Step3() {
         },
       } as Partial<RegistrationData['stepData']>);
 
-      saveRegistrationData({ currentStep: 3 });
+      saveRegistrationData({ currentStep: 3, confirmModalOpen: true });
       setModalOpen(true);
     },
     () => setTriedSubmit(true)
   );
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    saveRegistrationData({ confirmModalOpen: false });
+  };
+
+  const handleEdit = () => {
+    setModalOpen(false);
+    saveRegistrationData({ confirmModalOpen: false });
+  };
+
+  const handleConfirm = async () => {
+    setIsSubmitting(true);
+
+    try {
+      const registrationData = getRegistrationData();
+
+      if (
+        !registrationData.stepData.step1 ||
+        !registrationData.stepData.step2 ||
+        !registrationData.stepData.step3
+      ) {
+        throw new Error('Не все шаги регистрации завершены');
+      }
+
+      const requestData = {
+        email: registrationData.stepData.step1.email,
+        password: registrationData.stepData.step1.passwordHash,
+        avatar: registrationData.stepData.step2.avatarDataUrl,
+        name: registrationData.stepData.step2.name,
+        birthDate: registrationData.stepData.step2.birthDate,
+        gender: registrationData.stepData.step2.gender,
+        city: registrationData.stepData.step2.city,
+        interests: {
+          categories: registrationData.stepData.step2.categories,
+          subcategories: registrationData.stepData.step2.subcategories,
+        },
+        skill: {
+          title: registrationData.stepData.step3.title,
+          category: registrationData.stepData.step3.category,
+          subcategory: registrationData.stepData.step3.subcategory,
+          description: registrationData.stepData.step3.description,
+          images: registrationData.stepData.step3.images,
+        },
+      };
+
+      const result = await completeRegistration(requestData);
+
+      // Авторизуем пользователя
+      login(result.user);
+
+      // Очищаем данные регистрации
+      clearRegistrationData();
+
+      // Редирект на главную
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Registration completion error:', error);
+      alert(error instanceof Error ? error.message : 'Произошла ошибка при завершении регистрации');
+      setIsSubmitting(false);
+    }
+  };
 
   const leftContent = (
     <form className={styles.form} onSubmit={onSubmit} aria-labelledby="register-step-3-title">
@@ -281,9 +355,24 @@ export default function Step3() {
         columnJustify="center"
         columnAlign="center"
       />
-      <ModalUI isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Заглушка">
-        <p>Данные шага 3 сохранены в хранилище. Здесь будет следующий экран/действие.</p>
-      </ModalUI>
+      {data.step3 && (
+        <SkillConfirmModal
+          isOpen={modalOpen}
+          onClose={handleModalClose}
+          title="Ваше предложение"
+          helpText="Пожалуйста, проверьте и подтвердите правильность данных"
+          skillData={{
+            title: data.step3.title,
+            category: data.step3.category,
+            subcategory: data.step3.subcategory,
+            description: data.step3.description,
+            images: data.step3.images,
+          }}
+          onEdit={handleEdit}
+          onConfirm={handleConfirm}
+          isSubmitting={isSubmitting}
+        />
+      )}
     </>
   );
 }

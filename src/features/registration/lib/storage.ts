@@ -34,6 +34,7 @@ export type RegistrationData = {
     step3?: RegistrationStep3Data;
   };
   expiresAt: number;
+  confirmModalOpen?: boolean;
 };
 
 const KEY = 'registration';
@@ -46,6 +47,7 @@ const EMPTY: RegistrationData = {
   currentStep: 1,
   completedSteps: [],
   stepData: {},
+  confirmModalOpen: false,
   expiresAt: Date.now() + TTL_MS,
 };
 

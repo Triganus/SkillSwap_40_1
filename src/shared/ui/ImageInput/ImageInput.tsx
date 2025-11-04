@@ -17,16 +17,13 @@ export const ImageInput: React.FC<ImageInputProps> = ({
   const [items, setItems] = React.useState<ImageInputFile[]>([]);
   const [initialized, setInitialized] = React.useState(false);
 
-  const dataUrlToFile = React.useCallback(
-    async (dataUrl: string, index: number): Promise<File> => {
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      const fileName = `image-${index + 1}.${blob.type.split('/')[1] || 'png'}`;
+  const dataUrlToFile = React.useCallback(async (dataUrl: string, index: number): Promise<File> => {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    const fileName = `image-${index + 1}.${blob.type.split('/')[1] || 'png'}`;
 
-      return new File([blob], fileName, { type: blob.type });
-    },
-    []
-  );
+    return new File([blob], fileName, { type: blob.type });
+  }, []);
 
   React.useEffect(() => {
     if (initialized) return;

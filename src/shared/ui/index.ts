@@ -49,6 +49,9 @@ export type { StandaloneStepIndicatorProps } from './StepIndicator';
 export { AuthMethodsSeparator } from './AuthMethodsSeparator';
 export type { AuthMethodsSeparatorProps } from './AuthMethodsSeparator';
 
+export { FormField } from './Form';
+export type { FormFieldProps } from './Form';
+
 export * from './Form';
 export * from './DropDown';
 

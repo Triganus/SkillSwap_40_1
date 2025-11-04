@@ -88,7 +88,7 @@
   font-size: 12px;
   color: var(--color-caption, #69735d);
   pointer-events: none;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgb(255 255 255 / 90%);
   padding: 2px 4px;
   border-radius: 4px;
 }
@@ -96,4 +96,3 @@
 .counter-error {
   color: #ef4444;
 }
-

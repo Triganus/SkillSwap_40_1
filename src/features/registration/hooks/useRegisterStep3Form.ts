@@ -120,7 +120,15 @@ export function useRegisterStep3Form(initial?: Partial<RegisterStep3Values>) {
   const descriptionUI = form.getFieldUI('description');
   const imagesUI = form.getFieldUI('images');
 
-  return { ...form, canSubmit, titleUI, categoryUI, subcategoryUI, descriptionUI, imagesUI } as const;
+  return {
+    ...form,
+    canSubmit,
+    titleUI,
+    categoryUI,
+    subcategoryUI,
+    descriptionUI,
+    imagesUI,
+  } as const;
 }
 
 export function buildSubcategoryOptions(category: TagCategory | '') {
