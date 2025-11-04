@@ -18,6 +18,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   onLikeClick,
   isLiked = false,
   ariaLabel,
+  showDetailsButton = true,
 }) => (
   <article className={styles.card} aria-label={ariaLabel || `Карточка пользователя ${user.name}`}>
     <div className={styles.userInfo}>
@@ -62,14 +63,16 @@ export const SkillCard: React.FC<SkillCardProps> = ({
           </div>
         </div>
       </div>
-      <Button
-        onClick={onDetailsClick}
-        variant="primary"
-        type="button"
-        aria-label={`Подробнее о пользователе ${user.name}`}
-      >
-        Подробнее
-      </Button>
+      {showDetailsButton && onDetailsClick && (
+        <Button
+          onClick={onDetailsClick}
+          variant="primary"
+          type="button"
+          aria-label={`Подробнее о навыке ${teachingSkills[0]?.title || 'пользователя'}`}
+        >
+          Подробнее
+        </Button>
+      )}
     </div>
   </article>
 );

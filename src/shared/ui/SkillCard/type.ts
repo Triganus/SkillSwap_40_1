@@ -10,4 +10,5 @@ export interface SkillCardProps {
   onLikeClick?: () => void;
   isLiked?: boolean;
   ariaLabel?: string;
+  showDetailsButton?: boolean; // Показывать ли кнопку "Подробнее"
 }
