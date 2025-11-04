@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback,useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
@@ -22,6 +22,7 @@ import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
 import type { FilterPayload } from '@/entities/filterSideBar/model';
 import type { SkillCategoriesData } from '@entities/Skill';
 import styles from './HomePage.module.scss';
+import { useSidebarFilter } from '@/shared/hooks/useSidebarFilter';
 
 // Временные мок-данные для каталога навыков (фильтры)
 const MOCK_SKILLS_CATALOG: SkillCategoriesData = {
@@ -88,15 +89,7 @@ const MOCK_USERS_DATA: SkillCardProps[] = [
       createdAt: '2023-01-15',
     },
     teachingSkills: [
-      {
-        id: 'art_004',
-        title: 'Игра на барабанах',
-        description: 'Научу играть на барабанах',
-        type: 'teaching',
-        category: 'art',
-        authorId: 'user1',
-        createdAt: '2023-01-15',
-      },
+      
     ],
     learningSkills: [
       {
@@ -773,6 +766,15 @@ export default function HomePage() {
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
   const isSearching = searchFromUrl.trim().length > 0;
+  
+const isSidebarActive =
+  !!currentFilters.general ||
+  !!currentFilters.gender ||
+  (currentFilters.skills && currentFilters.skills.skill_categories.length > 0) ||
+  (currentFilters.cities && currentFilters.cities.length > 0);
+
+// Режим фильтрации активен, если есть либо строка поиска, либо боковые фильтры
+ const isFiltering =  isSearching || isSidebarActive;
 
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
@@ -836,9 +838,21 @@ export default function HomePage() {
           )
       )
     : [];
+  
+    const baseForFilter = searchFromUrl.trim()
+  ? searchResultCards
+  : MOCK_USERS_DATA;
+    
+
+const { matchesSidebar } = useSidebarFilter(currentFilters);
+const visibleSearchResultCards = useMemo(
+  () => baseForFilter.filter(matchesSidebar),
+  [baseForFilter, matchesSidebar]
+);
+
 
   // Режим поиска - отображаем только результаты
-  if (isSearching) {
+  if (isFiltering) {
     return (
       <div className={styles.container}>
         <aside className={styles.sidebar}>
@@ -847,7 +861,8 @@ export default function HomePage() {
         <main className={styles.content}>
           <div className={styles.searchResults}>
             <TitleUI size="large" className={styles.searchTitle}>
-              Подходящие предложения: {searchResultCards.length}
+              {/* Подходящие предложения: {searchResultCards.length} */}
+              Подходящие предложения: {visibleSearchResultCards.length}
             </TitleUI>
             <InfiniteGridUI
               hasMore={false}
@@ -856,7 +871,7 @@ export default function HomePage() {
               gap="24px"
               className={styles.searchGrid}
             >
-              {searchResultCards.map((card) => (
+              {visibleSearchResultCards.map((card) => (
                 <SkillCard
                   key={card.user.id}
                   user={card.user}
