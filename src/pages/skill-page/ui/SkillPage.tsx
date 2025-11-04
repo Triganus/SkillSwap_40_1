@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchSkills, getSkills, getSkillsError, getSkillsLoading } from '@entities/skill/model';
 import { usersActions, selectUsersState } from '@entities/user/model/usersSlice';
 import type { RootState, AppDispatch } from '@app/Provider';
-import type { User, DbUser } from '@entities/user/model/types/types';
+import type { User, DbUser } from '@entities/user/model';
 import type { Skill } from '@entities/skill/model/types/types';
 import { SkillCard } from '@shared/ui/SkillCard';
 import { SkillDetails } from '@entities/skill/ui/SkillDetails';
