@@ -89,14 +89,19 @@ export default function HomePage() {
   }, [dispatch, usersData.length, loadingUsers]);
 
   const isSidebarActive =
-    !!currentFilters.general ||
-    !!currentFilters.gender ||
-    (currentFilters.skills && currentFilters.skills.skill_categories.length > 0) ||
-    (currentFilters.cities && currentFilters.cities.length > 0);
+    !!currentFilters &&
+    ((currentFilters.general && currentFilters.general !== 'Всё') ||
+      (currentFilters.gender &&
+        ['мужской', 'женский'].includes(currentFilters.gender.toLowerCase())) ||
+      !!currentFilters.skills?.skill_categories.some(
+        (cat) => cat.skills && cat.skills.length > 0
+      ) ||
+      (currentFilters.cities && currentFilters.cities.length > 0));
 
+  console.log(currentFilters);
   // Режим фильтрации активен, если есть либо строка поиска, либо боковые фильтры
   const isFiltering = isSearching || isSidebarActive;
-
+  console.log(currentFilters.gender);
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
     if (searchFromUrl !== searchQuery) {
