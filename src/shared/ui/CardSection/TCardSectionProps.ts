@@ -1,4 +1,4 @@
-import type { SkillCardProps } from '../SkillCard';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 
 // TODO: Насколько правильно импортировать из другого компонента?
 export type TCardSectionProps = {

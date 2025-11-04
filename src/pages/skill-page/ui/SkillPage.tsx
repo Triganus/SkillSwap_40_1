@@ -6,14 +6,12 @@ import { usersActions, selectUsersState } from '@entities/user/model/usersSlice'
 import type { RootState, AppDispatch } from '@app/Provider';
 import type { User, DbUser } from '@entities/user/model';
 import type { Skill } from '@entities/skill/model/types/types';
-import { SkillCard } from '@shared/ui/SkillCard';
-import { SkillDetails } from '@entities/skill/ui/SkillDetails';
+import { SkillCard } from '@widgets/Cards/SkillCard';
 import { CardSlider } from '@widgets/Cards/CardSlider';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { TextUI } from '@shared/ui/Text';
 import { useAuth } from '@app/Provider';
-import { TwoColumnLayout } from '@shared/ui/TwoColumnLayout';
-import type { SkillCardProps } from '@shared/ui/SkillCard';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 
 export default function SkillPage() {
   const { id } = useParams<{ id: string }>();
@@ -226,41 +224,25 @@ export default function SkillPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {/* Двухколоночный макет: слева - карточка пользователя, справа - детали навыка */}
-      <TwoColumnLayout
-        leftContent={
-          authorUser ? (
-            <SkillCard
-              user={authorUser}
-              teachingSkills={teachingSkills}
-              learningSkills={learningSkills}
-              isLiked={liked}
-              onLikeClick={onLikeClick}
-              showDetailsButton={false}
-              ariaLabel={`Карточка автора навыка ${skill.title}`}
-            />
-          ) : null
-        }
-        rightContent={
-          <SkillDetails
-            title={skill.title}
-            category={skill.category}
-            text={skill.description}
-            images={[]}
-            variant="want"
-            isLiked={liked}
-            isLikeActive
-            isRequestSent={false}
-            onLikeClick={onLikeClick}
-            onExchangeClick={onExchangeClick}
-            onShareClick={onShareClick}
-            onMoreClick={onMoreClick}
-          />
-        }
-        gap={24}
-        columnPadding={32}
-        containerPadding={0}
-      />
+      {/* Основной контент: карточка навыка в полном режиме */}
+      {authorUser && skill && (
+        <SkillCard
+          mode="full"
+          user={authorUser}
+          teachingSkills={teachingSkills}
+          learningSkills={learningSkills}
+          title={skill.title}
+          category={skill.category}
+          description={skill.description}
+          images={[]}
+          isLiked={liked}
+          onLikeClick={onLikeClick}
+          onExchangeClick={onExchangeClick}
+          onShareClick={onShareClick}
+          onMoreClick={onMoreClick}
+          ariaLabel={`Карточка навыка ${skill.title} от пользователя ${authorUser.name}`}
+        />
+      )}
 
       {/* Секция с похожими предложениями */}
       <CardSlider title="Похожие предложения" skillsList={similarCards} loading={loading} />

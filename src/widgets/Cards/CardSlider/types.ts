@@ -1,4 +1,4 @@
-import type { SkillCardProps } from '@/shared/ui/SkillCard';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 
 export interface CardsSliderProps {
   title: string;

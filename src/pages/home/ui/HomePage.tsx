@@ -17,7 +17,7 @@ import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { CardSectionUI } from '@shared/ui/CardSection';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
-import { SkillCard } from '@shared/ui/SkillCard';
+import { SkillCard } from '@widgets/Cards/SkillCard';
 import { TitleUI } from '@shared/ui/Title';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
@@ -123,11 +123,11 @@ export default function HomePage() {
 
   // Обработчики для CardSection
   const handleViewAllPopular = useCallback(() => {
-    navigate('/search?sort=popular');
+    navigate('/popular-skills');
   }, [navigate]);
 
   const handleViewAllNew = useCallback(() => {
-    navigate('/search?sort=new');
+    navigate('/new-skills');
   }, [navigate]);
 
   // Обработчик для бесконечного скролла

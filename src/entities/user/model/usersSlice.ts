@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { DbUser } from './types/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '@app/Provider';
-import type { SkillCardProps } from '@/shared/ui/SkillCard';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import { fetchUsersAsSkillCards } from '@/api';
 
 // Состояние: справочник всех пользователей
