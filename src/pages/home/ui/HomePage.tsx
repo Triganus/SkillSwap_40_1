@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
@@ -13,16 +13,19 @@ import {
   getAllUsersWithSkills,
   getUsersLoading,
 } from '@entities/user/model/usersSlice';
+import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
+import { getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { CardSectionUI } from '@shared/ui/CardSection';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { SkillCard } from '@shared/ui/SkillCard';
 import { TitleUI } from '@shared/ui/Title';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
-import type { FilterPayload } from '@widgets/FilterSideBar/TFilterSideBarProps';
+import type { FilterPayload } from '@/entities/filterSideBar/model';
 import type { SkillCategoriesData } from '@entities/Skill';
 import { fetchSkillsCatalog } from '@/api';
 import styles from './HomePage.module.scss';
+import { useSidebarFilter } from '@/shared/hooks/useSidebarFilter';
 
 // Мок-данные удалены - теперь используются данные из API (fetchSkillsCatalog и fetchUsersAsSkillCards)
 
@@ -30,6 +33,8 @@ export default function HomePage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
+
+  // const [filters, setFilters] = useState<FilterPayload>(EMPTY_FILTERS);
 
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
@@ -40,7 +45,7 @@ export default function HomePage() {
   // Локальное состояние для каталога навыков (для фильтров)
   const [skillsCatalog, setSkillsCatalog] = useState<SkillCategoriesData | null>(null);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
-
+  const currentFilters = useAppSelector(getSideBarFilters);
   // Локальное состояние для бесконечного скролла
   const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
@@ -83,6 +88,20 @@ export default function HomePage() {
     }
   }, [dispatch, usersData.length, loadingUsers]);
 
+  const isSidebarActive =
+    !!currentFilters &&
+    ((currentFilters.general && currentFilters.general !== 'Всё') ||
+      (currentFilters.gender &&
+        ['мужской', 'женский'].includes(currentFilters.gender.toLowerCase())) ||
+      !!currentFilters.skills?.skill_categories.some(
+        (cat) => cat.skills && cat.skills.length > 0
+      ) ||
+      (currentFilters.cities && currentFilters.cities.length > 0));
+
+  console.log(currentFilters);
+  // Режим фильтрации активен, если есть либо строка поиска, либо боковые фильтры
+  const isFiltering = isSearching || isSidebarActive;
+  console.log(currentFilters.gender);
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
     if (searchFromUrl !== searchQuery) {
@@ -92,10 +111,15 @@ export default function HomePage() {
   }, [searchFromUrl, searchQuery, dispatch]);
 
   // Обработчик изменения фильтров
-  const handleFiltersChange = useCallback((filters: FilterPayload) => {
-    console.log('Filters applied:', filters);
-    // TODO: применить фильтры к данным после готовности API
-  }, []);
+  const handleFiltersChange = useCallback(
+    (filters: FilterPayload) => {
+      console.log('Filters applied:', filters);
+      dispatch(setFilter(filters));
+
+      // TODO: применить фильтры к данным после готовности API
+    },
+    [dispatch]
+  );
 
   // Обработчики для CardSection
   const handleViewAllPopular = useCallback(() => {
@@ -137,6 +161,13 @@ export default function HomePage() {
           )
       )
     : [];
+  const baseForFilter = searchFromUrl.trim() ? searchResultCards : usersData;
+
+  const { matchesSidebar } = useSidebarFilter(currentFilters);
+  const visibleSearchResultCards = useMemo(
+    () => baseForFilter.filter(matchesSidebar),
+    [baseForFilter, matchesSidebar]
+  );
 
   // Показываем прелоадер пока загружаются данные
   const isLoading = loadingCatalog || loadingUsers;
@@ -151,7 +182,7 @@ export default function HomePage() {
   }
 
   // Режим поиска - отображаем только результаты
-  if (isSearching) {
+  if (isFiltering) {
     return (
       <div className={styles.container}>
         <aside className={styles.sidebar}>
@@ -162,7 +193,8 @@ export default function HomePage() {
         <main className={styles.content}>
           <div className={styles.searchResults}>
             <TitleUI size="large" className={styles.searchTitle}>
-              Подходящие предложения: {searchResultCards.length}
+              {/* Подходящие предложения: {searchResultCards.length} */}
+              Подходящие предложения: {visibleSearchResultCards.length}
             </TitleUI>
             <InfiniteGridUI
               hasMore={false}
@@ -171,7 +203,7 @@ export default function HomePage() {
               gap="24px"
               className={styles.searchGrid}
             >
-              {searchResultCards.map((card) => (
+              {visibleSearchResultCards.map((card) => (
                 <SkillCard
                   key={card.user.id}
                   user={card.user}

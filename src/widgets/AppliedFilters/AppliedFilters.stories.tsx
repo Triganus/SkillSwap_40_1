@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { AppliedFilters } from './AppliedFilters';
-import type { FilterPayload } from '@widgets/FilterSideBar/TFilterSideBarProps';
+import type { FilterPayload } from '@/entities/filterSideBar/model';
 import type { SkillCategoriesData } from '@/entities/Skill';
 
 const meta: Meta<typeof AppliedFilters> = {
