@@ -214,7 +214,7 @@ widgets   → pages
 🧠 State Management
 Глобальное состояние: Redux Toolkit
 Слайсы: хранятся в features/*/model/
-Store: инициализируется в src/app/store/store.ts
+Store: инициализируется в src/app/store/index.ts
 Локальное состояние: useState, useReducer
 
 🎨 Стилизация
