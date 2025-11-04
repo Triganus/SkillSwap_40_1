@@ -123,11 +123,11 @@ export default function HomePage() {
 
   // Обработчики для CardSection
   const handleViewAllPopular = useCallback(() => {
-    navigate('/search?sort=popular');
+    navigate('/popular-skills');
   }, [navigate]);
 
   const handleViewAllNew = useCallback(() => {
-    navigate('/search?sort=new');
+    navigate('/new-skills');
   }, [navigate]);
 
   // Обработчик для бесконечного скролла
