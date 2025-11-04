@@ -7,8 +7,7 @@ import type { RootState, AppDispatch } from '@app/Provider';
 import { fetchUsers } from '@/api/users-api';
 import type { User } from '@entities/user/model/types/types';
 import type { Skill } from '@entities/skill/model/types/types';
-import { SkillCard } from '@shared/ui/SkillCard';
-import { SkillDetails } from '@entities/skill/ui/SkillDetails';
+import { SkillCard } from '@widgets/Cards/SkillCard';
 import { CardSlider } from '@widgets/Cards/CardSlider';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { TextUI } from '@shared/ui/Text';
@@ -140,28 +139,24 @@ export default function SkillPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {authorUser && (
+      {/* Основной контент: карточка навыка в полном режиме */}
+      {authorUser && skill && (
         <SkillCard
+          mode="full"
           user={authorUser}
           teachingSkills={teachingSkills}
           learningSkills={learningSkills}
+          title={skill.title}
+          category={skill.category}
+          description={skill.description}
+          images={[]}
           isLiked={liked}
           onLikeClick={onLikeClick}
+          onExchangeClick={onExchangeClick}
+          onShareClick={() => console.log('Share clicked')}
+          onMoreClick={() => console.log('More clicked')}
         />
       )}
-
-      <SkillDetails
-        title={skill.title}
-        category={skill.category}
-        text={skill.description}
-        images={[]}
-        variant="want"
-        isLiked={liked}
-        isLikeActive
-        isRequestSent={false}
-        onLikeClick={onLikeClick}
-        onExchangeClick={onExchangeClick}
-      />
 
       <CardSlider title="Похожие предложения" skillsList={similarCards} loading={loading} />
     </div>

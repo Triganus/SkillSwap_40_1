@@ -1,0 +1,175 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  max-inline-size: 100%;
+  min-width: 0;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  overflow-wrap: break-word;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+}
+
+/* Компактный режим */
+.user-info {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 4px 12px;
+  align-items: start;
+  max-inline-size: 100%;
+  block-size: 100px;
+  min-height: 100px;
+  position: static;
+  min-width: 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  grid-column: 2;
+  margin-block: 28px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.like-button {
+  position: absolute !important;
+  inset: 20px 20px auto auto !important;
+  z-index: 10;
+  margin: 0 !important;
+}
+
+.basic-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.skills-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skill-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-tags {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Полный режим */
+.full-content {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  gap: var(--space-8, 40px);
+  align-items: start;
+}
+
+.actionbar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  z-index: 10;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-7, 32px);
+  height: var(--space-7, 32px);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-caption, #69735d);
+  cursor: pointer;
+  border-radius: var(--radius-s, 8px);
+  transition:
+    background-color var(--dur-normal, 200ms) var(--easing-standard),
+    color var(--dur-normal, 200ms) var(--easing-standard);
+
+  &:hover {
+    background-color: var(--color-button-hover, #deebc5);
+    color: var(--color-text, #253017);
+  }
+
+  &:active {
+    background-color: var(--color-disabled, #e4e8df);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-link, #508826);
+    outline-offset: var(--space-1, 4px);
+  }
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 20px);
+  min-width: 0;
+}
+
+.skill-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.category-tag {
+  align-self: flex-start;
+}
+
+.description {
+  margin: 0;
+}
+
+.exchange-button {
+  width: 100%;
+  max-width: 320px;
+  align-self: flex-start;
+}
+
+.right-column {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+@media (width <= 768px) {
+  .full-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-5, 20px);
+  }
+
+  .right-column {
+    order: -1;
+  }
+
+  .actionbar {
+    position: static;
+    align-self: flex-end;
+    margin-bottom: var(--space-2, 8px);
+  }
+}
