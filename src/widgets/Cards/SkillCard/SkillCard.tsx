@@ -218,14 +218,16 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             </div>
           </div>
         </div>
-        <Button
-          onClick={onDetailsClick}
-          variant="primary"
-          type="button"
-          aria-label={`Подробнее о пользователе ${user.name}`}
-        >
-          Подробнее
-        </Button>
+        <div className={styles.buttonWrapper}>
+          <Button
+            onClick={onDetailsClick}
+            variant="primary"
+            type="button"
+            aria-label={`Подробнее о пользователе ${user.name}`}
+          >
+            Подробнее
+          </Button>
+        </div>
       </div>
     </article>
   );
