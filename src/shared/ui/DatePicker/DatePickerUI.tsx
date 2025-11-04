@@ -131,7 +131,7 @@ export const DatePickerUI = ({
 
   return (
     <div className={`${styles.datePickerWrapper} ${className}`} ref={wrapperRef}>
-      <div className={styles['input-wrapper']}>
+      <div className={styles.inputWrapper}>
         <input
           type="text"
           readOnly
@@ -179,9 +179,7 @@ export const DatePickerUI = ({
                         <li
                           key={idx}
                           role="option"
-                          className={`${styles.dropdownItem} ${
-                            idx === currentMonth ? styles.selected : ''
-                          }`}
+                          className={idx === currentMonth ? styles.selected : ''}
                           onClick={() => handleMonthChange(idx)}
                           aria-selected={idx === currentMonth}
                         >
@@ -218,9 +216,7 @@ export const DatePickerUI = ({
                         <li
                           key={year}
                           role="option"
-                          className={`${styles.dropdownItem} ${
-                            year === currentYear ? styles.selected : ''
-                          }`}
+                          className={year === currentYear ? styles.selected : ''}
                           onClick={() => handleYearChange(year)}
                           aria-selected={year === currentYear}
                         >
@@ -267,12 +263,8 @@ export const DatePickerUI = ({
           </div>
 
           <div className={styles.buttons}>
-            <Button className={styles.cancelButton} onClick={() => setIsOpen(false)}>
-              Отменить
-            </Button>
-            <Button className={styles.selectButton} onClick={() => setIsOpen(false)}>
-              Выбрать
-            </Button>
+            <Button onClick={() => setIsOpen(false)}>Отменить</Button>
+            <Button onClick={() => setIsOpen(false)}>Выбрать</Button>
           </div>
         </div>
       )}

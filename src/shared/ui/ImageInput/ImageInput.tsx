@@ -102,7 +102,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
         role="button"
         tabIndex={0}
         aria-label={ariaLabel}
-        onClick={pickFiles}
+        onClick={() => pickFiles()}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -115,7 +115,16 @@ export const ImageInput: React.FC<ImageInputProps> = ({
       >
         <TextUI>Перетащите изображения сюда или нажмите, чтобы выбрать</TextUI>
         <div style={{ marginTop: 8 }}>
-          <Button variant="secondary">Выбрать файл</Button>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              pickFiles();
+            }}
+          >
+            Выбрать файл
+          </Button>
         </div>
         <input
           ref={inputRef}

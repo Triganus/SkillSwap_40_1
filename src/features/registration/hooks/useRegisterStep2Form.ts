@@ -8,10 +8,14 @@ import { getSkillsByCategory, isValidSkillName } from '@shared/lib/constants/ski
 import { tagCategoryToLabel } from '@shared/lib/categoryMapper';
 import type { TagCategory } from '@shared/ui/Tag';
 
-export const GENDER_DROPDOWN_OPTIONS = GENDER_OPTIONS.map((o) => ({ label: o.label, value: o.value }));
+export const GENDER_DROPDOWN_OPTIONS = GENDER_OPTIONS.map((o) => ({
+  label: o.label,
+  value: o.value,
+}));
 export const CITY_DROPDOWN_OPTIONS = CITIES.map((c) => ({ label: c, value: c }));
-export const CATEGORY_OPTIONS = (Object.entries(tagCategoryToLabel) as [TagCategory, string][])
-  .map(([id, label]) => ({ label, value: id }));
+export const CATEGORY_OPTIONS = (Object.entries(tagCategoryToLabel) as [TagCategory, string][]).map(
+  ([id, label]) => ({ label, value: id })
+);
 
 export type RegisterStep2Values = {
   avatarFile: File | null;
@@ -47,19 +51,34 @@ export const registerStep2Schema = yup
 
         return /^image\//.test(f.type);
       }),
-    name: yup.string().trim().min(2, 'Минимум 2 символа').max(50, 'Максимум 50 символов').required('Укажите имя'),
+    name: yup
+      .string()
+      .trim()
+      .min(2, 'Минимум 2 символа')
+      .max(50, 'Максимум 50 символов')
+      .required('Укажите имя'),
     birthDate: yup
       .string()
       .trim()
       .matches(dateRegex, 'Введите дату в формате дд.мм.гггг')
       .required('Укажите дату рождения'),
-    gender: yup.string().oneOf(GENDER_OPTIONS.map((g) => g.value), 'Некорректное значение').required('Укажите пол'),
+    gender: yup
+      .string()
+      .oneOf(
+        GENDER_OPTIONS.map((g) => g.value),
+        'Некорректное значение'
+      )
+      .required('Укажите пол'),
     city: yup
       .string()
       .test('city', 'Выберите город из списка', (v) => !!v && isValidCity(v))
       .required('Укажите город'),
     categories: yup
-      .array(yup.string().test('category-id', 'Некорректная категория', (v) => !!v && isValidCategoryId(v)))
+      .array(
+        yup
+          .string()
+          .test('category-id', 'Некорректная категория', (v) => !!v && isValidCategoryId(v))
+      )
       .min(1, 'Выберите хотя бы одну категорию')
       .required('Выберите категорию'),
     subcategories: yup
@@ -103,7 +122,14 @@ export function useRegisterStep2Form(initial?: Partial<RegisterStep2Values>) {
     autoClearServerErrors: true,
   });
 
-  const [nameVal = '', birthDateVal = '', genderVal = '', cityVal = '', categoriesVal = [], subcategoriesVal = []] = useWatch({
+  const [
+    nameVal = '',
+    birthDateVal = '',
+    genderVal = '',
+    cityVal = '',
+    categoriesVal = [],
+    subcategoriesVal = [],
+  ] = useWatch({
     control: form.control,
     name: ['name', 'birthDate', 'gender', 'city', 'categories', 'subcategories'],
   });
@@ -134,5 +160,14 @@ export function useRegisterStep2Form(initial?: Partial<RegisterStep2Values>) {
   const categoriesUI = form.getFieldUI('categories');
   const subcategoriesUI = form.getFieldUI('subcategories');
 
-  return { ...form, canSubmit, nameUI, birthDateUI, genderUI, cityUI, categoriesUI, subcategoriesUI } as const;
+  return {
+    ...form,
+    canSubmit,
+    nameUI,
+    birthDateUI,
+    genderUI,
+    cityUI,
+    categoriesUI,
+    subcategoriesUI,
+  } as const;
 }

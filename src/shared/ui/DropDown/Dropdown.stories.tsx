@@ -124,8 +124,19 @@ function OverlayWithTextExample() {
         open={open}
         onOpenChange={setOpen}
       />
-      <div style={{ marginTop: 12, padding: 12, background: '#f7f7f7', border: '1px dashed #cfcfcf', borderRadius: 8 }}>
-        <p>Это тестовый блок под дропдауном. При открытии список должен перекрывать этот блок и не смещать его.</p>
+      <div
+        style={{
+          marginTop: 12,
+          padding: 12,
+          background: '#f7f7f7',
+          border: '1px dashed #cfcfcf',
+          borderRadius: 8,
+        }}
+      >
+        <p>
+          Это тестовый блок под дропдауном. При открытии список должен перекрывать этот блок и не
+          смещать его.
+        </p>
         <p>Добавлен для визуальной проверки поведения наложения.</p>
       </div>
     </div>

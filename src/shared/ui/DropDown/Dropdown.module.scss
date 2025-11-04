@@ -159,8 +159,13 @@
   color: var(--color-error);
 }
 
-.small { --trigger-h: 32px; }
-.large { --trigger-h: 48px; }
+.small {
+  --trigger-h: 32px;
+}
+
+.large {
+  --trigger-h: 48px;
+}
 
 .fit-trigger {
   width: 100%;

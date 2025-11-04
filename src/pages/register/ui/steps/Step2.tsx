@@ -1,9 +1,16 @@
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, FormField, Input, TwoColumnLayout, Dropdown, UserAvatarUpload } from '@shared/ui';
+import type { UserAvatarUploadHandle } from '@shared/ui';
 import { InfoBlock } from '@features/auth';
 import { useRegistrationProgress, saveRegistrationData } from '@features/registration';
-import { useRegisterStep2Form, GENDER_DROPDOWN_OPTIONS, CITY_DROPDOWN_OPTIONS, CATEGORY_OPTIONS } from '@features/registration/hooks/useRegisterStep2Form';
+import {
+  useRegisterStep2Form,
+  GENDER_DROPDOWN_OPTIONS,
+  CITY_DROPDOWN_OPTIONS,
+  CATEGORY_OPTIONS,
+} from '@features/registration/hooks/useRegisterStep2Form';
+import type { RegisterStep2Values } from '@features/registration/hooks/useRegisterStep2Form';
 import { getSkillsByCategory } from '@shared/lib/constants/skillCategories';
 import { tagCategoryToLabel } from '@shared/lib/categoryMapper';
 import type { TagCategory } from '@shared/ui/Tag';
@@ -27,21 +34,41 @@ export default function Step2() {
     : undefined;
 
   const form = useRegisterStep2Form(initial);
-  const { handleSubmit, setValue, getValues, clearServerError, canSubmit, rootErrorMessage, forceAllFieldsError, nameUI, birthDateUI, genderUI, cityUI, categoriesUI, subcategoriesUI, watch } = form;
+  const {
+    handleSubmit,
+    setValue,
+    getValues,
+    clearServerError,
+    canSubmit,
+    rootErrorMessage,
+    forceAllFieldsError,
+    nameUI,
+    birthDateUI,
+    genderUI,
+    cityUI,
+    categoriesUI,
+    subcategoriesUI,
+    watch,
+  } = form;
 
-  const avatarRef = useRef<React.ElementRef<typeof UserAvatarUpload>>(null);
+  const avatarRef = useRef<UserAvatarUploadHandle>(null);
   const [subcategoriesTouched, setSubcategoriesTouched] = useState(false);
   const [triedSubmit, setTriedSubmit] = useState(false);
 
   useEffect(() => {
-    const sub = watch((values, { name }) => {
+    const sub = watch((rawValues, { name }) => {
       if (name === 'categories') {
-        const categories = (values as any).categories as string[];
+        const values = rawValues as unknown as RegisterStep2Values;
+        const categories = (values.categories ?? []) as string[];
         const allowed = new Set<string>();
+
         (categories ?? []).forEach((c) => getSkillsByCategory(c).forEach((s) => allowed.add(s)));
-        const current = ((values as any).subcategories as string[]) ?? [];
+
+        const current = (values.subcategories ?? []) as string[];
         const filtered = current.filter((s) => allowed.has(s));
-        setValue('subcategories', filtered, { shouldValidate: true, shouldDirty: true });
+
+        setSubcategoriesTouched(false);
+        setValue('subcategories', filtered, { shouldValidate: false, shouldDirty: true });
       }
     });
 
@@ -54,7 +81,7 @@ export default function Step2() {
       setTriedSubmit(false);
 
       const file = avatarRef.current?.getFile?.() ?? values.avatarFile;
-      const avatarDataUrl = file ? await fileToDataURL(file) : data.step2?.avatarDataUrl ?? null;
+      const avatarDataUrl = file ? await fileToDataURL(file) : (data.step2?.avatarDataUrl ?? null);
 
       completeStep(2, {
         step2: {
@@ -78,30 +105,64 @@ export default function Step2() {
   const leftContent = (
     <form className={styles.form} onSubmit={onSubmit} aria-labelledby="register-step-2-title">
       <div className={styles.avatarWrap}>
-        <UserAvatarUpload ref={avatarRef as any} diameter={64} ariaLabel="Выбрать аватар" initialSrc={data.step2?.avatarDataUrl ?? undefined} />
+        <UserAvatarUpload
+          ref={avatarRef}
+          diameter={64}
+          ariaLabel="Выбрать аватар"
+          initialSrc={data.step2?.avatarDataUrl ?? undefined}
+        />
       </div>
 
       <div className={styles.field}>
-        <FormField label="Имя" htmlFor="name" error={nameUI.errorText} forceError={forceAllFieldsError}>
-          <Input id="name" placeholder="Введите ваше имя" {...nameUI.register} error={nameUI.highlight} className={styles.fullWidth} />
+        <FormField
+          label="Имя"
+          htmlFor="name"
+          error={nameUI.errorText}
+          forceError={forceAllFieldsError}
+        >
+          <Input
+            id="name"
+            placeholder="Введите ваше имя"
+            {...nameUI.register}
+            error={nameUI.highlight}
+            className={styles.fullWidth}
+          />
         </FormField>
       </div>
 
       <div className={styles.row}>
         <div className={styles.field}>
-          <FormField label="Дата рождения" htmlFor="birthDate" error={birthDateUI.errorText} forceError={forceAllFieldsError}>
-            <Input id="birthDate" placeholder="дд.мм.гггг" {...birthDateUI.register} error={birthDateUI.highlight} className={styles.fullWidth} />
+          <FormField
+            label="Дата рождения"
+            htmlFor="birthDate"
+            error={birthDateUI.errorText}
+            forceError={forceAllFieldsError}
+          >
+            <Input
+              id="birthDate"
+              placeholder="дд.мм.гггг"
+              {...birthDateUI.register}
+              error={birthDateUI.highlight}
+              className={styles.fullWidth}
+            />
           </FormField>
         </div>
 
         <div className={styles.field}>
-          <FormField label="Пол" htmlFor="gender" error={genderUI.errorText} forceError={forceAllFieldsError}>
+          <FormField
+            label="Пол"
+            htmlFor="gender"
+            error={genderUI.errorText}
+            forceError={forceAllFieldsError}
+          >
             <Dropdown
               id="gender"
               placeholder="Не указан"
               options={GENDER_DROPDOWN_OPTIONS}
               value={getValues('gender')}
-              onChange={(v) => setValue('gender', String(v), { shouldValidate: true, shouldDirty: true })}
+              onChange={(v) =>
+                setValue('gender', String(v), { shouldValidate: true, shouldDirty: true })
+              }
               fit="trigger"
               className={styles.fullWidth}
             />
@@ -110,13 +171,20 @@ export default function Step2() {
       </div>
 
       <div className={styles.field}>
-        <FormField label="Город" htmlFor="city" error={cityUI.errorText} forceError={forceAllFieldsError}>
+        <FormField
+          label="Город"
+          htmlFor="city"
+          error={cityUI.errorText}
+          forceError={forceAllFieldsError}
+        >
           <Dropdown
             id="city"
             placeholder="Не указан"
             options={CITY_DROPDOWN_OPTIONS}
             value={getValues('city')}
-            onChange={(v) => setValue('city', String(v), { shouldValidate: true, shouldDirty: true })}
+            onChange={(v) =>
+              setValue('city', String(v), { shouldValidate: true, shouldDirty: true })
+            }
             enableSearch
             fit="trigger"
             className={styles.fullWidth}
@@ -137,13 +205,11 @@ export default function Step2() {
             options={CATEGORY_OPTIONS}
             multiple
             value={getValues('categories')}
-            onChange={(v) =>
-              setValue(
-                'categories',
-                Array.isArray(v) ? v : [String(v)].filter(Boolean),
-                { shouldValidate: true, shouldDirty: true }
-              )
-            }
+            onChange={(v) => {
+              const next = (Array.isArray(v) ? v : [String(v)]).filter(Boolean) as TagCategory[];
+
+              setValue('categories', next, { shouldValidate: false, shouldDirty: true });
+            }}
             fit="trigger"
             className={styles.fullWidth}
           />
@@ -154,7 +220,7 @@ export default function Step2() {
         <FormField
           label="Подкатегория навыка, которому хотите научиться"
           htmlFor="subcategory"
-          error={(subcategoriesTouched || triedSubmit) ? subcategoriesUI.errorText : null}
+          error={subcategoriesTouched || triedSubmit ? subcategoriesUI.errorText : null}
           forceError={forceAllFieldsError}
         >
           <Dropdown
@@ -165,11 +231,10 @@ export default function Step2() {
             value={getValues('subcategories')}
             onChange={(v) => {
               setSubcategoriesTouched(true);
-              setValue(
-                'subcategories',
-                Array.isArray(v) ? v : [String(v)].filter(Boolean),
-                { shouldValidate: true, shouldDirty: true }
-              );
+              setValue('subcategories', Array.isArray(v) ? v : [String(v)].filter(Boolean), {
+                shouldValidate: true,
+                shouldDirty: true,
+              });
             }}
             onOpenChange={(open) => open && setSubcategoriesTouched(true)}
             fit="trigger"
@@ -179,7 +244,12 @@ export default function Step2() {
       </div>
 
       <div className={styles.actions}>
-        <Button variant="secondary" type="button" onClick={() => navigate('/register/1')} className={styles.fluidBtn}>
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={() => navigate('/register/1')}
+          className={styles.fluidBtn}
+        >
           Назад
         </Button>
         <Button variant="primary" type="submit" disabled={!canSubmit} className={styles.fluidBtn}>

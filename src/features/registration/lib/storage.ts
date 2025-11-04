@@ -17,12 +17,20 @@ export type RegistrationStep2Data = {
   subcategories: string[]; // названия навыков/подкатегорий
 };
 
+export type RegistrationStep3Data = {
+  title: string;
+  category: TagCategory;
+  subcategory: string;
+  images: string[];
+};
+
 export type RegistrationData = {
   currentStep: number;
   completedSteps: number[];
   stepData: {
     step1?: RegistrationStep1Data;
     step2?: RegistrationStep2Data;
+    step3?: RegistrationStep3Data;
   };
   expiresAt: number;
 };

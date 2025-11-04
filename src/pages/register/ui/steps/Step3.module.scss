@@ -3,14 +3,7 @@
   width: 100%;
 }
 
-.header {
-  margin-bottom: 16px;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.field {
   margin-bottom: 16px;
 }
 
@@ -19,12 +12,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-top: 16px;
-}
-
-.avatar-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 16px;
 }
 
 .full-width {
@@ -36,6 +23,10 @@
   width: 100%;
 }
 
-.field {
+.dropzone-wrap {
+  margin-top: 8px;
+}
+
+.header {
   margin-bottom: 16px;
 }

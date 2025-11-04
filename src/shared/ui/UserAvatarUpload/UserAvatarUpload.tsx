@@ -1,4 +1,12 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styles from './UserAvatarUpload.module.scss';
 import DefaultUserIconUrl from '@shared/assets/images/user-circle.svg?url';
 import { Icon } from '@shared/ui';
@@ -47,28 +55,34 @@ export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUpl
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [imgError, setImgError] = useState(false);
+    const lastUrlRef = useRef<string | null>(null);
 
     useEffect(() => {
       setImgError(false);
     }, [previewUrl, initialSrc]);
 
     useEffect(() => {
-      if (!file) {
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl);
+      if (lastUrlRef.current) {
+        URL.revokeObjectURL(lastUrlRef.current);
 
-          setPreviewUrl(null);
-        }
-
-        return;
+        lastUrlRef.current = null;
       }
 
-      const url = URL.createObjectURL(file);
+      if (file) {
+        const url = URL.createObjectURL(file);
 
-      setPreviewUrl(url);
+        lastUrlRef.current = url;
+
+        setPreviewUrl(url);
+      } else {
+        setPreviewUrl(null);
+      }
 
       return () => {
-        URL.revokeObjectURL(url);
+        if (lastUrlRef.current) {
+          URL.revokeObjectURL(lastUrlRef.current);
+          lastUrlRef.current = null;
+        }
       };
     }, [file]);
 
@@ -95,10 +109,13 @@ export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUpl
       [file, onChange, previewUrl]
     );
 
-    const rootStyle = useMemo<React.CSSProperties>(() => ({
-      width: diameter,
-      height: diameter,
-    }), [diameter]);
+    const rootStyle = useMemo<React.CSSProperties>(
+      () => ({
+        width: diameter,
+        height: diameter,
+      }),
+      [diameter]
+    );
 
     const pickFile = useCallback(() => {
       if (disabled) {
@@ -108,18 +125,21 @@ export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUpl
       inputRef.current?.click();
     }, [disabled]);
 
-    const onInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-      const f = e.target.files?.[0] ?? null;
+    const onInputChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const f = e.target.files?.[0] ?? null;
 
-      if (!f) {
-        return;
-      }
+        if (!f) {
+          return;
+        }
 
-      setFile(f);
-      onChange?.(f);
+        setFile(f);
+        onChange?.(f);
 
-      e.currentTarget.value = '';
-    }, [onChange]);
+        e.currentTarget.value = '';
+      },
+      [onChange]
+    );
 
     const showPreview = !!previewUrl && !imgError;
     const showInitial = !showPreview && !!initialSrc && !imgError;
@@ -139,9 +159,19 @@ export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUpl
           disabled={disabled}
         >
           {showPreview ? (
-            <img className={styles.image} src={previewUrl!} alt={alt} onError={() => setImgError(true)} />
+            <img
+              className={styles.image}
+              src={previewUrl!}
+              alt={alt}
+              onError={() => setImgError(true)}
+            />
           ) : showInitial ? (
-            <img className={styles.image} src={initialSrc!} alt={alt} onError={() => setImgError(true)} />
+            <img
+              className={styles.image}
+              src={initialSrc!}
+              alt={alt}
+              onError={() => setImgError(true)}
+            />
           ) : (
             <img className={styles.placeholder} src={DefaultUserIconUrl} alt={alt} />
           )}
