@@ -10,6 +10,7 @@
   gap: var(--grid-gap, 24px);
   width: 100%;
   min-width: 0;
+  align-items: stretch;
 
   @media (width >= 768px) {
     grid-template-columns: repeat(var(--grid-columns-tablet, 2), 1fr);

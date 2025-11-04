@@ -31,6 +31,14 @@
             {
               "skill_id": "hlth_001",
               "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            },
+            {
+              "skill_id": "art_001",
+              "skill_description": "Хочу научиться рисованию"
+            },
+            {
+              "skill_id": "lang_002",
+              "skill_description": "Интересуюсь французским языком"
             }
           ]
         },
@@ -65,12 +73,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "art_001",
+              "skill_description": "Хочу научиться рисованию и иллюстрации"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "lang_002",
+              "skill_description": "Интересуюсь французским языком"
+            },
+            {
+              "skill_id": "home_001",
+              "skill_description": "Хочу улучшить навыки организации пространства"
             }
           ]
         },
@@ -105,12 +117,24 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "bus_001",
+              "skill_description": "Хочу развить навыки управления командой"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "bus_002",
+              "skill_description": "Интересуюсь маркетингом и рекламой"
+            },
+            {
+              "skill_id": "edu_001",
+              "skill_description": "Стремлюсь к личностному развитию"
+            },
+            {
+              "skill_id": "art_002",
+              "skill_description": "Хочу научиться фотографии"
+            },
+            {
+              "skill_id": "hlth_002",
+              "skill_description": "Интересуюсь здоровым питанием"
             }
           ]
         },
@@ -146,12 +170,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "art_002",
+              "skill_description": "Хочу научиться фотографии"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "home_001",
+              "skill_description": "Интересуюсь организацией пространства"
+            },
+            {
+              "skill_id": "edu_002",
+              "skill_description": "Хочу улучшить навыки обучения"
             }
           ]
         },
@@ -186,12 +214,20 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "bus_003",
+              "skill_description": "Хочу развить навыки продаж и переговоров"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "lang_003",
+              "skill_description": "Интересуюсь испанским языком"
+            },
+            {
+              "skill_id": "art_003",
+              "skill_description": "Хочу научиться видеомонтажу"
+            },
+            {
+              "skill_id": "hlth_003",
+              "skill_description": "Стремлюсь к улучшению ментального здоровья"
             }
           ]
         },
@@ -226,12 +262,12 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "bus_004",
+              "skill_description": "Хочу развить личный бренд"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "art_005",
+              "skill_description": "Интересуюсь актёрским мастерством"
             }
           ]
         },
@@ -266,12 +302,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "bus_007",
+              "skill_description": "Хочу освоить проектное управление"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "lang_004",
+              "skill_description": "Интересуюсь немецким языком"
+            },
+            {
+              "skill_id": "home_003",
+              "skill_description": "Хочу научиться готовить"
             }
           ]
         },
@@ -306,12 +346,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "edu_003",
+              "skill_description": "Хочу развить когнитивные техники"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "art_006",
+              "skill_description": "Интересуюсь креативным письмом"
+            },
+            {
+              "skill_id": "hlth_004",
+              "skill_description": "Стремлюсь к осознанности"
             }
           ]
         },
@@ -346,12 +390,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "home_002",
+              "skill_description": "Хочу научиться управлять домашними финансами"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "lang_005",
+              "skill_description": "Интересуюсь китайским языком"
+            },
+            {
+              "skill_id": "hlth_005",
+              "skill_description": "Стремлюсь к регулярным физическим тренировкам"
             }
           ]
         },
@@ -386,12 +434,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "edu_004",
+              "skill_description": "Хочу освоить скорочтение"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "art_007",
+              "skill_description": "Интересуюсь арт-терапией"
+            },
+            {
+              "skill_id": "home_004",
+              "skill_description": "Хочу научиться ухаживать за домашними растениями"
             }
           ]
         },
@@ -426,12 +478,20 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "bus_005",
+              "skill_description": "Хочу улучшить навыки прохождения собеседований"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "lang_006",
+              "skill_description": "Интересуюсь японским языком"
+            },
+            {
+              "skill_id": "home_005",
+              "skill_description": "Хочу научиться ремонту"
+            },
+            {
+              "skill_id": "hlth_006",
+              "skill_description": "Стремлюсь улучшить качество сна"
             }
           ]
         },
@@ -466,12 +526,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "edu_005",
+              "skill_description": "Хочу развить навыки преподавания"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "art_008",
+              "skill_description": "Интересуюсь декором и DIY"
+            },
+            {
+              "skill_id": "home_006",
+              "skill_description": "Хочу научиться организации хранения вещей"
             }
           ]
         },
@@ -506,12 +570,16 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "edu_006",
+              "skill_description": "Хочу освоить коучинг"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "lang_007",
+              "skill_description": "Интересуюсь подготовкой к экзаменам IELTS и TOEFL"
+            },
+            {
+              "skill_id": "hlth_007",
+              "skill_description": "Стремлюсь к балансу жизни и работы"
             }
           ]
         },
@@ -546,12 +614,24 @@
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "bus_001",
+              "skill_description": "Хочу развить навыки управления командой"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "art_003",
+              "skill_description": "Интересуюсь видеомонтажом"
+            },
+            {
+              "skill_id": "edu_002",
+              "skill_description": "Хочу улучшить навыки обучения"
+            },
+            {
+              "skill_id": "hlth_005",
+              "skill_description": "Стремлюсь к регулярным физическим тренировкам"
+            },
+            {
+              "skill_id": "lang_001",
+              "skill_description": "Хочу улучшить английский язык"
             }
           ]
         },
@@ -619,16 +699,27 @@
         },
         "my_skills": {
           "teach": [
-          
+            {
+              "skill_id": "bus_001",
+              "skill_description": "Научу управлению командой. Опыт руководства театром кукол."
+            },
+            {
+              "skill_id": "art_005",
+              "skill_description": "Преподаю актёрское мастерство. Многолетний опыт в театре."
+            }
           ],
           "learn": [
             {
-              "skill_id": "bus_006",
-              "skill_description": "Хочу научиться эффективно управлять временем"
+              "skill_id": "art_001",
+              "skill_description": "Хочу научиться рисованию"
             },
             {
-              "skill_id": "hlth_001",
-              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+              "skill_id": "art_002",
+              "skill_description": "Интересуюсь фотографией"
+            },
+            {
+              "skill_id": "bus_003",
+              "skill_description": "Хочу развить навыки продаж"
             }
           ]
         },
@@ -662,7 +753,18 @@
             }
           ],
           "learn": [
-            
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь йогой и медитацией"
+            },
+            {
+              "skill_id": "lang_001",
+              "skill_description": "Хочу улучшить английский язык"
+            }
           ]
         },
         "offers": {
