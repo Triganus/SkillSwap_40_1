@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback,useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
@@ -33,10 +33,9 @@ export default function HomePage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
-  
-// const [filters, setFilters] = useState<FilterPayload>(EMPTY_FILTERS);
 
-   
+  // const [filters, setFilters] = useState<FilterPayload>(EMPTY_FILTERS);
+
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
   const loading = useAppSelector(getSkillsLoading);
@@ -88,15 +87,15 @@ export default function HomePage() {
       dispatch(fetchUsersWithSkills());
     }
   }, [dispatch, usersData.length, loadingUsers]);
-  
-const isSidebarActive =
-  !!currentFilters.general ||
-  !!currentFilters.gender ||
-  (currentFilters.skills && currentFilters.skills.skill_categories.length > 0) ||
-  (currentFilters.cities && currentFilters.cities.length > 0);
 
-// Режим фильтрации активен, если есть либо строка поиска, либо боковые фильтры
- const isFiltering =  isSearching || isSidebarActive;
+  const isSidebarActive =
+    !!currentFilters.general ||
+    !!currentFilters.gender ||
+    (currentFilters.skills && currentFilters.skills.skill_categories.length > 0) ||
+    (currentFilters.cities && currentFilters.cities.length > 0);
+
+  // Режим фильтрации активен, если есть либо строка поиска, либо боковые фильтры
+  const isFiltering = isSearching || isSidebarActive;
 
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
@@ -107,12 +106,15 @@ const isSidebarActive =
   }, [searchFromUrl, searchQuery, dispatch]);
 
   // Обработчик изменения фильтров
-  const handleFiltersChange = useCallback((filters: FilterPayload) => {
-    console.log('Filters applied:', filters);
-    dispatch(setFilter(filters));
+  const handleFiltersChange = useCallback(
+    (filters: FilterPayload) => {
+      console.log('Filters applied:', filters);
+      dispatch(setFilter(filters));
 
-    // TODO: применить фильтры к данным после готовности API
-  }, [ dispatch]);
+      // TODO: применить фильтры к данным после готовности API
+    },
+    [dispatch]
+  );
 
   // Обработчики для CardSection
   const handleViewAllPopular = useCallback(() => {
@@ -154,18 +156,13 @@ const isSidebarActive =
           )
       )
     : [];
-  
-    const baseForFilter = searchFromUrl.trim()
-  ? searchResultCards
-  : usersData;
-    
+  const baseForFilter = searchFromUrl.trim() ? searchResultCards : usersData;
 
-const { matchesSidebar } = useSidebarFilter(currentFilters);
-const visibleSearchResultCards = useMemo(
-  () => baseForFilter.filter(matchesSidebar),
-  [baseForFilter, matchesSidebar]
-);
-
+  const { matchesSidebar } = useSidebarFilter(currentFilters);
+  const visibleSearchResultCards = useMemo(
+    () => baseForFilter.filter(matchesSidebar),
+    [baseForFilter, matchesSidebar]
+  );
 
   // Показываем прелоадер пока загружаются данные
   const isLoading = loadingCatalog || loadingUsers;
@@ -177,9 +174,6 @@ const visibleSearchResultCards = useMemo(
         </div>
       </div>
     );
-  }
-
- 
   }
 
   // Режим поиска - отображаем только результаты

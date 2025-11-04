@@ -600,7 +600,78 @@
           "outgoing": [],
           "archived": []
         }
+      },
+      {
+        "id": "user00",
+        "name": "Карабас-Барабас",
+        "date_of_birth": "2002-12-03",
+        "age": 22,
+        "date_of_registration": "2025-08-08",
+        "about_me": "Страшный и ужасный кукольный барабанщик.",
+        "avatar_image": "db/avatars/karabas.png",
+        "gender": "мужской",
+        "user_profession": "Фронтендер",
+        "is_online": true,
+        "location": "Архангельск",
+        "contacts": {
+          "phone": "+79161234579",
+          "email": "Karabas@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+          
+          ],
+          "learn": [
+            {
+              "skill_id": "bus_006",
+              "skill_description": "Хочу научиться эффективно управлять временем"
+            },
+            {
+              "skill_id": "hlth_001",
+              "skill_description": "Интересуюсь медитацией для внутреннего баланса"
+            }
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
+      },
+      {
+        "id": "user22",
+        "name": "Пикачу",
+        "date_of_birth": "2002-12-03",
+        "age": 44,
+        "date_of_registration": "2025-08-08",
+        "about_me": "Молодой покемон, любящий накатить пивка в гараже с друзьями",
+        "avatar_image": "db/avatars/pikachu.png",
+        "gender": "мужской",
+        "user_profession": "Покемон",
+        "is_online": true,
+        "location": "Казань",
+        "contacts": {
+          "phone": "+79161234579",
+          "email": "pikachu@mail.ru"
+        },
+        "my_skills": {
+          "teach": [
+            {
+              "skill_id": "art_004",
+              "skill_description": "Научу играть на барабанах. Энергичный подход к обучению."
+            }
+          ],
+          "learn": [
+            
+          ]
+        },
+        "offers": {
+          "incoming": [],
+          "outgoing": [],
+          "archived": []
+        }
       }
+      
     ]
   }
   

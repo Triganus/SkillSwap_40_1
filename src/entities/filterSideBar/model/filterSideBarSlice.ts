@@ -3,24 +3,25 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 const FilterPayloadInitialState: FilterPayload = {
-  general: null,  
+  general: null,
   gender: null,
-  skills: null, 
+  skills: null,
   cities: [],
   filtersApplied: false,
-};  
+};
 
 const filterSideBarSlice = createSlice({
   name: 'filterSideBar',
-  initialState: FilterPayloadInitialState,    
-  reducers: {   
-   
-setFilter (state, action: PayloadAction<FilterPayload>) {
+  initialState: FilterPayloadInitialState,
+  reducers: {
+    setFilter(state, action: PayloadAction<FilterPayload>) {
       return { ...state, ...action.payload };
-    } ,
-getFilter (state) {
+    },
+    getFilter(state) {
       return state;
-    } } } );
+    },
+  },
+});
 
 export const { setFilter, getFilter } = filterSideBarSlice.actions;
 

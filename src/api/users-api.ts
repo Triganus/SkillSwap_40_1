@@ -4,6 +4,7 @@ import type { Skill } from '@/entities/skill/model/types/types';
 import type { SkillCategoriesData } from '@/entities/Skill';
 import type { DbUser } from '@/entities/user/model/types/types';
 import { mapCategoryToTag } from '@/shared/lib/categoryMapper';
+// import { de } from 'date-fns/locale';
 
 interface DbUsersResponse {
   users: DbUser[];
@@ -29,6 +30,7 @@ export const fetchUsers = async (): Promise<User[]> => {
       name: dbUser.name,
       email: dbUser.contacts?.email || '',
       avatar: dbUser.avatar_image,
+      gender: dbUser.gender,
       bio:
         dbUser.location && dbUser.age
           ? `${dbUser.location}, ${dbUser.age} ${getAgeWord(dbUser.age)}`
@@ -123,6 +125,7 @@ export const fetchUsersAsSkillCards = async (): Promise<SkillCardProps[]> => {
         name: dbUser.name,
         email: dbUser.contacts?.email || '',
         avatar: dbUser.avatar_image,
+        gender: dbUser.gender,
         bio,
         skills: [],
         createdAt: dbUser.date_of_registration || new Date().toISOString(),

@@ -19,11 +19,8 @@ export const store = configureStore({
     users: usersReducer,
     skills: skillsReducer,
     user: userReducer,
-<<<<<<< HEAD
     filterSideBar: filterSideBarReducer,
-=======
     notifications: notificationsReducer,
->>>>>>> develop
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>
