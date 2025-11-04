@@ -134,14 +134,6 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
           resetToken={resetToken}
         />
       </div>
-
-      <CitiesSideBar
-        key={`cities-${resetToken}`}
-        title="Город"
-        cities={CITIES.map((city) => city)}
-        onChange={(val) => setCitiesSelected(val)}
-        resetToken={resetToken}
-      />
     </div>
   );
 };
