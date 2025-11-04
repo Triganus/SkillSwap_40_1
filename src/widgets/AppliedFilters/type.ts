@@ -1,4 +1,4 @@
-import type { FilterPayload } from '@widgets/FilterSideBar/TFilterSideBarProps';
+import type { FilterPayload } from '@/entities/filterSideBar/model';
 
 export interface TAppliedFiltersProps {
   filters: FilterPayload;
