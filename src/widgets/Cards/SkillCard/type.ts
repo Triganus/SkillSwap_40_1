@@ -23,4 +23,5 @@ export interface SkillCardProps {
   images?: string[];
   title?: string;
   category?: TagCategory;
+  isProposed?: boolean; // Обмен уже предложен
 }

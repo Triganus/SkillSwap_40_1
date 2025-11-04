@@ -30,6 +30,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   images = [],
   title,
   category,
+  isProposed = false,
 }) => {
   // Преобразуем images в формат MediaItem
   const mediaItems: MediaItem[] = React.useMemo(
@@ -147,17 +148,28 @@ export const SkillCard: React.FC<SkillCardProps> = ({
               </div>
             )}
 
-            {/* Кнопка "Предложить обмен" */}
-            {onExchangeClick && (
+            {/* Кнопка "Предложить обмен" или "Обмен предложен" */}
+            {isProposed ? (
               <Button
-                onClick={onExchangeClick}
-                variant="primary"
+                variant="secondary"
                 type="button"
                 className={styles.exchangeButton}
-                aria-label="Предложить обмен навыками"
+                aria-label="Обмен уже предложен"
               >
-                Предложить обмен
+                Обмен предложен
               </Button>
+            ) : (
+              onExchangeClick && (
+                <Button
+                  onClick={onExchangeClick}
+                  variant="primary"
+                  type="button"
+                  className={styles.exchangeButton}
+                  aria-label="Предложить обмен навыками"
+                >
+                  Предложить обмен
+                </Button>
+              )
             )}
           </div>
 
@@ -218,16 +230,24 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             </div>
           </div>
         </div>
-        <div className={styles.buttonWrapper}>
-          <Button
-            onClick={onDetailsClick}
-            variant="primary"
-            type="button"
-            aria-label={`Подробнее о пользователе ${user.name}`}
-          >
-            Подробнее
-          </Button>
-        </div>
+        {onDetailsClick && (
+          <div className={styles.buttonWrapper}>
+            <Button
+              onClick={(e) => {
+                console.log('[SkillCard] Button clicked for user:', user.name);
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('[SkillCard] Calling onDetailsClick');
+                onDetailsClick();
+              }}
+              variant="primary"
+              type="button"
+              aria-label={`Подробнее о пользователе ${user.name}`}
+            >
+              Подробнее
+            </Button>
+          </div>
+        )}
       </div>
     </article>
   );

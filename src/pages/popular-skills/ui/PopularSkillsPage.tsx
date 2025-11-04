@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
@@ -59,8 +59,24 @@ export default function PopularSkillsPage() {
     }, 500);
   }, [displayedCount, usersData.length]);
 
+  // Обновляем обработчики для карточек с правильной навигацией
+  const cardsWithNavigation = useMemo(() => {
+    return usersData.map((card) => ({
+      ...card,
+      onDetailsClick: () => {
+        const firstSkill = card.teachingSkills[0];
+        if (firstSkill) {
+          console.log('[PopularSkillsPage] Navigating to skill:', firstSkill.id);
+          navigate(`/skill/${firstSkill.id}`);
+        } else {
+          console.warn('[PopularSkillsPage] No teaching skills found for user:', card.user.name);
+        }
+      },
+    }));
+  }, [usersData, navigate]);
+
   // Фильтруем популярные карточки (все доступные, можно добавить логику популярности)
-  const popularCards = usersData.slice(0, displayedCount);
+  const popularCards = cardsWithNavigation.slice(0, displayedCount);
 
   // Обработчик возврата на главную
   const handleGoBack = useCallback(() => {

@@ -1,0 +1,59 @@
+.container {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-sizing: border-box;
+
+  @media (width <= 1024px) {
+    padding: var(--space-6) var(--space-6);
+  }
+
+  @media (width <= 768px) {
+    padding: var(--space-4) var(--space-3);
+    gap: var(--space-3);
+  }
+}
+
+.main-content {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.left-column {
+  /* Место под карточку пользователя (UserCard) */
+  min-height: 100px;
+}
+
+.right-column {
+  /* Правая колонка для SkillCard */
+  flex: 1;
+}
+
+.similar-section {
+  margin-top: calc(-1 * var(--space-2));
+}
+
+.similar-title {
+  margin: 0 0 var(--space-6);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: var(--space-8) var(--space-5);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-caption);
+}
+
+.error {
+  color: #d32f2f;
+}

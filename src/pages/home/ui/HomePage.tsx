@@ -143,14 +143,31 @@ export default function HomePage() {
     }, 500);
   }, [displayedRecommendedCount, usersData.length]);
 
+  // Обновляем обработчики для карточек с правильной навигацией
+  const cardsWithNavigation = useMemo(() => {
+    return usersData.map((card) => ({
+      ...card,
+      onDetailsClick: () => {
+        // Переходим на страницу первого навыка из teachingSkills
+        const firstSkill = card.teachingSkills[0];
+        if (firstSkill) {
+          console.log('[HomePage] Navigating to skill:', firstSkill.id);
+          navigate(`/skill/${firstSkill.id}`);
+        } else {
+          console.warn('[HomePage] No teaching skills found for user:', card.user.name);
+        }
+      },
+    }));
+  }, [usersData, navigate]);
+
   // Данные для отображения
-  const popularCards = usersData.slice(0, 3); // Первые 3
-  const newCards = usersData.slice(3, 6); // Следующие 3
-  const recommendedCards = usersData.slice(0, displayedRecommendedCount);
+  const popularCards = cardsWithNavigation.slice(0, 3); // Первые 3
+  const newCards = cardsWithNavigation.slice(3, 6); // Следующие 3
+  const recommendedCards = cardsWithNavigation.slice(0, displayedRecommendedCount);
 
   // Для поиска - фильтруем по имени или навыкам
   const searchResultCards = isSearching
-    ? usersData.filter(
+    ? cardsWithNavigation.filter(
         (card) =>
           card.user.name.toLowerCase().includes(searchFromUrl.toLowerCase()) ||
           card.teachingSkills.some((skill) =>
@@ -161,7 +178,7 @@ export default function HomePage() {
           )
       )
     : [];
-  const baseForFilter = searchFromUrl.trim() ? searchResultCards : usersData;
+  const baseForFilter = searchFromUrl.trim() ? searchResultCards : cardsWithNavigation;
 
   const { matchesSidebar } = useSidebarFilter(currentFilters);
   const visibleSearchResultCards = useMemo(
