@@ -10,6 +10,7 @@ export type RegisterStep3Values = {
   title: string;
   category: TagCategory | '';
   subcategory: string;
+  description: string;
   images: File[];
 };
 
@@ -46,6 +47,12 @@ export const registerStep3Schema = yup
         return Boolean(catLabel) && getSkillsByCategory(catLabel).includes(v);
       })
       .required('Выберите подкатегорию'),
+    description: yup
+      .string()
+      .trim()
+      .min(10, 'Минимум 10 символов')
+      .max(500, 'Максимум 500 символов')
+      .required('Добавьте описание навыка'),
     images: yup
       .array(
         yup
@@ -70,6 +77,7 @@ export function useRegisterStep3Form(initial?: Partial<RegisterStep3Values>) {
       title: '',
       category: '' as RegisterStep3Values['category'],
       subcategory: '',
+      description: '',
       images: [],
       ...(initial ?? {}),
     },
@@ -78,9 +86,15 @@ export function useRegisterStep3Form(initial?: Partial<RegisterStep3Values>) {
     autoClearServerErrors: true,
   });
 
-  const [titleVal = '', categoryVal = '', subcategoryVal = '', imagesVal = []] = useWatch({
+  const [
+    titleVal = '',
+    categoryVal = '',
+    subcategoryVal = '',
+    descriptionVal = '',
+    imagesVal = [],
+  ] = useWatch({
     control: form.control,
-    name: ['title', 'category', 'subcategory', 'images'],
+    name: ['title', 'category', 'subcategory', 'description', 'images'],
   });
 
   const canSubmit = useMemo(() => {
@@ -90,6 +104,7 @@ export function useRegisterStep3Form(initial?: Partial<RegisterStep3Values>) {
           title: titleVal,
           category: categoryVal as TagCategory | '',
           subcategory: subcategoryVal,
+          description: descriptionVal,
           images: imagesVal as File[],
         },
         { abortEarly: false }
@@ -97,14 +112,15 @@ export function useRegisterStep3Form(initial?: Partial<RegisterStep3Values>) {
     } catch {
       return false;
     }
-  }, [titleVal, categoryVal, subcategoryVal, imagesVal]);
+  }, [titleVal, categoryVal, subcategoryVal, descriptionVal, imagesVal]);
 
   const titleUI = form.getFieldUI('title');
   const categoryUI = form.getFieldUI('category');
   const subcategoryUI = form.getFieldUI('subcategory');
+  const descriptionUI = form.getFieldUI('description');
   const imagesUI = form.getFieldUI('images');
 
-  return { ...form, canSubmit, titleUI, categoryUI, subcategoryUI, imagesUI } as const;
+  return { ...form, canSubmit, titleUI, categoryUI, subcategoryUI, descriptionUI, imagesUI } as const;
 }
 
 export function buildSubcategoryOptions(category: TagCategory | '') {

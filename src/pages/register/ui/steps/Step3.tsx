@@ -8,6 +8,7 @@ import {
   Dropdown,
   ImageInput,
   ModalUI,
+  Textarea,
 } from '@shared/ui';
 import { InfoBlock } from '@features/auth';
 import schoolBoardImage from '@shared/assets/images/school-board.svg';
@@ -31,9 +32,12 @@ export default function Step3() {
         title: data.step3.title,
         category: data.step3.category as TagCategory,
         subcategory: data.step3.subcategory,
+        description: data.step3.description || '',
         images: [],
       }
     : undefined;
+
+  const savedImageUrls = data.step3?.images || [];
 
   const form = useRegisterStep3Form(initial);
   const {
@@ -47,11 +51,13 @@ export default function Step3() {
     titleUI,
     categoryUI,
     subcategoryUI,
+    descriptionUI,
   } = form;
 
   const [titleTouched, setTitleTouched] = useState(false);
   const [categoryTouched, setCategoryTouched] = useState(false);
   const [subcategoryTouched, setSubcategoryTouched] = useState(false);
+  const [descriptionTouched, setDescriptionTouched] = useState(false);
   const [imagesTouched, setImagesTouched] = useState(false);
   const [triedSubmit, setTriedSubmit] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -79,6 +85,7 @@ export default function Step3() {
           title: values.title.trim(),
           category: values.category as TagCategory,
           subcategory: values.subcategory,
+          description: values.description.trim(),
           images: imageDataUrls,
         },
       } as Partial<RegistrationData['stepData']>);
@@ -176,6 +183,37 @@ export default function Step3() {
 
       <div className={styles.field}>
         <FormField
+          label="Описание"
+          htmlFor="skillDescription"
+          error={descriptionTouched || triedSubmit ? descriptionUI.errorText : null}
+          forceError={forceAllFieldsError}
+        >
+          {(() => {
+            const reg = descriptionUI.register;
+
+            return (
+              <Textarea
+                id="skillDescription"
+                aria-label="Описание навыка"
+                placeholder="Коротко опишите, чему можете научить"
+                {...reg}
+                onBlur={(e) => {
+                  reg.onBlur(e);
+                  setDescriptionTouched(true);
+                }}
+                error={descriptionTouched || triedSubmit ? descriptionUI.highlight : false}
+                className={styles['full-width']}
+                rows={5}
+                maxLength={500}
+                showCounter
+              />
+            );
+          })()}
+        </FormField>
+      </div>
+
+      <div className={styles.field}>
+        <FormField
           label="Изображения навыка"
           htmlFor="skillImages"
           error={imagesTouched || triedSubmit ? form.getFieldClientError('images') : null}
@@ -185,10 +223,11 @@ export default function Step3() {
             <ImageInput
               multiple
               ariaLabel="Перетащите или выберите изображения навыка"
+              initialDataUrls={savedImageUrls}
               onFilesChange={(files) => {
                 setImagesTouched(true);
                 setValue('images', files, { shouldValidate: false, shouldDirty: true });
-                form.clearErrors(['title', 'category', 'subcategory']);
+                form.clearErrors(['title', 'category', 'subcategory', 'description']);
               }}
             />
           </div>

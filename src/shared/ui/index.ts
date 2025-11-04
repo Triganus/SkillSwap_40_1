@@ -4,6 +4,9 @@ export type { ButtonProps } from './Button';
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
+export { Textarea } from './Textarea';
+export type { TextareaProps } from './Textarea';
+
 export { AvatarUI } from './AvatarUI';
 export type { TAvatarUIProps } from './AvatarUI';
 

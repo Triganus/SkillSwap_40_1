@@ -21,6 +21,7 @@ export type RegistrationStep3Data = {
   title: string;
   category: TagCategory;
   subcategory: string;
+  description: string;
   images: string[];
 };
 
