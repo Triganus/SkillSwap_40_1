@@ -52,6 +52,7 @@ export default function Step3() {
     handleSubmit,
     setValue,
     getValues,
+    trigger,
     clearServerError,
     canSubmit,
     rootErrorMessage,
@@ -271,6 +272,13 @@ export default function Step3() {
                 aria-label="Описание навыка"
                 placeholder="Коротко опишите, чему можете научить"
                 {...reg}
+                onChange={async (e) => {
+                  await reg.onChange(e);
+
+                  setDescriptionTouched(true);
+
+                  await trigger('description');
+                }}
                 onBlur={(e) => {
                   reg.onBlur(e);
                   setDescriptionTouched(true);
@@ -278,8 +286,7 @@ export default function Step3() {
                 error={descriptionTouched || triedSubmit ? descriptionUI.highlight : false}
                 className={styles['full-width']}
                 rows={5}
-                maxLength={500}
-                showCounter
+                maxLength={300}
               />
             );
           })()}

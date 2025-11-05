@@ -14,7 +14,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       className = '',
       rows = 4,
       maxLength,
-      showCounter = false,
       resize = 'vertical',
       ...props
     },
@@ -31,10 +30,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       .filter(Boolean)
       .join(' ');
 
-    const currentLength = typeof value === 'string' ? value.length : 0;
-    const showCounterElement = showCounter && maxLength !== undefined;
-    const counterError = maxLength !== undefined && currentLength > maxLength;
-
     const baseProps = {
       ref,
       placeholder,
@@ -47,16 +42,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       ...(value !== undefined ? { value } : {}),
     } as const;
 
-    if (showCounterElement) {
-      return (
-        <span className={styles.wrapper}>
-          <textarea {...baseProps} />
-          <span className={`${styles.counter} ${counterError ? styles.counterError : ''}`}>
-            {currentLength}/{maxLength}
-          </span>
-        </span>
-      );
-    }
 
     return <textarea {...baseProps} />;
   }

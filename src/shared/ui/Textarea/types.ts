@@ -15,6 +15,5 @@ export interface TextareaProps
   id?: string;
   rows?: number;
   maxLength?: number;
-  showCounter?: boolean;
   resize?: 'none' | 'vertical' | 'horizontal' | 'both';
 }

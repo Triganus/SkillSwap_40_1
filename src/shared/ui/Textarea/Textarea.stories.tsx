@@ -23,9 +23,6 @@ const meta: Meta<typeof Textarea> = {
       control: { type: 'select' },
       options: ['none', 'vertical', 'horizontal', 'both'],
     },
-    showCounter: {
-      control: { type: 'boolean' },
-    },
     rows: {
       control: { type: 'number' },
     },
@@ -87,7 +84,6 @@ export const WithCounter: Story = {
   args: {
     placeholder: 'Введите описание (до 500 символов)',
     maxLength: 500,
-    showCounter: true,
     size: 'medium',
   },
 };
@@ -97,7 +93,6 @@ export const WithCounterAndValue: Story = {
     value: 'Это пример текста с счетчиком символов',
     placeholder: 'Введите описание',
     maxLength: 500,
-    showCounter: true,
     size: 'medium',
   },
 };
@@ -140,7 +135,6 @@ export const WithDescription: Story = {
   args: {
     placeholder: 'Коротко опишите, чему можете научить',
     maxLength: 500,
-    showCounter: true,
     size: 'medium',
     rows: 5,
   },
