@@ -10,9 +10,6 @@ const LoginPage = lazy(() => import('@pages/login/ui/LoginPage'));
 const RegisterPage = lazy(() => import('@pages/register/ui/RegisterPage'));
 const ProfilePage = lazy(() => import('@pages/profile/ui/ProfilePage'));
 const FavoritesPage = lazy(() => import('@pages/favorites/ui/FavoritesPage'));
-const PopupTestPage = lazy(() =>
-  import('@pages/popup-test').then((m) => ({ default: m.PopupTestPage }))
-);
 const SkillPage = lazy(() => import('@pages/skill-page'));
 const PopularSkillsPage = lazy(() => import('@pages/popular-skills'));
 const NewSkillsPage = lazy(() => import('@pages/new-skills'));
@@ -81,7 +78,6 @@ export default function AppRouter() {
           <Route path="/skill/:id" element={<SkillPage />} />
           <Route path="/popular-skills" element={<PopularSkillsPage />} />
           <Route path="/new-skills" element={<NewSkillsPage />} />
-          <Route path="/popup-test" element={<PopupTestPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<ProfilePage />} />
