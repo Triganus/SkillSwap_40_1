@@ -35,4 +35,3 @@ const popupSlice = createSlice({
 });
 
 export const { actions: popupActions, reducer: popupReducer } = popupSlice;
-

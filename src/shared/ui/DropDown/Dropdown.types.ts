@@ -1,4 +1,3 @@
-// filepath: /Users/dcrawe/Projects/Corses/YPracticum/SkillSwap_40_11/src/shared/ui/Dropdown/Dropdown.types.ts
 import React from 'react';
 
 export type Option = {
@@ -21,7 +20,6 @@ export type DropdownProps = {
   required?: boolean;
   fullWidth?: boolean;
   className?: string;
-  /** список опций. Можно также отрисовывать свои <Dropdown.Item/> вручную */
   options?: Option[];
   multiple?: boolean;
   value?: DropdownValue;

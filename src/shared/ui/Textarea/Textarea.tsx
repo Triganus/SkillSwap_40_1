@@ -42,7 +42,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       ...(value !== undefined ? { value } : {}),
     } as const;
 
-
     return <textarea {...baseProps} />;
   }
 );

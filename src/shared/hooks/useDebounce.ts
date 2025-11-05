@@ -1,4 +1,3 @@
-// filepath: /Users/dcrawe/Projects/Corses/YPracticum/SkillSwap_40_11/src/shared/hooks/useDebounce.ts
 import { useEffect, useState } from 'react';
 
 export function useDebounce<T>(value: T, delay = 300): T {
@@ -11,6 +10,7 @@ export function useDebounce<T>(value: T, delay = 300): T {
     }
 
     const id = setTimeout(() => setDebounced(value), delay);
+
     return () => clearTimeout(id);
   }, [value, delay]);
 

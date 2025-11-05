@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { usePopup } from '@app/hooks/usePopup';
 import { ModalUI, Button } from '@shared/ui';
 import styles from './NotificationPopup.module.scss';
@@ -31,12 +31,7 @@ export function NotificationPopup() {
   }
 
   return (
-    <ModalUI
-      isOpen={true}
-      onClose={handleClose}
-      title=""
-      className={styles.notificationModal}
-    >
+    <ModalUI isOpen={true} onClose={handleClose} title="" className={styles.notificationModal}>
       <div className={styles.notificationContent}>
         {activePopup.icon && (
           <div className={styles.iconWrapper}>
@@ -48,16 +43,10 @@ export function NotificationPopup() {
 
         <p className={styles.message}>{activePopup.message}</p>
 
-        <Button
-          type="button"
-          variant="primary"
-          className={styles.button}
-          onClick={handleClose}
-        >
+        <Button type="button" variant="primary" className={styles.button} onClick={handleClose}>
           {activePopup.buttonText || 'Готово'}
         </Button>
       </div>
     </ModalUI>
   );
 }
-

@@ -1,6 +1,14 @@
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, FormField, Input, TwoColumnLayout, Dropdown, UserAvatarUpload } from '@shared/ui';
+import {
+  Button,
+  FormField,
+  Input,
+  TwoColumnLayout,
+  Dropdown,
+  UserAvatarUpload,
+  DatePickerUI,
+} from '@shared/ui';
 import type { UserAvatarUploadHandle } from '@shared/ui';
 import { InfoBlock } from '@features/auth';
 import { useRegistrationProgress, saveRegistrationData } from '@features/registration';
@@ -139,13 +147,16 @@ export default function Step2() {
             error={birthDateUI.errorText}
             forceError={forceAllFieldsError}
           >
-            <Input
-              id="birthDate"
+            <DatePickerUI
+              selectedDate={parseDateFromString(getValues('birthDate'))}
+              onChange={(date) => {
+                const formatted = date ? formatDateToString(date) : '';
+                setValue('birthDate', formatted, { shouldValidate: true, shouldDirty: true });
+              }}
               placeholder="дд.мм.гггг"
-              {...birthDateUI.register}
-              error={birthDateUI.highlight}
+              maxDate={new Date()}
               className={styles.fullWidth}
-              size="large"
+              error={birthDateUI.highlight}
             />
           </FormField>
         </div>
@@ -301,6 +312,42 @@ async function fileToDataURL(file: File): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+/**
+ * Преобразует строку формата дд.мм.гггг в объект Date
+ */
+function parseDateFromString(dateStr: string): Date | undefined {
+  if (!dateStr || typeof dateStr !== 'string') return undefined;
+
+  const parts = dateStr.split('.');
+  if (parts.length !== 3) return undefined;
+
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+  const year = parseInt(parts[2], 10);
+
+  if (isNaN(day) || isNaN(month) || isNaN(year)) return undefined;
+
+  const date = new Date(year, month - 1, day);
+
+  // Проверяем, что дата валидна
+  if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+    return undefined;
+  }
+
+  return date;
+}
+
+/**
+ * Форматирует объект Date в строку формата дд.мм.гггг
+ */
+function formatDateToString(date: Date): string {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}.${month}.${year}`;
 }
 
 function buildSubcategoryOptions(categories: string[]) {

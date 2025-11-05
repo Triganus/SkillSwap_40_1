@@ -57,3 +57,6 @@ export * from './DropDown';
 
 export { UserAvatarUpload } from './UserAvatarUpload';
 export type { UserAvatarUploadProps, UserAvatarUploadHandle } from './UserAvatarUpload';
+
+export { DatePickerUI } from './DatePicker';
+export type { TDatePickerUIProps } from './DatePicker';

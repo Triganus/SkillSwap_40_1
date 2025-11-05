@@ -24,4 +24,3 @@ export function usePopup() {
     hidePopup,
   } as const;
 }
-

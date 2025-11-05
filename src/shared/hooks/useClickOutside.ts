@@ -1,4 +1,3 @@
-// filepath: /Users/dcrawe/Projects/Corses/YPracticum/SkillSwap_40_11/src/shared/hooks/useClickOutside.ts
 import { useEffect } from 'react';
 
 /**

@@ -1,4 +1,3 @@
-// filepath: /Users/dcrawe/Projects/Corses/YPracticum/SkillSwap_40_11/src/shared/hooks/useKeyboardNavigation.ts
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type NavigationOptions = {

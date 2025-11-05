@@ -10,7 +10,9 @@ const LoginPage = lazy(() => import('@pages/login/ui/LoginPage'));
 const RegisterPage = lazy(() => import('@pages/register/ui/RegisterPage'));
 const ProfilePage = lazy(() => import('@pages/profile/ui/ProfilePage'));
 const FavoritesPage = lazy(() => import('@pages/favorites/ui/FavoritesPage'));
-const PopupTestPage = lazy(() => import('@pages/popup-test').then((m) => ({ default: m.PopupTestPage })));
+const PopupTestPage = lazy(() =>
+  import('@pages/popup-test').then((m) => ({ default: m.PopupTestPage }))
+);
 const NotFoundPage = lazy(() =>
   import('@pages/not-found404').then((m) => ({ default: m.NotFoundPage }))
 );

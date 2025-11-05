@@ -1,4 +1,3 @@
-// filepath: /Users/dcrawe/Projects/Corses/YPracticum/SkillSwap_40_11/src/shared/ui/Dropdown/Dropdown.tsx
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -13,6 +12,7 @@ import type { DropdownProps, DropdownValue, Option } from './Dropdown.types';
 
 const normalize = (val?: DropdownValue, multiple?: boolean): string[] => {
   if (multiple) return Array.isArray(val) ? val : val ? [val] : [];
+
   return typeof val === 'string' ? (val ? [val] : []) : Array.isArray(val) ? val.slice(0, 1) : [];
 };
 
@@ -31,6 +31,7 @@ const useControllable = <T,>(
     },
     [isControlled, onChange]
   );
+
   return [value, set] as const;
 };
 
@@ -92,7 +93,9 @@ export const Dropdown: React.FC<DropdownProps> & {
   const filtered = useMemo(() => {
     if (!enableSearch) return options; // если поиск выключен, показываем все
     if (!debouncedQuery) return options;
+
     const q = debouncedQuery.toLowerCase();
+
     return options.filter((o) => String(o.label).toLowerCase().includes(q));
   }, [debouncedQuery, enableSearch, options]);
 
@@ -109,7 +112,6 @@ export const Dropdown: React.FC<DropdownProps> & {
           : [...internal, val];
         setInternal(next);
         setQuery('');
-        // список остаётся открытым при мультиселекте
       } else {
         setInternal([val]);
         setQuery('');
@@ -136,22 +138,30 @@ export const Dropdown: React.FC<DropdownProps> & {
       const id = setTimeout(() => {
         menuRef.current?.focus();
       }, 0);
+
       return () => clearTimeout(id);
     }
+
     return;
   }, [isOpen]);
 
   const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
       e.preventDefault();
+
       setOpen(!isOpen);
+
       return;
     }
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      if (!isOpen) setOpen(true);
+
+      if (!isOpen) {
+        setOpen(true);
+      }
       // передаём в общий onKeyDown, чтобы выбрать активный элемент
       onKeyDown(e);
+
       return;
     }
   };
@@ -164,8 +174,13 @@ export const Dropdown: React.FC<DropdownProps> & {
     }
     if (e.key === 'Enter' && activeIndex >= 0) {
       e.preventDefault();
+
       const opt = filtered[activeIndex];
-      if (opt && !opt.disabled) onItemSelect(opt.value);
+
+      if (opt && !opt.disabled) {
+        onItemSelect(opt.value);
+      }
+
       return;
     }
     onKeyDown(e);
@@ -213,9 +228,13 @@ export const Dropdown: React.FC<DropdownProps> & {
   );
 
   const displayContent = useMemo(() => {
-    if (renderDisplay) return renderDisplay(selectedOptions, placeholder);
-    if (multiple)
+    if (renderDisplay) {
+      return renderDisplay(selectedOptions, placeholder);
+    }
+    if (multiple) {
       return selectedOptions.length ? `Выбрано: ${selectedOptions.length}` : placeholder;
+    }
+
     return selectedOptions[0]?.label ?? placeholder;
   }, [multiple, placeholder, renderDisplay, selectedOptions]);
   const placeholderText = useMemo(

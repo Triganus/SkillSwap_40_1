@@ -50,7 +50,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transform: translate(0, -1px);
   transition:
     background-color var(--dur-normal) var(--easing-standard),
     color var(--dur-normal) var(--easing-standard),
