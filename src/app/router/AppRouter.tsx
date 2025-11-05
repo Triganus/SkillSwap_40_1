@@ -13,12 +13,16 @@ const FavoritesPage = lazy(() => import('@pages/favorites/ui/FavoritesPage'));
 const PopupTestPage = lazy(() =>
   import('@pages/popup-test').then((m) => ({ default: m.PopupTestPage }))
 );
+const SkillPage = lazy(() => import('@pages/skill-page'));
+const PopularSkillsPage = lazy(() => import('@pages/popular-skills'));
+const NewSkillsPage = lazy(() => import('@pages/new-skills'));
 const NotFoundPage = lazy(() =>
   import('@pages/not-found404').then((m) => ({ default: m.NotFoundPage }))
 );
 const ServerErrorPage = lazy(() =>
   import('@pages/server-error500').then((m) => ({ default: m.ServerErrorPage }))
 );
+const NotificationsPage = lazy(() => import('@pages/notifications/ui/NotificationsPage'));
 
 function RequireAuth() {
   const { auth } = useAuth();
@@ -74,11 +78,15 @@ export default function AppRouter() {
 
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/skill/:id" element={<SkillPage />} />
+          <Route path="/popular-skills" element={<PopularSkillsPage />} />
+          <Route path="/new-skills" element={<NewSkillsPage />} />
           <Route path="/popup-test" element={<PopupTestPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
           </Route>
 
           {/* Страницы ошибок */}

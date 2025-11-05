@@ -2,7 +2,7 @@
  * Константы для гендера
  */
 export const GENDER_OPTIONS = [
-  { label: 'Не указан', value: '' },
+  { label: 'Не имеет значения', value: '' },
   { label: 'Мужской', value: 'Мужской' },
   { label: 'Женский', value: 'Женский' },
 ] as const;

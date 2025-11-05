@@ -1,4 +1,7 @@
 import type React from 'react';
+import { useState, useCallback } from 'react';
+import type { KeyboardEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LogoUI } from '@shared/ui/Logo';
 import { NavMenu } from '@widgets/NavMenu';
 import { baseNavItems } from '@/shared/config/navigation';
@@ -12,8 +15,27 @@ import { useAuth } from '@app/Provider.tsx';
 
 export const HeaderWidget: React.FC = () => {
   const { auth } = useAuth();
+  const navigate = useNavigate();
   const items = useHeaderActions();
+  const [searchValue, setSearchValue] = useState('');
   const classes = [cls.header, auth.isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
+
+  const handleSearchSubmit = useCallback(() => {
+    if (searchValue.trim()) {
+      navigate(`/?search=${encodeURIComponent(searchValue.trim())}`);
+    } else {
+      navigate('/');
+    }
+  }, [searchValue, navigate]);
+
+  const handleSearchKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        handleSearchSubmit();
+      }
+    },
+    [handleSearchSubmit]
+  );
 
   return (
     <header className={classes}>
@@ -31,6 +53,9 @@ export const HeaderWidget: React.FC = () => {
             placeholder="Искать навык"
             prefix={<Icon name="search" size={24} title="Поиск" />}
             containerProps={{ style: { width: '100%' } }}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
           />
         </div>
         <div className={cls.right}>

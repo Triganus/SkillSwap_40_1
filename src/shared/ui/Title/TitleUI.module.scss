@@ -2,6 +2,9 @@
   font-family: 'Jost', var(--font-sans);
   font-weight: 500;
   color: var(--color-text);
+  overflow-wrap: break-word;
+  max-width: 100%;
+  text-align: left;
 }
 
 .xsmall {

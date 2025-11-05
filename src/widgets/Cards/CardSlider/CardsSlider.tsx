@@ -1,11 +1,11 @@
 import React from 'react';
 import { TitleUI } from '@/shared/ui/Title/TitleUI';
-import { SkillCardWidget } from '@/widgets/SkillCard/SkillCard';
 import { TextUI } from '@/shared/ui/Text/TextUI';
 import styles from './CardsSlider.module.scss';
-import { Slider } from '@shared/ui/Slider';
-import type { SkillCardProps } from '@shared/ui/SkillCard/type';
+import { Slider } from '@shared/ui';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { CardsSliderProps } from './types';
+import { SkillCard } from '@widgets/Cards/SkillCard';
 
 export const CardSlider: React.FC<CardsSliderProps> = ({
   title,
@@ -38,7 +38,7 @@ export const CardSlider: React.FC<CardsSliderProps> = ({
           slidesPerView={4}
           className={styles.slider}
           data={skillsList}
-          renderItem={(skill: SkillCardProps) => <SkillCardWidget {...skill} />}
+          renderItem={(skill: SkillCardProps) => <SkillCard {...skill} />}
         />
       )}
     </section>

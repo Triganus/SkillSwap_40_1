@@ -2,8 +2,13 @@ import type { TTitleUIProps } from './TitleUIProps';
 import styles from './TitleUI.module.scss';
 import type { JSX } from 'react';
 
-export const TitleUI: React.FC<TTitleUIProps> = ({ children, size = 'medium', id }) => {
-  const className = `${styles.title} ${styles[size]}`;
+export const TitleUI: React.FC<TTitleUIProps> = ({
+  children,
+  size = 'medium',
+  id,
+  className: customClassName,
+}) => {
+  const className = `${styles.title} ${styles[size]} ${customClassName || ''}`.trim();
 
   const getTeg = () => {
     switch (size) {

@@ -25,6 +25,12 @@
   column-gap: 24px;
   padding: 40px 0 12px;
   overflow: visible;
+
+  @media (width <= 768px) {
+    flex-wrap: wrap;
+    padding: 20px 0 12px;
+    gap: 12px;
+  }
 }
 
 .left {
@@ -32,6 +38,11 @@
   align-items: center;
   gap: 16px 20px;
   flex-wrap: nowrap;
+
+  @media (width <= 768px) {
+    flex: 0 0 auto;
+    order: 1;
+  }
 }
 
 .logo {
@@ -44,6 +55,10 @@
   min-width: 0;
   display: flex;
   flex-wrap: nowrap;
+
+  @media (width <= 768px) {
+    display: none;
+  }
 }
 
 .menu > * {
@@ -56,6 +71,12 @@
   min-width: 280px;
   display: flex;
   align-items: center;
+
+  @media (width <= 768px) {
+    flex: 1 1 100%;
+    min-width: 100%;
+    order: 2;
+  }
 }
 
 .right {
@@ -66,6 +87,12 @@
   flex-wrap: nowrap;
   justify-content: flex-end;
   max-width: var(--header-right-max);
+
+  @media (width <= 768px) {
+    flex: 0 0 auto;
+    order: 1;
+    gap: 8px;
+  }
 }
 
 .actions {

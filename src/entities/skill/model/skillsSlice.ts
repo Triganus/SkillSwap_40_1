@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '@app/store/store';
+import type { RootState } from '@app/store';
 import { fetchSkills as fetchSkillsAPI } from '@/api/skills-api';
 import type { Skill } from './types/types';
 import type { SkillsState } from './types';
