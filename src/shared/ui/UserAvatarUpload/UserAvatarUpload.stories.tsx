@@ -55,9 +55,7 @@ const WithRefApiDemo = (args: UserAvatarUploadProps) => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <TextUI>Файл: {fileName}</TextUI>
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button
-            onClick={() => alert(ref.current?.getFile() ? 'Есть файл' : 'Нет файла')}
-          >
+          <Button onClick={() => alert(ref.current?.getFile() ? 'Есть файл' : 'Нет файла')}>
             Проверить файл
           </Button>
           <Button variant="secondary" onClick={() => ref.current?.clear()}>

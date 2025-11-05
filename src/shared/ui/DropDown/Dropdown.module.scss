@@ -103,8 +103,6 @@
   display: block;
   top: calc(100% - var(--trigger-h));
   padding-top: calc(var(--trigger-h) + var(--shell-pad));
-  //padding-left: var(--shell-pad);
-  //padding-right: var(--shell-pad);
   border-color: var(--color-caption);
   border-radius: var(--radius-s);
 }
