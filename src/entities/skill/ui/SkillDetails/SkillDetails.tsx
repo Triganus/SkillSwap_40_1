@@ -14,12 +14,14 @@ import styles from './SkillDetails.module.scss';
 export const SkillDetails: React.FC<SkillDetailsProps> = ({
   title,
   category,
+  categoryLabel,
   text,
   images,
   variant,
   isLiked = false,
   isLikeActive = false,
   isRequestSent = false,
+  likesCount = 0,
   onLikeClick,
   onExchangeClick,
   onShareClick,
@@ -56,6 +58,8 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
               isActive={isLiked}
               onClick={onLikeClick}
               ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+              likesCount={likesCount}
+              showCount={true}
             />
           )}
           {onShareClick && (
@@ -86,7 +90,11 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
       {/* Заголовок и подзаголовок - слева */}
       <div className={styles.header}>
         <TitleUI size="large">{title}</TitleUI>
-        <TagUI label={tagCategoryToLabel[category]} category={category} className={styles.tag} />
+        <TagUI
+          label={categoryLabel || tagCategoryToLabel[category]}
+          category={category}
+          className={styles.tag}
+        />
       </div>
 
       {/* Описание - слева */}

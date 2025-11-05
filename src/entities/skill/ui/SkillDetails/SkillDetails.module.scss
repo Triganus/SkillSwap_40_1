@@ -1,6 +1,6 @@
 .skill-details {
   display: grid;
-  grid-template-columns: 1fr min-content;
+  grid-template-columns: 1fr auto;
   grid-template-rows: min-content min-content min-content;
   gap: var(--space-5, 20px) calc(var(--space-8, 40px) + var(--space-7, 32px));
   padding: var(--space-7, 32px) var(--space-8, 40px);
@@ -111,6 +111,8 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
+  min-width: 480px; /* Минимальная ширина для галереи (mainSize + thumb) */
+  width: auto;
 }
 
 .skill-details.modal {

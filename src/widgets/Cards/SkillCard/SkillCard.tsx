@@ -24,6 +24,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   onShareClick,
   onMoreClick,
   isLiked = false,
+  likesCount = 0,
   ariaLabel,
   mode = 'compact',
   description,
@@ -31,6 +32,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   title,
   category,
   isProposed = false,
+  userBio,
+  locationAndAge,
 }) => {
   // Преобразуем images в формат MediaItem
   const mediaItems: MediaItem[] = React.useMemo(
@@ -57,6 +60,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({
               isActive={isLiked}
               onClick={onLikeClick}
               ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+              likesCount={likesCount}
+              showCount={true}
             />
           )}
           {onShareClick && (
@@ -184,6 +189,65 @@ export const SkillCard: React.FC<SkillCardProps> = ({
     );
   }
 
+  // Режим для страницы навыка (по дизайну Figma)
+  if (mode === 'skill-page') {
+    return (
+      <article
+        className={styles.card}
+        aria-label={ariaLabel || `Карточка пользователя ${user.name}`}
+      >
+        {/* Большое фото профиля сверху */}
+        <div className={styles.skillPageAvatar}>
+          <AvatarUI
+            src={user.avatar || '/default-avatar.png'}
+            alt={`Аватар пользователя ${user.name}`}
+            size={120}
+          />
+        </div>
+
+        {/* Имя, город и возраст */}
+        <div className={styles.skillPageHeader}>
+          <TitleUI size="medium">{user.name}</TitleUI>
+          {locationAndAge && (
+            <TextUI variant="body" color="primary">
+              {locationAndAge}
+            </TextUI>
+          )}
+        </div>
+
+        {/* Биография пользователя */}
+        {userBio && userBio.trim() && (
+          <div className={styles.skillPageBio}>
+            <TextUI variant="body" color="primary">
+              {userBio}
+            </TextUI>
+          </div>
+        )}
+
+        {/* Навыки */}
+        <div className={styles.skillsSection}>
+          <div className={styles.skillGroup}>
+            <TitleUI size="xsmall">Может научить:</TitleUI>
+            <div className={styles.skillTags} aria-label="Может научить">
+              {teachingSkills.map((skill) => (
+                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.skillGroup}>
+            <TitleUI size="xsmall">Хочет научиться:</TitleUI>
+            <div className={styles.skillTags} aria-label="Хочет научиться">
+              {learningSkills.map((skill) => (
+                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
   // Компактный режим (по умолчанию)
   return (
     <article className={styles.card} aria-label={ariaLabel || `Карточка пользователя ${user.name}`}>
@@ -205,6 +269,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             isLiked ? `Убрать ${user.name} из избранного` : `Добавить ${user.name} в избранное`
           }
           className={styles.likeButton}
+          likesCount={likesCount}
+          showCount={true}
         />
       </div>
       <div className={styles.basicContent}>
