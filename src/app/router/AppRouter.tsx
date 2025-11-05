@@ -1,8 +1,9 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from '../Provider';
 import { Layout } from '@app/layouts/Layout.tsx';
 import { GuestLayout } from '@app/layouts/GuestLayout.tsx';
+import { clearRegistrationData, setEntryPath } from '@features/registration';
 
 const HomePage = lazy(() => import('@pages/home/ui/HomePage'));
 const LoginPage = lazy(() => import('@pages/login/ui/LoginPage'));
@@ -31,14 +32,45 @@ function RequireAuth() {
   return <Outlet />;
 }
 
+function GuestOnly() {
+  const { auth } = useAuth();
+  if (auth.isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+  return <Outlet />;
+}
+
 export default function AppRouter() {
+  const location = useLocation();
+  const prevPathRef = useRef<string>(location.pathname);
+
+  useEffect(() => {
+    const prev = prevPathRef.current;
+    const curr = location.pathname;
+
+    const wasRegister = prev.startsWith('/register');
+    const nowRegister = curr.startsWith('/register');
+
+    if (!wasRegister && nowRegister) {
+      setEntryPath(prev);
+    }
+
+    if (wasRegister && !nowRegister) {
+      clearRegistrationData();
+    }
+
+    prevPathRef.current = curr;
+  }, [location.pathname]);
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route element={<GuestLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/register/:step" element={<RegisterPage />} />
+          <Route element={<GuestOnly />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/register/:step" element={<RegisterPage />} />
+          </Route>
         </Route>
 
         <Route element={<Layout />}>

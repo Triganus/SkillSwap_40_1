@@ -15,6 +15,12 @@ export default {
         ignoreProperties: ['print-color-adjust', 'composes'],
       },
     ],
+    'selector-pseudo-class-no-unknown': [
+      true,
+      {
+        ignorePseudoClasses: ['global', 'local', 'export'],
+      },
+    ],
   },
   ignoreFiles: ['**/*.js', '**/*.ts', '**/*.jsx', '**/*.tsx'],
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './FormField.module.scss';
 
 export interface FormFieldProps {
   label?: string;
@@ -21,7 +22,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   return (
     <div>
       {label ? (
-        <label htmlFor={htmlFor} style={{ display: 'block', textAlign: 'left' }}>
+        <label htmlFor={htmlFor} className={styles.label}>
           {label}
         </label>
       ) : null}
@@ -39,7 +40,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           })()
         : children}
       {error ? (
-        <div id={describedById} role="alert" style={{ color: 'var(--color-error, #bf3920)' }}>
+        <div id={describedById} role="alert" className={styles.error}>
           {error}
         </div>
       ) : null}

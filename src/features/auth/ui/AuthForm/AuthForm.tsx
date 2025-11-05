@@ -7,11 +7,11 @@ import { FormField } from '@shared/ui/Form';
 import type { FieldUI } from '@shared/hooks/useValidatedForm';
 
 export interface AuthFormProps {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  onEmailChange: (value: string) => void;
-  onPasswordChange: (value: string) => void;
+  onEmailChange?: (value: string) => void;
+  onPasswordChange?: (value: string) => void;
   emailField?: FieldUI;
   passwordField?: FieldUI;
   register?: UseFormRegister<{ email: string; password: string }>;
@@ -30,8 +30,8 @@ export interface AuthFormProps {
 }
 
 export const AuthForm: React.FC<AuthFormProps> = ({
-  email,
-  password,
+  email = '',
+  password = '',
   loading,
   error,
   onSubmit,
@@ -108,7 +108,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               type="email"
               placeholder={emailPlaceholder}
               value={email}
-              onChange={(e) => onEmailChange(e.target.value)}
+              onChange={(e) => onEmailChange?.(e.target.value)}
               autoComplete="email"
               size="large"
               className={styles.fullWidth}
@@ -141,7 +141,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               type="password"
               placeholder={passwordPlaceholder}
               value={password}
-              onChange={(e) => onPasswordChange(e.target.value)}
+              onChange={(e) => onPasswordChange?.(e.target.value)}
               autoComplete="current-password"
               size="large"
               className={styles.fullWidth}

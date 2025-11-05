@@ -1,5 +1,6 @@
 import type { IRequestOrchestrator } from '../types';
 import { createAuthApiHandler } from './createAuthApiHandler';
+import { createRegistrationCompleteHandler } from './createRegistrationCompleteHandler';
 
 /**
  * Регистрация обработчиков запросов
@@ -7,4 +8,5 @@ import { createAuthApiHandler } from './createAuthApiHandler';
  */
 export function registerHandlers(orchestrator: IRequestOrchestrator): void {
   orchestrator.registerHandler(createAuthApiHandler(100));
+  orchestrator.registerHandler(createRegistrationCompleteHandler(100));
 }

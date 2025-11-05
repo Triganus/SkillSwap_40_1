@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ModalUI } from './ModalUI';
+import { Icon } from '../Icon/Icon';
 
 const meta: Meta<typeof ModalUI> = {
   title: 'Shared/UI/Modal',
@@ -142,6 +143,40 @@ export const LongContent: Story = {
       {
         label: 'Принять',
         onClick: () => console.log('Принять clicked'),
+        variant: 'primary',
+      },
+    ],
+    onClose: () => console.log('Modal closed'),
+  },
+};
+
+export const WithIcon: Story = {
+  args: {
+    isOpen: true,
+    title: 'Ваше предложение создано',
+    children: 'Теперь вы можете предложить обмен',
+    icon: <Icon name="user-circle" size={100} />,
+    actions: [
+      {
+        label: 'Готово',
+        onClick: () => console.log('Готово clicked'),
+        variant: 'primary',
+      },
+    ],
+    onClose: () => console.log('Modal closed'),
+  },
+};
+
+export const WithDifferentIcon: Story = {
+  args: {
+    isOpen: true,
+    title: 'Навык успешно создан',
+    children: 'Теперь другие пользователи смогут увидеть ваше предложение',
+    icon: <Icon name="Done" size={100} />,
+    actions: [
+      {
+        label: 'Отлично',
+        onClick: () => console.log('Отлично clicked'),
         variant: 'primary',
       },
     ],

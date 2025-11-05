@@ -1,0 +1,32 @@
+.form {
+  max-width: 460px;
+  width: 100%;
+}
+
+.field {
+  margin-bottom: var(--space-4);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+}
+
+.full-width {
+  width: 100%;
+  display: block;
+}
+
+.fluid-btn {
+  width: 100%;
+}
+
+.dropzone-wrap {
+  margin-top: var(--space-2);
+}
+
+.header {
+  margin-bottom: var(--space-4);
+}

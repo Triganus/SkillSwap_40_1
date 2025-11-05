@@ -1,0 +1,64 @@
+.textarea {
+  border: 1px solid var(--color-caption);
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  font-family: inherit;
+  width: 100%;
+
+  &:disabled {
+    background-color: var(--color-disabled);
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: var(--color-caption);
+  }
+}
+
+/* Sizes */
+.small {
+  padding: 6px 12px;
+  font-size: 14px;
+  min-height: 80px;
+}
+
+.medium {
+  padding: 8px 16px;
+  font-size: 16px;
+  min-height: 100px;
+}
+
+.large {
+  padding: 12px 20px;
+  font-size: 18px;
+  min-height: 120px;
+}
+
+/* States */
+.error {
+  border-color: var(--color-error);
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Resize options */
+.resize-none {
+  resize: none;
+}
+
+.resize-vertical {
+  resize: vertical;
+}
+
+.resize-horizontal {
+  resize: horizontal;
+}
+
+.resize-both {
+  resize: both;
+}

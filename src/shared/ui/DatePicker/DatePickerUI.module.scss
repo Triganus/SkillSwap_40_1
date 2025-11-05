@@ -9,15 +9,18 @@
     display: flex;
     align-items: center;
     border: 1px solid var(--border-color, #cccccc);
-    border-radius: var(--radius-m, 12px);
+    border-radius: var(--radius-s);
     background: var(--color-surface, #ffffff);
     overflow: hidden;
-    margin-bottom: 4px;
+
+    &.error {
+      border-color: var(--color-error);
+    }
   }
 
   .input {
     flex: 1;
-    padding: 12px 16px;
+    padding: 11px 16px;
     font-size: 16px;
     border: none;
     background: transparent;
@@ -211,6 +214,48 @@
     .day-button {
       background-color: var(--color-accent, #9cd36a);
       color: white;
+      font-weight: 600;
+    }
+  }
+
+  .today {
+    .day-button {
+      position: relative;
+      font-weight: 600;
+      color: var(--color-accent, #9cd36a);
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: var(--color-accent, #9cd36a);
+      }
+    }
+
+    &.selected-day .day-button {
+      color: white;
+
+      &::after {
+        background-color: white;
+      }
+    }
+  }
+
+  .disabled-day {
+    .day-button {
+      color: var(--color-caption, #999999);
+      opacity: 0.4;
+      cursor: not-allowed;
+      text-decoration: line-through;
+
+      &:hover {
+        background: none;
+      }
     }
   }
 

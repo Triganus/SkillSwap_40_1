@@ -9,7 +9,7 @@ import 'swiper/css/a11y';
 import styles from './MediaSlider.module.scss';
 import type { MediaSliderProps } from './types';
 import { Icon } from '../Icon/Icon.tsx';
-import { TextUI } from '../Text/TextUI';
+import { TextUI } from '@shared/ui';
 
 const toCssSize = (val: number | string): string => (typeof val === 'number' ? `${val}px` : val);
 
@@ -84,7 +84,19 @@ export const MediaSlider = <T extends { id: string; src: string; alt?: string }>
     handleAfterSetIndex(index);
   }, [index, handleAfterSetIndex]);
 
-  const rootCls = [styles.slider, className].filter(Boolean).join(' ');
+  const rootCls = useMemo(() => {
+    const cls = [styles.slider];
+
+    if (total === 1) {
+      cls.push(styles.singleImage);
+    }
+
+    if (className) {
+      cls.push(className);
+    }
+
+    return cls.filter(Boolean).join(' ');
+  }, [total, className]);
 
   const sizeStyle = useMemo<React.CSSProperties>(() => {
     const value = toCssSize(mainSize);
