@@ -68,8 +68,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
       cities: citiesSelected,
       filtersApplied: nextApplied,
     });
-  }, [generalFilterValue, genderValue, skillsData, citiesSelected, onChange]); // 🔴 зависимостями управляем тут
-
+  }, [generalFilterValue, genderValue, skillsData, citiesSelected, onChange]);
   return (
     <div className={styles.wrapper} role="region" aria-label="Боковая панель фильтров">
       <div
