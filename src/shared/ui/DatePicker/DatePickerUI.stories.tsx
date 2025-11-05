@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { DatePickerUI } from './DatePickerUI';
-
-// импортируем стили js-datepicker для Storybook
-import 'js-datepicker/dist/datepicker.min.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const meta: Meta<typeof DatePickerUI> = {
   title: 'Shared/DatePicker',
