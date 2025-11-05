@@ -126,12 +126,13 @@ export default function Step2() {
             {...nameUI.register}
             error={nameUI.highlight}
             className={styles.fullWidth}
+            size="large"
           />
         </FormField>
       </div>
 
       <div className={styles.row}>
-        <div className={styles.field}>
+        <div>
           <FormField
             label="Дата рождения"
             htmlFor="birthDate"
@@ -144,11 +145,12 @@ export default function Step2() {
               {...birthDateUI.register}
               error={birthDateUI.highlight}
               className={styles.fullWidth}
+              size="large"
             />
           </FormField>
         </div>
 
-        <div className={styles.field}>
+        <div>
           <FormField
             label="Пол"
             htmlFor="gender"
@@ -165,6 +167,7 @@ export default function Step2() {
               }
               fit="trigger"
               className={styles.fullWidth}
+              size="large"
             />
           </FormField>
         </div>
@@ -188,6 +191,7 @@ export default function Step2() {
             enableSearch
             fit="trigger"
             className={styles.fullWidth}
+            size="large"
           />
         </FormField>
       </div>
@@ -212,6 +216,7 @@ export default function Step2() {
             }}
             fit="trigger"
             className={styles.fullWidth}
+            size="large"
           />
         </FormField>
       </div>
@@ -239,6 +244,7 @@ export default function Step2() {
             onOpenChange={(open) => open && setSubcategoriesTouched(true)}
             fit="trigger"
             className={styles.fullWidth}
+            size="large"
           />
         </FormField>
       </div>

@@ -1,0 +1,13 @@
+.label {
+  display: block;
+  text-align: left;
+  margin-bottom: var(--space-1);
+}
+
+.error {
+  text-align: left;
+  font-size: var(--fs-caption);
+  color: var(--color-error);
+  line-height: var(--lh-caption);
+  margin-top: var(--space-1);
+}
