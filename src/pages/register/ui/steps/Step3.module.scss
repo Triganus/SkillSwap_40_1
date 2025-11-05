@@ -4,14 +4,14 @@
 }
 
 .field {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 16px;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
 }
 
 .full-width {
@@ -24,9 +24,9 @@
 }
 
 .dropzone-wrap {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 
 .header {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }

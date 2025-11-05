@@ -199,6 +199,7 @@ export default function Step3() {
                 }}
                 error={titleTouched || triedSubmit ? titleUI.highlight : false}
                 className={styles.fullWidth}
+                size="large"
               />
             );
           })()}
@@ -228,6 +229,7 @@ export default function Step3() {
             onOpenChange={(open) => open && setCategoryTouched(true)}
             fit="trigger"
             className={styles.fullWidth}
+            size="large"
           />
         </FormField>
       </div>
@@ -252,6 +254,7 @@ export default function Step3() {
             fit="trigger"
             className={styles.fullWidth}
             onOpenChange={(open) => open && setSubcategoryTouched(true)}
+            size="large"
           />
         </FormField>
       </div>
