@@ -7,11 +7,6 @@ export const baseNavItems: TNavItemNode[] = [
     label: 'О проекте',
     end: true,
   },
-  {
-    key: 'skills',
-    to: '/skills',
-    label: 'Все навыки',
-  },
 ];
 
 export const infoNavItems: TNavItemNode[] = [
