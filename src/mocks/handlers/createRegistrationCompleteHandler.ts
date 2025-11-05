@@ -52,6 +52,8 @@ export function createRegistrationCompleteHandler(priority = 100): IRequestHandl
         return Response.json({ message: 'Email and name are required' }, { status: 400 });
       }
 
+      const skillId = `skill_${Date.now()}_${body.skill.category}_${body.skill.subcategory}`;
+
       const mockUser: AuthUser = {
         id: `user_${Date.now()}`,
         email: body.email,
@@ -64,7 +66,7 @@ export function createRegistrationCompleteHandler(priority = 100): IRequestHandl
         my_skills: {
           teach: [
             {
-              skill_id: body.skill.category,
+              skill_id: skillId,
               skill_description: body.skill.description,
             },
           ],
