@@ -23,7 +23,7 @@
 
 .label {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
   min-inline-size: 20px;
   min-block-size: 34px;
@@ -42,7 +42,7 @@
 
 .content {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
   min-width: 0;
   max-width: 100%;
