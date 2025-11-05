@@ -53,7 +53,7 @@ export default function HomePage() {
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
   const isSearching = searchFromUrl.trim().length > 0;
-
+  console.log('Search from URL:', searchFromUrl);
   // Загрузка каталога навыков
   useEffect(() => {
     let cancelled = false;
@@ -149,6 +149,8 @@ export default function HomePage() {
   const recommendedCards = usersData.slice(0, displayedRecommendedCount);
 
   // Для поиска - фильтруем по имени или навыкам
+
+  console.log(searchFromUrl);
   const searchResultCards = isSearching
     ? usersData.filter(
         (card) =>

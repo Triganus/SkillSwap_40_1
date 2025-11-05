@@ -20,10 +20,13 @@ const filterSideBarSlice = createSlice({
     getFilter(state) {
       return state;
     },
+    resetFilter() {
+      return FilterPayloadInitialState;
+    },
   },
 });
 
-export const { setFilter, getFilter } = filterSideBarSlice.actions;
+export const { setFilter, getFilter, resetFilter } = filterSideBarSlice.actions;
 
 export const filterSideBarReducer = filterSideBarSlice.reducer;
 

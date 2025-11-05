@@ -1,7 +1,6 @@
 import type React from 'react';
-import { useState, useCallback } from 'react';
-import type { KeyboardEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { LogoUI } from '@shared/ui/Logo';
 import { NavMenu } from '@widgets/NavMenu';
 import { baseNavItems } from '@/shared/config/navigation';
@@ -15,26 +14,34 @@ import { useAuth } from '@app/Provider.tsx';
 
 export const HeaderWidget: React.FC = () => {
   const { auth } = useAuth();
-  const navigate = useNavigate();
+
   const items = useHeaderActions();
-  const [searchValue, setSearchValue] = useState('');
+  // const [searchValue, setSearchValue] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchValue, setSearchValue] = useState(searchParams.get('search') ?? '');
+
+  useEffect(() => {
+    const urlVal = searchParams.get('search') ?? '';
+    setSearchValue((prev) => (prev !== urlVal ? urlVal : prev));
+  }, [searchParams]);
+
   const classes = [cls.header, auth.isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
 
-  const handleSearchSubmit = useCallback(() => {
-    if (searchValue.trim()) {
-      navigate(`/?search=${encodeURIComponent(searchValue.trim())}`);
-    } else {
-      navigate('/');
-    }
-  }, [searchValue, navigate]);
-
-  const handleSearchKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        handleSearchSubmit();
-      }
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const next = e.target.value;
+      setSearchValue(next);
+      setSearchParams(
+        (prev) => {
+          const sp = new URLSearchParams(prev);
+          if (next.trim()) sp.set('search', next);
+          else sp.delete('search');
+          return sp;
+        },
+        { replace: true }
+      );
     },
-    [handleSearchSubmit]
+    [setSearchParams]
   );
 
   return (
@@ -54,8 +61,7 @@ export const HeaderWidget: React.FC = () => {
             prefix={<Icon name="search" size={24} title="Поиск" />}
             containerProps={{ style: { width: '100%' } }}
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onKeyDown={handleSearchKeyDown}
+            onChange={handleChange}
           />
         </div>
         <div className={cls.right}>
