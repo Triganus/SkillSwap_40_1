@@ -28,12 +28,15 @@ import {
 import type { TagCategory } from '@shared/ui/Tag';
 import { completeRegistration } from '@api/registration';
 import { useAuth } from '@app/Provider';
+import { usePopup } from '@app/hooks/usePopup';
+import { CheckIcon } from '@shared/ui/icons/CheckIcon';
 import styles from './Step3.module.scss';
 
 export default function Step3() {
   const navigate = useNavigate();
   const { completeStep, data } = useRegistrationProgress();
   const { login } = useAuth();
+  const { showPopup } = usePopup();
 
   const initial: Partial<RegisterStep3Values> | undefined = data.step3
     ? {
@@ -161,6 +164,14 @@ export default function Step3() {
 
       // Очищаем данные регистрации
       clearRegistrationData();
+
+      // Показываем попап об успешной регистрации
+      showPopup({
+        icon: <CheckIcon />,
+        title: 'Ваше предложение создано',
+        message: 'Теперь вы можете предложить обмен',
+        buttonText: 'Готово',
+      });
 
       // Редирект на главную
       navigate('/', { replace: true });

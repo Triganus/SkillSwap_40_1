@@ -1,0 +1,48 @@
+.notification-modal {
+  min-width: 556px;
+  padding: 0;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 40px;
+  width: 100%;
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 75px;
+  height: 75px;
+  margin-bottom: 65px;
+}
+
+.icon {
+  width: 75px;
+  height: 75px;
+}
+
+.title {
+  margin: 0 0 12px;
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-h2);
+  color: var(--color-text-primary, #1a1a1a);
+  text-align: center;
+}
+
+.message {
+  margin: 0 0 32px;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.button {
+  width: 100%;
+}
+
+
+

@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { authReducer } from '@features/auth/model/authSlice';
 import { usersReducer } from '@entities/user/model/userSlice';
 import { skillsReducer } from '@entities/skill/model';
+import { popupReducer } from './popupSlice';
 import { createLocalStorageMiddleware } from '@shared/lib/redux/localStorageMiddleware';
 import { loadState } from '@shared/lib/localStorage';
 
@@ -15,6 +16,7 @@ export const store = configureStore({
     auth: authReducer,
     users: usersReducer,
     skills: skillsReducer,
+    popup: popupReducer,
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>
