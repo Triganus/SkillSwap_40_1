@@ -28,10 +28,13 @@ body {
 }
 
 img,
-svg,
 video,
 canvas {
   display: block;
+  max-width: 100%;
+}
+
+svg {
   max-width: 100%;
 }
 
