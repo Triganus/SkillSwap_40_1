@@ -4,6 +4,9 @@ export type { ButtonProps } from './Button';
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
+export { Textarea } from './Textarea';
+export type { TextareaProps } from './Textarea';
+
 export { AvatarUI } from './AvatarUI';
 export type { TAvatarUIProps } from './AvatarUI';
 
@@ -46,4 +49,14 @@ export type { StandaloneStepIndicatorProps } from './StepIndicator';
 export { AuthMethodsSeparator } from './AuthMethodsSeparator';
 export type { AuthMethodsSeparatorProps } from './AuthMethodsSeparator';
 
+export { FormField } from './Form';
+export type { FormFieldProps } from './Form';
+
 export * from './Form';
+export * from './DropDown';
+
+export { UserAvatarUpload } from './UserAvatarUpload';
+export type { UserAvatarUploadProps, UserAvatarUploadHandle } from './UserAvatarUpload';
+
+export { DatePickerUI } from './DatePicker';
+export type { TDatePickerUIProps } from './DatePicker';

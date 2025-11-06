@@ -40,6 +40,7 @@ export interface ValidatedFormApi<TFieldValues extends Record<string, unknown>> 
   clearErrors: ReturnType<typeof useForm<TFieldValues>>['clearErrors'];
   setValue: ReturnType<typeof useForm<TFieldValues>>['setValue'];
   getValues: ReturnType<typeof useForm<TFieldValues>>['getValues'];
+  trigger: ReturnType<typeof useForm<TFieldValues>>['trigger'];
 
   // Подписанные значения состояния
   errors: FieldErrors<TFieldValues> & { root?: { message?: string; type?: string } };
@@ -193,6 +194,7 @@ export function useValidatedForm<TFieldValues extends Record<string, unknown>>(
       clearErrors: form.clearErrors,
       setValue: form.setValue,
       getValues: form.getValues,
+      trigger: form.trigger,
       errors: errors as ValidatedFormApi<TFieldValues>['errors'],
       getFieldClientError,
       hasFieldServerError,

@@ -32,6 +32,7 @@ export const DatePickerUI = ({
   placeholder = 'дд.мм.гггг',
   maxDate = new Date(),
   className = '',
+  error = false,
 }: TDatePickerUIProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -41,9 +42,27 @@ export const DatePickerUI = ({
   const [currentMonth, setCurrentMonth] = useState(initDate.getMonth());
   const [currentYear, setCurrentYear] = useState(initDate.getFullYear());
 
+  // временная выбранная дата (до подтверждения)
+  const [tempSelectedDate, setTempSelectedDate] = useState<Date | undefined>(selectedDate);
+
   // состояние для управления выпадающими списками
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
+
+  // обновляем временную дату при изменении selectedDate извне
+  useEffect(() => {
+    setTempSelectedDate(selectedDate);
+  }, [selectedDate]);
+
+  // обновляем месяц/год при открытии календаря
+  useEffect(() => {
+    if (isOpen) {
+      const dateToShow = selectedDate || new Date();
+      setCurrentMonth(dateToShow.getMonth());
+      setCurrentYear(dateToShow.getFullYear());
+      setTempSelectedDate(selectedDate);
+    }
+  }, [isOpen, selectedDate]);
 
   // закрытие при клике вне
   useEffect(() => {
@@ -93,8 +112,7 @@ export const DatePickerUI = ({
 
   const handleDateClick = (date: Date, disabled: boolean) => {
     if (disabled) return;
-    onChange?.(date);
-    setIsOpen(false);
+    setTempSelectedDate(date);
   };
 
   const handleMonthChange = (month: number) => {
@@ -117,6 +135,16 @@ export const DatePickerUI = ({
     setIsMonthDropdownOpen(false); // закрываем месяц, если открыт
   };
 
+  const handleCancel = () => {
+    setTempSelectedDate(selectedDate);
+    setIsOpen(false);
+  };
+
+  const handleConfirm = () => {
+    onChange?.(tempSelectedDate);
+    setIsOpen(false);
+  };
+
   const formatDate = (date?: Date): string => {
     if (!date) return '';
     return date.toLocaleDateString('ru-RU', {
@@ -126,12 +154,22 @@ export const DatePickerUI = ({
     });
   };
 
+  // Проверка, является ли дата сегодняшней
+  const isToday = (date: Date): boolean => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
+
   // генерируем список лет
   const years = Array.from({ length: 2025 - 1990 + 1 }, (_, i) => 1990 + i);
 
   return (
-    <div className={`${styles['date-picker-wrapper']} ${className}`} ref={wrapperRef}>
-      <div className={styles['input-wrapper']}>
+    <div className={`${styles.datePickerWrapper} ${className}`} ref={wrapperRef}>
+      <div className={`${styles.inputWrapper} ${error ? styles.error : ''}`}>
         <input
           type="text"
           readOnly
@@ -142,7 +180,7 @@ export const DatePickerUI = ({
         />
         <button
           type="button"
-          className={styles['icon-button-inside']}
+          className={styles.iconButtonInside}
           onClick={() => setIsOpen(true)}
           aria-label="Открыть календарь"
         >
@@ -157,7 +195,7 @@ export const DatePickerUI = ({
               <div className={styles.dropdown}>
                 <button
                   type="button"
-                  className={styles['month-button']}
+                  className={styles.monthButton}
                   aria-expanded={isMonthDropdownOpen}
                   aria-haspopup="listbox"
                 >
@@ -165,7 +203,7 @@ export const DatePickerUI = ({
                 </button>
                 <button
                   type="button"
-                  className={styles['chevron-button']}
+                  className={styles.chevronButton}
                   onClick={toggleMonthDropdown}
                   aria-label="Выбрать месяц"
                 >
@@ -173,15 +211,13 @@ export const DatePickerUI = ({
                 </button>
 
                 {isMonthDropdownOpen && (
-                  <div className={styles['dropdown-menu']}>
+                  <div className={styles.dropdownMenu}>
                     <ul role="listbox">
                       {MONTHS.map((month, idx) => (
                         <li
                           key={idx}
                           role="option"
-                          className={`${styles.dropdownItem} ${
-                            idx === currentMonth ? styles.selected : ''
-                          }`}
+                          className={idx === currentMonth ? styles.selected : ''}
                           onClick={() => handleMonthChange(idx)}
                           aria-selected={idx === currentMonth}
                         >
@@ -196,7 +232,7 @@ export const DatePickerUI = ({
               <div className={styles.dropdown}>
                 <button
                   type="button"
-                  className={styles['year-button']}
+                  className={styles.yearButton}
                   aria-expanded={isYearDropdownOpen}
                   aria-haspopup="listbox"
                 >
@@ -204,7 +240,7 @@ export const DatePickerUI = ({
                 </button>
                 <button
                   type="button"
-                  className={styles['chevron-button']}
+                  className={styles.chevronButton}
                   onClick={toggleYearDropdown}
                   aria-label="Выбрать год"
                 >
@@ -212,15 +248,13 @@ export const DatePickerUI = ({
                 </button>
 
                 {isYearDropdownOpen && (
-                  <div className={styles['dropdown-menu']}>
+                  <div className={styles.dropdownMenu}>
                     <ul role="listbox">
                       {years.map((year) => (
                         <li
                           key={year}
                           role="option"
-                          className={`${styles.dropdownItem} ${
-                            year === currentYear ? styles.selected : ''
-                          }`}
+                          className={year === currentYear ? styles.selected : ''}
                           onClick={() => handleYearChange(year)}
                           aria-selected={year === currentYear}
                         >
@@ -234,7 +268,7 @@ export const DatePickerUI = ({
             </div>
           </div>
 
-          <div className={styles['week-names']}>
+          <div className={styles.weekNames}>
             {WEEK_DAYS.map((day, i) => (
               <div key={i} className={styles.day}>
                 {day}
@@ -242,37 +276,38 @@ export const DatePickerUI = ({
             ))}
           </div>
 
-          <div className={styles['calendar-field']}>
+          <div className={styles.calendarField}>
             <div className={styles.days}>
-              {generateDays().map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`${styles.day} ${!item.isCurrent ? styles['day-outside'] : ''} ${
-                    selectedDate && item.date.toDateString() === selectedDate.toDateString()
-                      ? styles['selected-day']
-                      : ''
-                  }`}
-                >
-                  <button
-                    type="button"
-                    className={styles['day-button']}
-                    disabled={item.disabled}
-                    onClick={() => handleDateClick(item.date, item.disabled)}
+              {generateDays().map((item, idx) => {
+                const isSelectedDay =
+                  tempSelectedDate && item.date.toDateString() === tempSelectedDate.toDateString();
+                const isTodayDay = isToday(item.date);
+
+                return (
+                  <div
+                    key={idx}
+                    className={`${styles.day} ${!item.isCurrent ? styles.dayOutside : ''} ${
+                      isSelectedDay ? styles.selectedDay : ''
+                    } ${isTodayDay ? styles.today : ''} ${item.disabled ? styles.disabledDay : ''}`}
                   >
-                    {item.date.getDate()}
-                  </button>
-                </div>
-              ))}
+                    <button
+                      type="button"
+                      className={styles.dayButton}
+                      disabled={item.disabled}
+                      onClick={() => handleDateClick(item.date, item.disabled)}
+                      aria-label={`${item.date.getDate()} ${MONTHS[item.date.getMonth()]} ${item.date.getFullYear()}`}
+                    >
+                      {item.date.getDate()}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           <div className={styles.buttons}>
-            <Button className={styles.cancelButton} onClick={() => setIsOpen(false)}>
-              Отменить
-            </Button>
-            <Button className={styles.selectButton} onClick={() => setIsOpen(false)}>
-              Выбрать
-            </Button>
+            <Button onClick={handleCancel}>Отменить</Button>
+            <Button onClick={handleConfirm}>Выбрать</Button>
           </div>
         </div>
       )}

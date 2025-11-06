@@ -1,24 +1,20 @@
 .input {
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  border: 1px solid var(--color-caption);
+  border-radius: var(--radius-s);
   background-color: white;
-  transition: all 0.2s ease-in-out;
-  outline: none;
   font-family: inherit;
 
   &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgb(59 130 246 / 10%);
+    outline: none;
   }
 
   &:disabled {
-    background-color: #f9fafb;
-    color: #6b7280;
+    background-color: var(--color-disabled);
     cursor: not-allowed;
   }
 
   &::placeholder {
-    color: #9ca3af;
+    color: var(--color-caption);
   }
 }
 
@@ -36,7 +32,7 @@
 }
 
 .large {
-  padding: 12px 20px;
+  padding: 9px 20px;
   font-size: 18px;
   min-height: 48px;
 }

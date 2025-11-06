@@ -5,9 +5,10 @@ export type ImageInputFile = {
 
 export type ImageInputProps = {
   multiple?: boolean;
-  accept?: string; // e.g. 'image/*'
+  accept?: string;
   ariaLabel?: string;
   className?: string;
   onFilesChange: (files: File[]) => void;
-  initialFiles?: File[]; // optional prefilled files
+  initialFiles?: File[];
+  initialDataUrls?: string[];
 };

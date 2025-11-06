@@ -19,4 +19,8 @@ export interface TDatePickerUIProps {
    * дополнительный CSS-класс
    */
   className?: string;
+  /**
+   * состояние ошибки для визуального отображения
+   */
+  error?: boolean;
 }

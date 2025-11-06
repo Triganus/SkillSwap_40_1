@@ -10,18 +10,47 @@ export const ImageInput: React.FC<ImageInputProps> = ({
   className = '',
   onFilesChange,
   initialFiles = [],
+  initialDataUrls = [],
 }) => {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const [dragging, setDragging] = React.useState(false);
   const [items, setItems] = React.useState<ImageInputFile[]>([]);
+  const [initialized, setInitialized] = React.useState(false);
 
-  // Build object URLs for initial files if provided
+  const dataUrlToFile = React.useCallback(async (dataUrl: string, index: number): Promise<File> => {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    const fileName = `image-${index + 1}.${blob.type.split('/')[1] || 'png'}`;
+
+    return new File([blob], fileName, { type: blob.type });
+  }, []);
+
   React.useEffect(() => {
-    if (!initialFiles.length) return;
-    const withUrls = initialFiles.map((file) => ({ file, url: URL.createObjectURL(file) }));
-    setItems(withUrls);
-    // Do not revoke here; assume initial provided externally
-  }, [initialFiles]);
+    if (initialized) return;
+
+    const init = async () => {
+      if (initialDataUrls.length > 0) {
+        const filesFromDataUrls = await Promise.all(
+          initialDataUrls.map((url, idx) => dataUrlToFile(url, idx))
+        );
+        const withUrls = filesFromDataUrls.map((file, idx) => ({
+          file,
+          url: initialDataUrls[idx],
+        }));
+
+        setItems(withUrls);
+        onFilesChange(filesFromDataUrls);
+      } else if (initialFiles.length > 0) {
+        const withUrls = initialFiles.map((file) => ({ file, url: URL.createObjectURL(file) }));
+
+        setItems(withUrls);
+      }
+
+      setInitialized(true);
+    };
+
+    init();
+  }, [initialized, initialFiles, initialDataUrls, dataUrlToFile, onFilesChange]);
 
   const update = React.useCallback(
     (next: ImageInputFile[]) => {
@@ -32,7 +61,11 @@ export const ImageInput: React.FC<ImageInputProps> = ({
   );
 
   const revokeUrls = (list: ImageInputFile[]) => {
-    list.forEach((i) => URL.revokeObjectURL(i.url));
+    list.forEach((i) => {
+      if (i.url.startsWith('blob:')) {
+        URL.revokeObjectURL(i.url);
+      }
+    });
   };
 
   React.useEffect(() => () => revokeUrls(items), [items]);
@@ -44,10 +77,15 @@ export const ImageInput: React.FC<ImageInputProps> = ({
   const onInputChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files ? Array.from(e.target.files) : [];
-      if (!files.length) return;
+
+      if (!files.length) {
+        return;
+      }
+
       const prepared = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
+
       update(multiple ? [...items, ...prepared] : [prepared[0]]);
-      // reset value to allow re-select same file
+
       e.target.value = '';
     },
     [items, multiple, update]
@@ -86,7 +124,11 @@ export const ImageInput: React.FC<ImageInputProps> = ({
     (index: number) => {
       const next = [...items];
       const [removed] = next.splice(index, 1);
-      if (removed) URL.revokeObjectURL(removed.url);
+
+      if (removed && removed.url.startsWith('blob:')) {
+        URL.revokeObjectURL(removed.url);
+      }
+
       update(next);
     },
     [items, update]
@@ -102,7 +144,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
         role="button"
         tabIndex={0}
         aria-label={ariaLabel}
-        onClick={pickFiles}
+        onClick={() => pickFiles()}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -115,7 +157,16 @@ export const ImageInput: React.FC<ImageInputProps> = ({
       >
         <TextUI>Перетащите изображения сюда или нажмите, чтобы выбрать</TextUI>
         <div style={{ marginTop: 8 }}>
-          <Button variant="secondary">Выбрать файл</Button>
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              pickFiles();
+            }}
+          >
+            Выбрать файл
+          </Button>
         </div>
         <input
           ref={inputRef}

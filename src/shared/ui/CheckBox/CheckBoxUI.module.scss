@@ -23,7 +23,7 @@
 
 .label {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
   min-inline-size: 20px;
   min-block-size: 34px;
@@ -42,7 +42,7 @@
 
 .content {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
   min-width: 0;
   max-width: 100%;
@@ -144,9 +144,8 @@
 .text {
   font-family: var(--font-sans), sans-serif;
   font-size: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .sm .text {

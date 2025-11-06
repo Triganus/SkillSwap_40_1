@@ -18,7 +18,7 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
   const handleToggle = useCallback(() => setOpened((v) => !v), []);
 
   const selectedList = useMemo(() => Array.from(selected), [selected]);
-
+  console.log('Selected cities:', selected);
   // Сброс при изменении resetToken
   useEffect(() => {
     onChange?.(selectedList);
@@ -56,7 +56,6 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
         {cities.map((city, idx) => {
           const hidden = isCollapsed && idx >= VISIBLE_LIMIT;
           const checked = selected.has(city);
-
           return (
             <div
               key={city}
