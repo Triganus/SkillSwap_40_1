@@ -120,7 +120,6 @@ export const SkillCard: React.FC<SkillCardProps> = ({
         {(onDetailsClick ?? onViewDetails) && (
           <Button
             variant="primary"
-            size="medium"
             onClick={onDetailsClick ?? onViewDetails}
             className={styles.detailsButton}
           >
