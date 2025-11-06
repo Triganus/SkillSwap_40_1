@@ -111,7 +111,6 @@ export const SkillCardWidget: FC<SkillCardWidgetProps> = ({
             <div style={{ marginTop: 18 }}>
               <Button
                 variant="primary"
-                size="medium"
                 onClick={() => sendOffer({ toUserId: String(user?.id ?? '') })}
                 disabled={isSending}
               >
