@@ -45,11 +45,9 @@ export const HeaderWidget: React.FC = () => {
         >
           <span>Все навыки</span>
           <Icon
-            name="chevron-down"
+            name={isSkillsPopupOpen ? 'chevron-up' : 'chevron-down'}
             size={16}
-            className={[cls['skills-icon'], isSkillsPopupOpen && cls['skills-icon-rotated']]
-              .filter(Boolean)
-              .join(' ')}
+            className={cls['skills-icon']}
           />
         </button>
       ),

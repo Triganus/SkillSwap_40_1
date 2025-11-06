@@ -1,79 +1,135 @@
 import React from 'react';
-
 import styles from './SkillCard.module.scss';
-
-import { Button } from '../Button';
 import type { SkillCardProps } from './type';
-import type { Skill } from '@entities/skill/model/types/types';
+
 import { AvatarUI } from '../AvatarUI';
-import { TitleUI } from '../Title';
 import { TextUI } from '../Text';
-import { LikeButtonUI } from '../LikeButton';
-import { TagUI } from '../Tag';
+import { Button } from '../Button';
+import { Icon } from '../Icon';
 
 export const SkillCard: React.FC<SkillCardProps> = ({
   user,
   teachingSkills,
   learningSkills,
+  variant = 'compact',
+  // Только контент и колбэки, БЕЗ обработчиков
+  onToggleFavorite,
   onDetailsClick,
-  onLikeClick,
-  isLiked = false,
-  ariaLabel,
-  showDetailsButton = true,
-}) => (
-  <article className={styles.card} aria-label={ariaLabel || `Карточка пользователя ${user.name}`}>
-    <div className={styles.userInfo}>
-      <AvatarUI
-        src={user.avatar || '/default-avatar.png'}
-        alt={`Аватар пользователя ${user.name}`}
-      />
-      <div className={styles.userDetails}>
-        <TitleUI size="small">{user.name}</TitleUI>
-        <TextUI variant="caption" color="primary">
-          {user.bio || 'Город не указан'}
-        </TextUI>
-      </div>
-      <LikeButtonUI
-        onClick={onLikeClick}
-        ariaLabel={
-          isLiked ? `Убрать ${user.name} из избранного` : `Добавить ${user.name} в избранное`
-        }
-        className={styles.likeButton}
-      />
-    </div>
-    <div className={styles.basicContent}>
-      <div className={styles.skillsSection}>
-        <div className={styles.skillGroup}>
-          <TitleUI size="xsmall">Может научить:</TitleUI>
-          <div className={styles.skillTags} aria-label="Может научить">
-            {teachingSkills.map((skill: Skill) => (
-              <TagUI key={skill.id} label={skill.title} category={skill.category} />
-            ))}
-          </div>
-        </div>
+  onViewDetails,
+  isFavorite = false,
+  className = '',
+}) => {
+  const isDetailed = variant === 'detailed';
+  // Рендер одной карточки
+  return (
+    <article
+      className={`
+      ${styles.card} 
+      ${isDetailed ? styles.detailed : styles.compact} 
+      ${className}
+    `}
+    >
+      {/* Иконка избранного */}
+      {onToggleFavorite && (
+        <button
+          type="button"
+          className={styles.favoriteButton}
+          onClick={onToggleFavorite}
+          aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+        >
+          <Icon
+            name="heart"
+            size={24}
+            fill={isFavorite ? 'currentColor' : 'none'}
+            stroke="currentColor"
+          />
+        </button>
+      )}
 
-        <div className={styles.skillGroup}>
-          <TitleUI size="xsmall">Хочет научиться:</TitleUI>
-          <div className={styles.skillTags} aria-label="Хочет научиться">
-            {learningSkills.slice(0, 2).map((skill: Skill) => (
-              <TagUI key={skill.id} label={skill.title} category={skill.category} />
+      {/* Аватар */}
+      <div className={styles.avatarContainer}>
+        <AvatarUI
+          src={user.avatar}
+          alt={user.name}
+          fallback={user.name}
+          size={isDetailed ? 64 : 48}
+        />
+      </div>
+
+      {/* Имя и локация */}
+      <div className={styles.userHeader}>
+        <TextUI variant="body" className={styles.name}>
+          {user.name}
+        </TextUI>
+        {(user.location || user.age) && (
+          <TextUI variant="caption" color="secondary" className={styles.location}>
+            {[user.location, user.age].filter(Boolean).join(', ')}
+          </TextUI>
+        )}
+      </div>
+
+      {/* Bio (только для detailed) */}
+      {isDetailed && user.bio && (
+        <div className={styles.bio}>
+          <TextUI variant="body" color="secondary">
+            {user.bio}
+          </TextUI>
+        </div>
+      )}
+
+      {/* Навыки - Может научить */}
+      {teachingSkills.length > 0 && (
+        <div className={styles.skillsSection}>
+          <TextUI variant="caption" className={styles.skillsLabel}>
+            Может научить:
+          </TextUI>
+          <div className={styles.skillsTags}>
+            {teachingSkills.slice(0, 3).map((skill) => (
+              <span key={skill.id} className={styles.tag}>
+                {skill.title}
+              </span>
             ))}
-            {learningSkills.length > 2 && (
-              <TagUI label={`+${learningSkills.length - 2}`} category="other" />
+            {teachingSkills.length > 3 && (
+              <span className={styles.moreTag}>+{teachingSkills.length - 3}</span>
             )}
           </div>
         </div>
-      </div>
-      {showDetailsButton && onDetailsClick && (
-        <Button
-          onClick={onDetailsClick}
-          variant="primary"
-          type="button"
-          aria-label={`Подробнее о навыке ${teachingSkills[0]?.title || 'пользователя'}`}
-        >
-          Подробнее
-        </Button>
       )}
-    </div>
-  </article>
-);
+
+      {/* Навыки - Хочет научиться */}
+      {learningSkills.length > 0 && (
+        <div className={styles.skillsSection}>
+          <TextUI variant="caption" className={styles.skillsLabel}>
+            Хочет научиться:
+          </TextUI>
+          <div className={styles.skillsTags}>
+            {learningSkills.slice(0, 3).map((skill) => (
+              <span key={skill.id} className={styles.tag}>
+                {skill.title}
+              </span>
+            ))}
+            {learningSkills.length > 3 && (
+              <span className={styles.moreTag}>+{learningSkills.length - 3}</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Кнопки действий */}
+      <div className={styles.actions}>
+        {(onDetailsClick ?? onViewDetails) && (
+          <Button
+            variant="primary"
+            size="medium"
+            onClick={onDetailsClick ?? onViewDetails}
+            className={styles.detailsButton}
+          >
+            Подробнее
+          </Button>
+        )}
+      </div>
+    </article>
+  );
+};
+
+export default SkillCard;
