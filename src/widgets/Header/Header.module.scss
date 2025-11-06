@@ -1,5 +1,4 @@
 .header {
-  --header-menu-max: 560px;
   --header-center-basis: 410px;
   --header-right-max: 357px;
   --header-actions-width: 36px;
@@ -124,15 +123,12 @@
   font-size: inherit;
   font-family: inherit;
   display: inline-flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
   gap: 4px;
   line-height: inherit;
   transition: color var(--dur-fast) var(--easing-standard);
   white-space: nowrap;
   flex-shrink: 0;
-  min-width: 0;
 
   &:hover {
     color: var(--color-accent);
@@ -145,25 +141,14 @@
 }
 
 .skills-button > span {
-  order: 1;
-  display: inline-block;
   flex-shrink: 0;
   white-space: nowrap;
 }
 
 .skills-icon {
-  transition: transform var(--dur-fast) var(--easing-standard);
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
   width: 16px;
   height: 16px;
-  margin-left: 0;
-  order: 2; // Гарантируем, что иконка всегда справа
-}
-
-.skills-icon-rotated {
-  transform: rotate(180deg);
+  order: 2;
+  transform: translateY(1px);
 }
