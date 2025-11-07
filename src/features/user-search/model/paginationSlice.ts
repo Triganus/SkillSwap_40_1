@@ -51,7 +51,10 @@ export const paginationSlice = createSlice({
     setRecommendedLoading(state, action: PayloadAction<boolean>) {
       state.recommended.isLoading = action.payload;
     },
-    setFiltered(state, action: PayloadAction<{ ids: string[]; hasMore: boolean; replace?: boolean }>) {
+    setFiltered(
+      state,
+      action: PayloadAction<{ ids: string[]; hasMore: boolean; replace?: boolean }>
+    ) {
       if (action.payload.replace) {
         state.filtered.items = action.payload.ids;
         state.filtered.page = 1;
@@ -89,10 +92,14 @@ export const paginationReducer = paginationSlice.reducer;
 
 // Селекторы
 export const selectPaginationState = (state: { pagination: PaginationState }) => state.pagination;
-export const selectPopularIds = (state: { pagination: PaginationState }) => state.pagination.popular.items;
+export const selectPopularIds = (state: { pagination: PaginationState }) =>
+  state.pagination.popular.items;
 export const selectNewIds = (state: { pagination: PaginationState }) => state.pagination.new.items;
-export const selectRecommendedIds = (state: { pagination: PaginationState }) => state.pagination.recommended.items;
-export const selectFilteredIds = (state: { pagination: PaginationState }) => state.pagination.filtered.items;
-export const selectRecommendedHasMore = (state: { pagination: PaginationState }) => state.pagination.recommended.hasMore;
-export const selectFilteredHasMore = (state: { pagination: PaginationState }) => state.pagination.filtered.hasMore;
-
+export const selectRecommendedIds = (state: { pagination: PaginationState }) =>
+  state.pagination.recommended.items;
+export const selectFilteredIds = (state: { pagination: PaginationState }) =>
+  state.pagination.filtered.items;
+export const selectRecommendedHasMore = (state: { pagination: PaginationState }) =>
+  state.pagination.recommended.hasMore;
+export const selectFilteredHasMore = (state: { pagination: PaginationState }) =>
+  state.pagination.filtered.hasMore;

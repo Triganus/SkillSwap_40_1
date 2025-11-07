@@ -1,0 +1,16 @@
+{
+  "genders": [
+    {
+      "id": "male",
+      "name": "Мужской"
+    },
+    {
+      "id": "female",
+      "name": "Женский"
+    },
+    {
+      "id": "not_specified",
+      "name": "Не указан"
+    }
+  ]
+}

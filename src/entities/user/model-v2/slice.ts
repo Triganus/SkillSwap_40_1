@@ -9,6 +9,7 @@ import {
   fetchRecommendedUsersThunk,
   fetchPopularUsersThunk,
   fetchNewUsersThunk,
+  fetchUsersWithSkillsThunk,
 } from './thunks';
 
 /**
@@ -28,6 +29,7 @@ const initialState: UsersState = {
   profiles: profilesAdapter.getInitialState(),
   loading: false,
   error: null,
+  skillCards: [],
 };
 
 /**
@@ -187,13 +189,27 @@ export const usersSliceV2 = createSlice({
     // ========== fetchPopularUsersThunk ==========
     builder.addCase(fetchPopularUsersThunk.fulfilled, (state, action) => {
       listItemsAdapter.upsertMany(state.listItems, action.payload);
-      state.popularIds = action.payload.map(u => u.id);
+      state.popularIds = action.payload.map((u) => u.id);
     });
 
     // ========== fetchNewUsersThunk ==========
     builder.addCase(fetchNewUsersThunk.fulfilled, (state, action) => {
       listItemsAdapter.upsertMany(state.listItems, action.payload);
-      state.newIds = action.payload.map(u => u.id);
+      state.newIds = action.payload.map((u) => u.id);
+    });
+
+    // ========== fetchUsersWithSkillsThunk (для HomePage) ==========
+    builder.addCase(fetchUsersWithSkillsThunk.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchUsersWithSkillsThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.skillCards = action.payload;
+    });
+    builder.addCase(fetchUsersWithSkillsThunk.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || 'Failed to fetch users with skills';
     });
   },
 });

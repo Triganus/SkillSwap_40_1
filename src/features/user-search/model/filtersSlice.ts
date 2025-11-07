@@ -109,4 +109,3 @@ export const selectSelectedCities = (state: { filters: FiltersState }) =>
   state.filters.selectedCities;
 export const selectSortBy = (state: { filters: FiltersState }) => state.filters.sortBy;
 export const selectIsActive = (state: { filters: FiltersState }) => state.filters.isActive;
-

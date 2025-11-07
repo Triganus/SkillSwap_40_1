@@ -1,6 +1,30 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as usersApi from '@/api/users-api-v2';
 import type { UserListItem, UserProfile } from './types';
+import { userListItemToSkillCard } from './utils';
+import type { SkillCardProps } from '@/widgets/Cards/SkillCard';
+
+/**
+ * Загрузить пользователей для HomePage (популярные + новые + рекомендованные)
+ * Возвращает данные в формате для SkillCard
+ */
+export const fetchUsersWithSkillsThunk = createAsyncThunk<SkillCardProps[]>(
+  'usersV2/fetchUsersWithSkills',
+  async () => {
+    const [popularData, newData, recommendedData] = await Promise.all([
+      usersApi.fetchPopularUsers(),
+      usersApi.fetchNewUsers(),
+      usersApi.fetchRecommendedUsers({ limit: 30 }),
+    ]);
+    const allUsers = new Map<string, UserListItem>();
+
+    [...popularData, ...newData, ...recommendedData.users].forEach((user) => {
+      allUsers.set(user.id, user);
+    });
+
+    return Array.from(allUsers.values()).map(userListItemToSkillCard);
+  }
+);
 
 /**
  * Загрузить список пользователей для каталога

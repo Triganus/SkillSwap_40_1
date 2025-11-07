@@ -30,7 +30,7 @@ export interface UserRegistrationData {
   name: string;
   birthDate: string; // ISO format
   gender: Gender;
-  city: string;
+  cityId: string; // ID города из справочника
   avatar: File | null;
   learnCategoryIds: string[];
   learnSubcategoryIds: string[];
@@ -43,7 +43,7 @@ export interface UserRegistrationData {
 export interface UserListItem {
   id: string;
   name: string;
-  city: string;
+  cityId: string; // ID города из справочника
   age: number;
   gender: Gender;
   avatar: string | null;
@@ -67,7 +67,7 @@ export interface UserListItemWithMatches extends UserListItem {
 export interface UserProfile {
   id: string;
   name: string;
-  city: string;
+  cityId: string; // ID города из справочника
   age: number;
   gender: Gender;
   avatar: string | null;
@@ -111,4 +111,8 @@ export interface UsersState {
   error: string | null;
   popularIds?: string[]; // топ популярных
   newIds?: string[]; // топ новых
+  // TODO: Для совместимости со старым кодом HomePage - будет удалено после рефакторинга
+  // Используем any чтобы избежать циклических зависимостей с SkillCardProps
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  skillCards?: any[];
 }

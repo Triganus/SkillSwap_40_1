@@ -10,32 +10,68 @@ export const selectUsersV2State = (state: RootState) => state.usersV2 || state.u
 
 export const selectUserListItemsIds = (state: RootState) => {
   const usersState = selectUsersV2State(state);
+
   return usersState?.listItems?.ids || [];
 };
 
 export const selectUserListItemsEntities = (state: RootState) => {
   const usersState = selectUsersV2State(state);
+
   return usersState?.listItems?.entities || {};
 };
 
 export const selectUserProfilesIds = (state: RootState) => {
   const usersState = selectUsersV2State(state);
+
   return usersState?.profiles?.ids || [];
 };
 
 export const selectUserProfilesEntities = (state: RootState) => {
   const usersState = selectUsersV2State(state);
+
   return usersState?.profiles?.entities || {};
 };
 
 export const selectUsersLoading = (state: RootState) => {
   const usersState = selectUsersV2State(state);
+
   return usersState?.loading || false;
 };
 
 export const selectUsersError = (state: RootState) => {
   const usersState = selectUsersV2State(state);
+
   return usersState?.error || null;
+};
+
+/**
+ * Селектор для skillCards (совместимость с HomePage)
+ * Возвращает any[] чтобы избежать циклических зависимостей,
+ * но фактически это SkillCardProps[]
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const selectSkillCards = (state: RootState): any[] => {
+  const usersState = selectUsersV2State(state);
+
+  return usersState?.skillCards || [];
+};
+
+/**
+ * Селектор для popularIds
+ */
+export const selectPopularIds = (state: RootState) => {
+  const usersState = selectUsersV2State(state);
+
+  return usersState?.popularIds || [];
+};
+
+/**
+ * Селектор для newIds
+ */
+export const selectNewIds = (state: RootState) => {
+  const usersState = selectUsersV2State(state);
+
+  return usersState?.newIds || [];
 };
 
 /**
@@ -119,6 +155,7 @@ export const selectUserListItemsWithMatches = (searchType: SearchType = 'all') =
 export const selectIsSkillLikedByUser = (userId: string, skillId: string) =>
   createSelector([selectUserProfilesEntities], (entities): boolean => {
     const user = entities[userId];
+
     return user ? user.likedSkillIds.includes(skillId) : false;
   });
 
@@ -128,6 +165,7 @@ export const selectIsSkillLikedByUser = (userId: string, skillId: string) =>
 export const selectUserLikedSkills = (userId: string) =>
   createSelector([selectUserProfilesEntities], (entities): string[] => {
     const user = entities[userId];
+
     return user?.likedSkillIds || [];
   });
 
@@ -138,10 +176,11 @@ export const selectUserLikedSkills = (userId: string) =>
 /**
  * Фильтрация пользователей по городу
  */
-export const selectUsersByCity = (city: string) =>
+export const selectUsersByCity = (cityId: string) =>
   createSelector([selectAllUserListItems], (users): UserListItem[] => {
-    if (!city) return users;
-    return users.filter((user) => user.city === city);
+    if (!cityId) return users;
+
+    return users.filter((user) => user.cityId === cityId);
   });
 
 /**
@@ -150,18 +189,20 @@ export const selectUsersByCity = (city: string) =>
 export const selectUsersByGender = (gender: string) =>
   createSelector([selectAllUserListItems], (users): UserListItem[] => {
     if (!gender || gender === 'all' || gender === 'not_specified') return users;
+
     return users.filter((user) => user.gender === gender);
   });
 
-export const selectPopularUserIds = (state: RootState) => selectUsersV2State(state).popularIds || [];
+export const selectPopularUserIds = (state: RootState) =>
+  selectUsersV2State(state).popularIds || [];
 export const selectNewUserIds = (state: RootState) => selectUsersV2State(state).newIds || [];
 
 export const selectPopularUsers = createSelector(
   [selectPopularUserIds, selectUserListItemsEntities],
-  (ids, entities) => ids.map(id => entities[id]).filter(Boolean) as UserListItem[]
+  (ids, entities) => ids.map((id) => entities[id]).filter(Boolean) as UserListItem[]
 );
 
 export const selectNewUsers = createSelector(
   [selectNewUserIds, selectUserListItemsEntities],
-  (ids, entities) => ids.map(id => entities[id]).filter(Boolean) as UserListItem[]
+  (ids, entities) => ids.map((id) => entities[id]).filter(Boolean) as UserListItem[]
 );

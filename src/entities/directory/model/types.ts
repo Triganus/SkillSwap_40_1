@@ -35,6 +35,16 @@ export interface City {
 }
 
 /**
+ * Модель пола
+ */
+export interface Gender {
+  /** Уникальный идентификатор пола */
+  id: string;
+  /** Название пола */
+  name: string;
+}
+
+/**
  * Normalized state для категорий
  */
 export interface CategoriesState {
@@ -69,6 +79,20 @@ export interface CitiesState {
   /** Города в виде Record<id, City> */
   entities: Record<string, City>;
   /** Массив ID всех городов */
+  ids: string[];
+  /** Статус загрузки */
+  loading: boolean;
+  /** Ошибка загрузки */
+  error: string | null;
+}
+
+/**
+ * Normalized state для полов
+ */
+export interface GendersState {
+  /** Пола в виде Record<id, Gender> */
+  entities: Record<string, Gender>;
+  /** Массив ID всех полов */
   ids: string[];
   /** Статус загрузки */
   loading: boolean;

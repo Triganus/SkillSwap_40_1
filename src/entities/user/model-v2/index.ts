@@ -35,6 +35,7 @@ export {
   fetchRecommendedUsersThunk,
   fetchPopularUsersThunk,
   fetchNewUsersThunk,
+  fetchUsersWithSkillsThunk,
 } from './thunks';
 
 // Users selectors
@@ -46,6 +47,9 @@ export {
   selectUserProfilesEntities,
   selectUsersLoading,
   selectUsersError,
+  selectSkillCards,
+  selectPopularIds,
+  selectNewIds,
   selectAllUserListItems,
   selectUserListItemById,
   selectUserProfileById,
@@ -55,6 +59,9 @@ export {
   selectUsersByCity,
   selectUsersByGender,
 } from './selectors';
+
+// Utils
+export { userListItemToSkillCard } from './utils';
 
 // Auth slice
 export {

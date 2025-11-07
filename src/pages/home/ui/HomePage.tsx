@@ -9,14 +9,15 @@ import {
   fetchSkills,
 } from '@entities/skill/model';
 import {
-  fetchUsersWithSkills,
-  getAllUsersWithSkills,
-  getUsersLoading,
-} from '@entities/user/model/usersSlice';
+  fetchUsersWithSkillsThunk,
+  selectSkillCards,
+  selectUsersLoading,
+} from '@/entities/user/model-v2';
 import { setFilter, getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { CardSectionUI } from '@shared/ui/CardSection';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { SkillCard } from '@widgets/Cards/SkillCard';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard/type';
 import { TitleUI } from '@shared/ui/Title';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
@@ -35,8 +36,8 @@ export default function HomePage() {
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
   const loading = useAppSelector(getSkillsLoading);
-  const usersData = useAppSelector(getAllUsersWithSkills);
-  const loadingUsers = useAppSelector(getUsersLoading);
+  const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
+  const loadingUsers = useAppSelector(selectUsersLoading);
 
   // Справочники из Redux (загружаются централизованно в Provider)
   const skillsCatalog = useAppSelector(selectSkillsCatalog);
@@ -61,7 +62,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (usersData.length === 0 && !loadingUsers) {
-      dispatch(fetchUsersWithSkills());
+      dispatch(fetchUsersWithSkillsThunk());
     }
   }, [dispatch, usersData.length, loadingUsers]);
 

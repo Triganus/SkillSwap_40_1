@@ -22,7 +22,6 @@ export const SkillsPopup: React.FC<SkillsPopupProps> = ({ isOpen, onClose, butto
     isOpen
   );
 
-
   useEffect(() => {
     if (isOpen) {
       // Блокируем прокрутку фоновой страницы

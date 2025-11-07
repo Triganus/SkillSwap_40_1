@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '@/app/store';
-import type { Category, Subcategory, City } from './types';
+import type { Category, Subcategory, City, Gender } from './types';
 
 // ========== Categories Selectors ==========
 
@@ -32,9 +32,8 @@ export const selectAllCategories = createSelector(
  * Селектор всех категорий, отсортированных по полю order
  * Используйте этот селектор для отображения категорий в UI
  */
-export const selectCategoriesSorted = createSelector(
-  [selectAllCategories],
-  (categories) => [...categories].sort((a, b) => a.order - b.order)
+export const selectCategoriesSorted = createSelector([selectAllCategories], (categories) =>
+  [...categories].sort((a, b) => a.order - b.order)
 );
 
 /**
@@ -148,6 +147,43 @@ export const selectCityById = (cityId: string) =>
 export const selectCitiesSorted = createSelector([selectAllCities], (cities) =>
   [...cities].sort((a, b) => a.name.localeCompare(b.name, 'ru'))
 );
+
+// ========== Genders Selectors ==========
+
+/**
+ * Базовый селектор состояния полов
+ */
+export const selectGendersState = (state: RootState) => state.genders;
+
+/**
+ * Селектор загрузки полов
+ */
+export const selectGendersLoading = (state: RootState) => state.genders.loading;
+
+/**
+ * Селектор ошибки полов
+ */
+export const selectGendersError = (state: RootState) => state.genders.error;
+
+/**
+ * Селектор всех полов в виде массива
+ */
+export const selectAllGenders = createSelector(
+  [selectGendersState],
+  (gendersState) =>
+    gendersState.ids.map((id) => gendersState.entities[id]).filter(Boolean) as Gender[]
+);
+
+/**
+ * Селектор пола по ID
+ */
+export const selectGenderById = (genderId: string) =>
+  createSelector([selectGendersState], (gendersState) => gendersState.entities[genderId]);
+
+/**
+ * Селектор полов в виде Record
+ */
+export const selectGendersEntities = (state: RootState) => state.genders.entities;
 
 /**
  * Селектор городов в виде Record

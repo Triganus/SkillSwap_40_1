@@ -1,9 +1,5 @@
 import { store } from '@/app/store';
-import {
-  selectAllCategories,
-  selectAllSubcategories,
-  selectAllCities,
-} from '../model/selectors';
+import { selectAllCategories, selectAllSubcategories, selectAllCities } from '../model/selectors';
 import type { Category, Subcategory, City } from '../model/types';
 
 /**
@@ -32,4 +28,3 @@ export function getCitiesFromStore(): City[] {
   const state = store.getState();
   return selectAllCities(state);
 }
-

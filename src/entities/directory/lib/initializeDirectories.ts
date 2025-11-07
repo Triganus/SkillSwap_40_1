@@ -1,12 +1,12 @@
 import type { AppDispatch } from '@/app/store';
-import { fetchCategories, fetchSubcategories, fetchCities } from '../model';
+import { fetchCategories, fetchSubcategories, fetchCities, fetchGenders } from '../model';
 
 let directoriesInitialized = false;
 
 /**
  * Инициализация справочников.
  * Вызывается ОДИН РАЗ при создании store.
- * Загружает категории, подкатегории и города если их нет в store.
+ * Загружает категории, подкатегории, города и пола если их нет в store.
  */
 export function initializeDirectories(dispatch: AppDispatch) {
   if (directoriesInitialized) {
@@ -25,6 +25,7 @@ export function initializeDirectories(dispatch: AppDispatch) {
   dispatch(fetchCategories());
   dispatch(fetchSubcategories());
   dispatch(fetchCities());
+  dispatch(fetchGenders());
 }
 
 /**
