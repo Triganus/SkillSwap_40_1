@@ -27,7 +27,7 @@ import {
 } from '@features/registration/hooks/useRegisterStep3Form';
 import type { TagCategory } from '@shared/ui/Tag';
 import { completeRegistration } from '@api/registration';
-import { useAuth } from '@app/Provider';
+import { useAuthV2 } from '@app/Provider';
 import { usePopup } from '@app/hooks/usePopup';
 import { CheckIcon } from '@shared/ui/icons/CheckIcon';
 import styles from './Step3.module.scss';
@@ -35,7 +35,7 @@ import styles from './Step3.module.scss';
 export default function Step3() {
   const navigate = useNavigate();
   const { completeStep, data } = useRegistrationProgress();
-  const { login } = useAuth();
+  const { login } = useAuthV2();
   const { showPopup } = usePopup();
 
   const initial: Partial<RegisterStep3Values> | undefined = data.step3
@@ -160,7 +160,13 @@ export default function Step3() {
       const result = await completeRegistration(requestData);
 
       // Авторизуем пользователя
-      login(result.user);
+      login({
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        avatar: result.user.avatar_image || null,
+        token: result.accessToken,
+      });
 
       // Очищаем данные регистрации
       clearRegistrationData();

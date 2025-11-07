@@ -11,10 +11,10 @@ import { useHeaderActions } from './model/useHeaderActions';
 import { HeaderUserBlock } from './ui/HeaderUserBlock';
 import { SkillsPopup } from '@widgets/SkillsPopup';
 import cls from './Header.module.scss';
-import { useAuth } from '@app/Provider.tsx';
+import { useAuthV2 } from '@app/Provider.tsx';
 
 export const HeaderWidget: React.FC = () => {
-  const { auth } = useAuth();
+  const { isAuthenticated } = useAuthV2();
 
   const items = useHeaderActions();
   // const [searchValue, setSearchValue] = useState('');
@@ -28,7 +28,7 @@ export const HeaderWidget: React.FC = () => {
     setSearchValue((prev) => (prev !== urlVal ? urlVal : prev));
   }, [searchParams]);
 
-  const classes = [cls.header, auth.isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
+  const classes = [cls.header, isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
 
   // Создаем кнопку "Все навыки" для NavMenu
   const skillsNavItem = useMemo(

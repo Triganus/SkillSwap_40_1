@@ -1,12 +1,12 @@
 import React from 'react';
 import { GuestActions } from './GuestActions';
 import { UserBadge } from './UserBadge';
-import { useHeaderUser } from '../model/useHeaderUser';
+import { useHeaderUserV2 } from '../model/useHeaderUserV2';
 import styles from './user-block.module.scss';
 import { useNavigate } from 'react-router-dom';
 
 export const HeaderUserBlock: React.FC<{ className?: string }> = ({ className }) => {
-  const { user, isGuest } = useHeaderUser();
+  const { user, isGuest } = useHeaderUserV2();
   const navigate = useNavigate();
 
   if (isGuest) {

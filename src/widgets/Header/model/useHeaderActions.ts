@@ -2,7 +2,7 @@ import { useMemo, createElement } from 'react';
 import { Icon } from '@shared/ui/Icon';
 import type { ActionItem } from '@shared/ui';
 import { toggleTheme } from '@shared/lib/theme';
-import { useAuth } from '@app/Provider';
+import { useAuthV2 } from '@app/Provider';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
  * Виджет Header отвечает только за отображение, а не за принятие решения, какие элементы показывать.
  */
 export function useHeaderActions(): ActionItem[] {
-  const { auth } = useAuth();
+  const { isAuthenticated } = useAuthV2();
   const navigate = useNavigate();
 
   return useMemo<ActionItem[]>(() => {
@@ -27,7 +27,7 @@ export function useHeaderActions(): ActionItem[] {
       },
     ];
 
-    if (!auth.isAuthenticated) return common;
+    if (!isAuthenticated) return common;
 
     const authedExtra: ActionItem[] = [
       {
@@ -56,5 +56,7 @@ export function useHeaderActions(): ActionItem[] {
     ];
 
     return [...common, ...authedExtra];
-  }, [auth.isAuthenticated, navigate]);
+    // navigate из useNavigate стабильный, но ESLint требует его в deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 }

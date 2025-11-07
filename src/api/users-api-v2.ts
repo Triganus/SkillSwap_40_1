@@ -1,0 +1,135 @@
+import type { UserListItem, UserProfile } from '@/entities/user/model-v2';
+
+/**
+ * Получить список пользователей для каталога
+ */
+export async function fetchUserListItems(params?: {
+  page?: number;
+  limit?: number;
+  searchQuery?: string;
+  categoryIds?: string[];
+  subcategoryIds?: string[];
+  cities?: string[];
+  gender?: string;
+  sortBy?: 'newest' | 'oldest';
+}): Promise<{ users: UserListItem[]; hasMore: boolean; total: number }> {
+  const searchParams = new URLSearchParams();
+
+  if (params?.page) searchParams.set('page', String(params.page));
+  if (params?.limit) searchParams.set('limit', String(params.limit));
+  if (params?.searchQuery) searchParams.set('q', params.searchQuery);
+  if (params?.categoryIds?.length) searchParams.set('categories', params.categoryIds.join(','));
+  if (params?.subcategoryIds?.length)
+    searchParams.set('subcategories', params.subcategoryIds.join(','));
+  if (params?.cities?.length) searchParams.set('cities', params.cities.join(','));
+  if (params?.gender) searchParams.set('gender', params.gender);
+  if (params?.sortBy) searchParams.set('sort', params.sortBy);
+
+  const response = await fetch(`/api/users?${searchParams.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch users: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Получить профиль пользователя по ID
+ */
+export async function fetchUserProfile(userId: string): Promise<UserProfile> {
+  const response = await fetch(`/api/users/${userId}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user profile: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Обновить профиль пользователя
+ */
+export async function updateUserProfile(
+  userId: string,
+  updates: Partial<Omit<UserProfile, 'id'>>
+): Promise<UserProfile> {
+  const response = await fetch(`/api/users/${userId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update user profile: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Лайкнуть/разлайкнуть навык
+ */
+export async function toggleSkillLike(
+  userId: string,
+  skillId: string
+): Promise<{ liked: boolean }> {
+  const response = await fetch(`/api/users/${userId}/likes/${skillId}`, {
+    method: 'POST',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to toggle skill like: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Получить рекомендованных пользователей
+ */
+export async function fetchRecommendedUsers(params?: {
+  page?: number;
+  limit?: number;
+}): Promise<{ users: UserListItem[]; hasMore: boolean }> {
+  const searchParams = new URLSearchParams();
+
+  if (params?.page) searchParams.set('page', String(params.page));
+  if (params?.limit) searchParams.set('limit', String(params.limit));
+
+  const response = await fetch(`/api/users/recommended?${searchParams.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch recommended users: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Получить популярных пользователей (топ 3)
+ */
+export async function fetchPopularUsers(): Promise<UserListItem[]> {
+  const response = await fetch('/api/users/popular?limit=3');
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch popular users: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.users || data;
+}
+
+/**
+ * Получить новых пользователей (топ 3)
+ */
+export async function fetchNewUsers(): Promise<UserListItem[]> {
+  const response = await fetch('/api/users/new?limit=3');
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch new users: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.users || data;
+}

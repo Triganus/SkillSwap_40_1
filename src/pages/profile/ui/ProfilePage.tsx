@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '@app/Provider';
+import { useAuthV2 } from '@app/Provider';
 
 export default function ProfilePage() {
-  const { auth, logout } = useAuth();
+  const { user, logout } = useAuthV2();
 
   return (
     <div>
       <h1>Profile</h1>
-      {auth.user ? (
+      {user ? (
         <>
-          <p>{auth.user.name}</p>
+          <p>{user.name}</p>
           <button onClick={logout}>Выйти</button>
         </>
       ) : (
