@@ -44,10 +44,6 @@ export function useSimilarCards(
   const similarCards = useMemo(() => {
     if (!skill || !authorRaw) return [];
 
-    // Читаем likesUpdateTrigger для принудительного пересчета при изменении лайков
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _trigger = likesUpdateTrigger;
-
     const allUsers = Object.values(usersState.byId);
     const similarUsers: DbUser[] = [];
 
