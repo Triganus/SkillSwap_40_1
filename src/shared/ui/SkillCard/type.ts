@@ -1,24 +1,43 @@
-// import type { User } from '@entities/user/model/types/types';
-// import type { Skill } from '@entities/skill/model/types/types';
+/*// Использусуществующие из entities
+import type { User } from '@entities/user/model/types/types';
+import type { Skill } from '@entities/skill/model/types/types';
 
-// export interface SkillCardProps {
-//   user: Pick<User, 'id' | 'name' | 'avatar'> & {
-//     location?: string;
-//     age?: number;
-//     bio?: string;
-//   };
+export interface SkillCardProps {
+  user: User;
+  teachingSkills: Skill[];
+  learningSkills: Skill[];
+  onDetailsClick?: () => void;
+  onLikeClick?: () => void;
+  isLiked?: boolean;
+}*/
+import type { User } from '@entities/user/model/types/types';
+import type { Skill } from '@entities/skill/model/types/types';
 
-//   teachingSkills: Skill[];
-//   learningSkills: Skill[];
+export interface SkillCardProps {
+  // Данные пользователя
+  user: Pick<User, 'id' | 'name' | 'avatar'> & {
+    location?: string;
+    age?: number;
+    bio?: string;
+  };
 
-//   variant?: 'compact' | 'detailed';
+  // Навыки
+  teachingSkills: Skill[];
+  learningSkills: Skill[];
 
-//   onDetailsClick?: () => void;
-//   onViewDetails?: () => void;
-//   onOfferExchange?: () => void;
-//   onToggleFavorite?: () => void;
-// dfsgfdgdfgfd
-//   isFavorite?: boolean;
+  // Вариант отображения
+  variant?: 'compact' | 'detailed';
 
-//   className?: string;
-// }
+  // Обработчики действий
+  onDetailsClick?: () => void;
+  // Алиас для обратной совместимости — некоторые сторис/использования могли называть колбэк onViewDetails
+  onViewDetails?: () => void;
+  onOfferExchange?: () => void;
+  onToggleFavorite?: () => void;
+
+  // Состояния
+  isFavorite?: boolean;
+
+  // Стилизация
+  className?: string;
+}
