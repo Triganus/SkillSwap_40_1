@@ -18,6 +18,23 @@
   }
 }
 
+.layout {
+  align-items: stretch;
+}
+
+.profile-column,
+.details-column {
+  gap: 0;
+}
+
+.profile-column {
+  align-items: flex-start;
+}
+
+.details-column {
+  align-items: stretch;
+}
+
 .main-content {
   display: flex;
   gap: var(--space-6);

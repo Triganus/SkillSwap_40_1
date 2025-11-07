@@ -193,7 +193,7 @@
 /* Режим для страницы навыка */
 .skill-page-avatar {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: var(--space-4, 16px);
 }
@@ -203,10 +203,11 @@
   flex-direction: column;
   gap: var(--space-1, 4px);
   margin-bottom: var(--space-4, 16px);
-  text-align: center;
+  text-align: left;
+  align-items: flex-start;
 }
 
 .skill-page-bio {
   margin-bottom: var(--space-5, 20px);
-  text-align: center;
+  text-align: left;
 }

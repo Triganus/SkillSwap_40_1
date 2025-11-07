@@ -1,4 +1,4 @@
-import { type CSSProperties, memo, useMemo } from 'react';
+import { type CSSProperties, memo, useCallback, useMemo } from 'react';
 import type { TwoColumnLayoutProps } from './types';
 import styles from './TwoColumnLayout.module.scss';
 
@@ -23,22 +23,48 @@ export const TwoColumnLayout = memo<TwoColumnLayoutProps>(
     className,
     gap = 0,
     columnPadding = '24px',
+    leftColumnPadding,
+    rightColumnPadding,
     columnBackground = '#ffffff',
+    leftColumnBackground,
+    rightColumnBackground,
     containerBackground = 'transparent',
     containerPadding = 0,
+    columnsTemplate = '1fr 1fr',
     minHeight,
     columnJustify = 'flex-start',
     columnAlign = 'stretch',
+    borderRadius,
     leftColumnClassName,
     rightColumnClassName,
   }) => {
+    const normalizeSpace = useCallback(
+      (value?: number | string) => {
+        if (value === undefined) {
+          return undefined;
+        }
+
+        return typeof value === 'number' ? `${value}px` : value;
+      },
+      []
+    );
+
+    const sharedPadding = normalizeSpace(columnPadding);
+    const leftPaddingValue = normalizeSpace(leftColumnPadding) ?? sharedPadding;
+    const rightPaddingValue = normalizeSpace(rightColumnPadding) ?? sharedPadding;
+    const borderRadiusValue = normalizeSpace(borderRadius);
+
     const cssVariables = useMemo<CSSProperties>(
       () =>
         ({
           '--gap': typeof gap === 'number' ? `${gap}px` : gap,
-          '--column-padding':
-            typeof columnPadding === 'number' ? `${columnPadding}px` : columnPadding,
+          '--columns-template': columnsTemplate,
+          '--column-padding': sharedPadding,
+          '--left-column-padding': leftPaddingValue,
+          '--right-column-padding': rightPaddingValue,
           '--column-bg': columnBackground,
+          '--left-column-bg': leftColumnBackground ?? columnBackground,
+          '--right-column-bg': rightColumnBackground ?? columnBackground,
           '--container-bg': containerBackground,
           '--container-padding':
             typeof containerPadding === 'number' ? `${containerPadding}px` : containerPadding,
@@ -49,16 +75,23 @@ export const TwoColumnLayout = memo<TwoColumnLayoutProps>(
             : 'auto',
           '--column-justify': columnJustify,
           '--column-align': columnAlign,
+          '--column-radius': borderRadiusValue,
         }) as CSSProperties,
       [
         gap,
-        columnPadding,
+        columnsTemplate,
+        sharedPadding,
+        leftPaddingValue,
+        rightPaddingValue,
         columnBackground,
+        leftColumnBackground,
+        rightColumnBackground,
         containerBackground,
         containerPadding,
         minHeight,
         columnJustify,
         columnAlign,
+        borderRadiusValue,
       ]
     );
 

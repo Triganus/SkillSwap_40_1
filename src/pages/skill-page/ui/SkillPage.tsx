@@ -147,6 +147,7 @@ export default function SkillPage() {
   return (
     <div className={styles.container} key={containerKey}>
       <TwoColumnLayout
+        className={styles.layout}
         leftContent={
           <SkillCard
             mode="skill-page"
@@ -181,9 +182,17 @@ export default function SkillPage() {
             onMoreClick={onMoreClick}
           />
         }
-        gap={20}
-        columnPadding={24}
+        gap={32}
+        columnPadding={0}
+        leftColumnPadding={0}
+        rightColumnPadding={0}
+        columnBackground="transparent"
+        leftColumnBackground="transparent"
+        rightColumnBackground="transparent"
         containerPadding={0}
+        columnsTemplate="minmax(320px, 324px) minmax(0, 1fr)"
+        leftColumnClassName={styles['profile-column']}
+        rightColumnClassName={styles['details-column']}
       />
 
       <div className={styles['similar-section']}>
