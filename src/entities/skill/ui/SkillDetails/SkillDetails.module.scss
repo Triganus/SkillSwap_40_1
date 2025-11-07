@@ -1,29 +1,34 @@
 .skill-details {
   display: grid;
-  grid-template-columns: 1fr min-content;
-  grid-template-rows: min-content min-content min-content;
-  gap: var(--space-5, 20px) calc(var(--space-8, 40px) + var(--space-7, 32px));
+  grid-template-columns: 1fr 480px;
+  grid-template-rows: auto auto auto 1fr; /* ДОБАВИЛИ ещё одну строку */
+  gap: var(--space-5, 20px) var(--space-8, 40px);
   padding: var(--space-7, 32px) var(--space-8, 40px);
   border-radius: var(--radius-m, 12px);
   background-color: var(--color-surface, #ffffff);
   max-width: 1020px;
+  align-items: start;
+  position: relative;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
 }
 
 .actionbar {
-  grid-column: 2;
-  grid-row: 1;
-  display: inline-flex;
+  grid-column: 2; /* Правая колонка */
+  grid-row: 1; /* Первая строка */
+  display: flex;
   align-items: center;
   gap: var(--space-3, 12px);
-  justify-self: flex-end;
+  justify-self: end;
+  position: relative;
+  z-index: 10;
 }
 
 .action-button {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-7, 32px);
-  height: var(--space-7, 32px);
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: none;
   background: transparent;
@@ -31,8 +36,8 @@
   cursor: pointer;
   border-radius: var(--radius-s, 8px);
   transition:
-    background-color var(--dur-normal, 200ms) var(--easing-standard),
-    color var(--dur-normal, 200ms) var(--easing-standard);
+    background-color 200ms,
+    color 200ms;
 
   &:hover {
     background-color: var(--color-button-hover, #deebc5);
@@ -45,45 +50,54 @@
 
   &:focus-visible {
     outline: 2px solid var(--color-link, #508826);
-    outline-offset: var(--space-1, 4px);
+    outline-offset: 4px;
   }
 }
 
 .header {
-  grid-column: 1;
-  grid-row: 2;
+  grid-column: 1; /* Левая колонка */
+  grid-row: 2; /* ИЗМЕНИЛИ: теперь вторая строка */
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--space-1, 4px);
+  gap: var(--space-2, 8px);
 }
 
-.sub-title {
-  font-size: var(--fs-caption, 12px);
-  line-height: var(--lh-caption, 16px);
-  color: var(--color-caption, #69735d);
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--color-surface, #8e8e93);
+  font-size: 12px;
+  line-height: var(--lh-caption);
+  font-weight: 400;
+  align-self: flex-start;
+  padding: 0;
 }
 
 .content {
   grid-column: 1;
-  grid-row: 3;
+  grid-row: 3 / 5; /* ИЗМЕНИЛИ: теперь с 3 по 5 строку */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: var(--space-5, 20px);
 }
 
 .description {
-  margin-bottom: var(--space-4, 16px);
+  color: var(--color-text, #253017);
+  line-height: 1.5;
+  text-align: left;
 }
 
 .cta {
-  margin-top: var(--space-4, 16px);
+  display: flex;
+  margin-top: auto;
 }
 
 .exchange-button {
   width: 100%;
   max-width: 320px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2, 8px);
@@ -92,11 +106,11 @@
 .edit-actions {
   display: flex;
   gap: var(--space-3, 12px);
-  margin-top: var(--space-4, 16px);
+  margin-top: auto;
 }
 
 .edit-button {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: var(--space-2, 8px);
 }
@@ -107,15 +121,18 @@
 
 .gallery {
   grid-column: 2;
-  grid-row: 2 / 4;
+  grid-row: 2 / 5; /* ИЗМЕНИЛИ: теперь со 2 по 5 строку */
   display: flex;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: flex-end;
+  width: 480px;
+  position: relative;
+  z-index: 1;
 }
 
-.skill-details.modal {
+.modal {
   background-color: var(--color-surface, #ffffff);
-  box-shadow: 0 var(--space-3, 12px) var(--space-6, 24px) rgb(0 0 0 / 10%);
+  box-shadow: 0 12px 24px rgb(0 0 0 / 10%);
   max-width: 800px;
   margin: 0 auto;
   max-height: 445px;
@@ -133,7 +150,7 @@
   .actionbar {
     grid-column: 1;
     grid-row: 1;
-    justify-self: flex-end;
+    justify-self: end;
   }
 
   .header {
@@ -149,6 +166,7 @@
   .gallery {
     grid-column: 1;
     grid-row: 4;
-    position: relative;
+    width: 100%;
+    justify-content: center;
   }
 }
