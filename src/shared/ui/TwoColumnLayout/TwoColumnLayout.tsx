@@ -38,16 +38,13 @@ export const TwoColumnLayout = memo<TwoColumnLayoutProps>(
     leftColumnClassName,
     rightColumnClassName,
   }) => {
-    const normalizeSpace = useCallback(
-      (value?: number | string) => {
-        if (value === undefined) {
-          return undefined;
-        }
+    const normalizeSpace = useCallback((value?: number | string) => {
+      if (value === undefined) {
+        return undefined;
+      }
 
-        return typeof value === 'number' ? `${value}px` : value;
-      },
-      []
-    );
+      return typeof value === 'number' ? `${value}px` : value;
+    }, []);
 
     const sharedPadding = normalizeSpace(columnPadding);
     const leftPaddingValue = normalizeSpace(leftColumnPadding) ?? sharedPadding;
