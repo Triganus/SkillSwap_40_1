@@ -17,7 +17,7 @@
 //   onViewDetails?: () => void;
 //   onOfferExchange?: () => void;
 //   onToggleFavorite?: () => void;
-
+// dfsgfdgdfgfd
 //   isFavorite?: boolean;
 
 //   className?: string;
