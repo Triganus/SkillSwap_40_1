@@ -24,6 +24,23 @@ export const fetchCategories = createAsyncThunk<Category[], void, { rejectValue:
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Ошибка загрузки категорий');
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const state = getState() as { categories: CategoriesState };
+      const { loading, ids } = state.categories;
+      const shouldFetch = !loading && ids.length === 0;
+
+      if (import.meta.env.DEV) {
+        if (!shouldFetch) {
+          console.log('[Categories] Skip fetch:', { loading, idsCount: ids.length });
+        } else {
+          console.log('[Categories] Will fetch');
+        }
+      }
+
+      return shouldFetch;
+    },
   }
 );
 

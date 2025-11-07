@@ -2,6 +2,7 @@ import type { User, DbUser } from '@/entities/user/model/types/types';
 import type { SkillCardProps } from '@/widgets/Cards/SkillCard';
 import type { Skill } from '@/entities/skill/model/types/types';
 import type { TagCategory } from '@/shared/ui/Tag';
+import { getSubcategoriesFromStore } from '@/entities/directory/lib/getFromStore';
 
 interface DbUsersResponse {
   users: DbUser[];
@@ -45,32 +46,30 @@ export const fetchUsers = async (): Promise<User[]> => {
 
 /**
  * Преобразует данные пользователей из JSON в формат SkillCardProps[]
- * Загружает каталог навыков для получения названий и категорий
  * @returns Promise с массивом SkillCardProps
  */
-export const fetchUsersAsSkillCards = async (): Promise<SkillCardProps[]> => {
+export const fetchUsersAsSkillCards = async (
+  subcategories?: Array<{ id: string; name: string; categoryId: string }>
+): Promise<SkillCardProps[]> => {
   try {
-    // Загружаем данные параллельно
-    const [usersResponse, categoriesRes, subcategoriesRes] = await Promise.all([
-      fetch('/db/users.json'),
-      fetch('/api/directories/categories'),
-      fetch('/api/directories/subcategories'),
-    ]);
+    const subcategoriesData = subcategories || getSubcategoriesFromStore();
 
-    if (!usersResponse.ok || !categoriesRes.ok || !subcategoriesRes.ok) {
-      throw new Error('HTTP error while fetching data');
+    if (!subcategoriesData || subcategoriesData.length === 0) {
+      console.warn('[fetchUsersAsSkillCards] No subcategories available in store');
+    }
+
+    const usersResponse = await fetch('/db/users.json');
+
+    if (!usersResponse.ok) {
+      throw new Error('HTTP error while fetching users');
     }
 
     const usersData: DbUsersResponse = await usersResponse.json();
-    const subcategoriesData = await subcategoriesRes.json();
-
-    const subcategories = subcategoriesData.subcategories;
 
     // Создаем мапу для быстрого поиска навыков по skill_id
-    // Находим categoryId по subcategoryId
     const skillMap = new Map<string, { name: string; categoryId: string }>();
 
-    subcategories.forEach((sub: { id: string; name: string; categoryId: string }) => {
+    subcategoriesData.forEach((sub) => {
       skillMap.set(sub.id, {
         name: sub.name,
         categoryId: sub.categoryId,

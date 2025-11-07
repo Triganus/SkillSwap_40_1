@@ -14,9 +14,10 @@ import { Link } from 'react-router-dom';
 import styles from './ProfileForm.module.scss';
 import {
   GENDER_DROPDOWN_OPTIONS,
-  CITY_DROPDOWN_OPTIONS,
+  getCityDropdownOptions,
 } from '@features/registration/hooks/useRegisterStep2Form';
 import { parseDateFromString, formatDateToString } from '@/pages/register/lib/dateUtils';
+import { useDirectories } from '@/entities/directory';
 
 export type ProfileFormValues = {
   avatarFile: File | null;
@@ -44,6 +45,11 @@ export const ProfileForm: React.FC<ProfileFormPops> = ({
   // updateUserError
 }) => {
   const avatarRef = useRef<UserAvatarUploadHandle>(null);
+  const { cities } = useDirectories();
+
+  const CITY_DROPDOWN_OPTIONS = getCityDropdownOptions(
+    cities as Array<{ id: string; name: string }>
+  );
 
   //     const [editingFields, setEditingFields] = useState({
   //         email: false,

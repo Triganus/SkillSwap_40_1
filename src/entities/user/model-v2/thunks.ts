@@ -16,6 +16,7 @@ export const fetchUserListItemsThunk = createAsyncThunk<
     cities?: string[];
     gender?: string;
     sortBy?: 'newest' | 'oldest';
+    searchType?: 'all' | 'want_to_learn' | 'can_teach';
     replace?: boolean; // Заменить существующие данные или добавить к ним
   }
 >('usersV2/fetchListItems', async (params) => {

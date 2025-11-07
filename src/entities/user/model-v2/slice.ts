@@ -187,11 +187,13 @@ export const usersSliceV2 = createSlice({
     // ========== fetchPopularUsersThunk ==========
     builder.addCase(fetchPopularUsersThunk.fulfilled, (state, action) => {
       listItemsAdapter.upsertMany(state.listItems, action.payload);
+      state.popularIds = action.payload.map(u => u.id);
     });
 
     // ========== fetchNewUsersThunk ==========
     builder.addCase(fetchNewUsersThunk.fulfilled, (state, action) => {
       listItemsAdapter.upsertMany(state.listItems, action.payload);
+      state.newIds = action.payload.map(u => u.id);
     });
   },
 });

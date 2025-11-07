@@ -6,6 +6,8 @@ export interface Category {
   id: string;
   /** Название категории */
   name: string;
+  /** Порядок отображения (для сортировки) */
+  order: number;
   /** ID связанных подкатегорий */
   subcategoryIds: string[];
 }

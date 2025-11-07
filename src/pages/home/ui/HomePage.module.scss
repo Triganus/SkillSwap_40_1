@@ -88,6 +88,12 @@
   width: 100%;
 }
 
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 /* Адаптивность для мобильных устройств */
 @media (width <= 480px) {
   .container {

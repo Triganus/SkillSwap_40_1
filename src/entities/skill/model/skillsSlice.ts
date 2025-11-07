@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '@app/store';
-import { fetchSkills as fetchSkillsAPI } from '@/api/skills-api';
 import type { Skill } from './types/types';
 import type { SkillsState } from './types';
+import type { TagCategory } from '@/shared/ui/Tag';
 
 const initialState: SkillsState = {
   skills: [],
@@ -16,13 +16,39 @@ const initialState: SkillsState = {
 };
 
 /**
- * Асинхронный экшен для загрузки всех навыков с API
+ * Асинхронный экшен для загрузки всех навыков из справочников Redux store
+ * Преобразует подкатегории из store в формат Skill
  */
-export const fetchSkills = createAsyncThunk<Skill[], void, { rejectValue: string }>(
+export const fetchSkills = createAsyncThunk<Skill[], void, { rejectValue: string; state: RootState }>(
   'skills/fetchSkills',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
-      const skills = await fetchSkillsAPI();
+      const state = getState();
+      const subcategoriesState = state.subcategories;
+      const subcategories = subcategoriesState.ids
+        .map(id => subcategoriesState.entities[id])
+        .filter(Boolean) as Array<{ id: string; name: string; categoryId: string }>;
+
+      if (!subcategories || subcategories.length === 0) {
+        console.warn('[fetchSkills] No subcategories available in store');
+        return [];
+      }
+
+      if (import.meta.env.DEV) {
+        console.log('[fetchSkills] Using subcategories from store:', subcategories.length);
+      }
+
+      // Преобразуем подкатегории в формат Skill
+      const skills: Skill[] = subcategories.map((sub) => ({
+        id: sub.id,
+        title: sub.name,
+        description: '',
+        type: 'learning' as const,
+        category: (sub.categoryId || 'other') as TagCategory,
+        authorId: 'mock-author-id',
+        createdAt: new Date().toISOString(),
+      }));
+
       return skills;
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch skills');

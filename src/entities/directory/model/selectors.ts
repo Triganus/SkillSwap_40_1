@@ -29,6 +29,15 @@ export const selectAllCategories = createSelector(
 );
 
 /**
+ * Селектор всех категорий, отсортированных по полю order
+ * Используйте этот селектор для отображения категорий в UI
+ */
+export const selectCategoriesSorted = createSelector(
+  [selectAllCategories],
+  (categories) => [...categories].sort((a, b) => a.order - b.order)
+);
+
+/**
  * Селектор категории по ID
  */
 export const selectCategoryById = (categoryId: string) =>
@@ -200,6 +209,45 @@ export const selectAllCategoriesWithSubcategories = createSelector(
     }))
 );
 
+/**
+ * Селектор всех категорий с подкатегориями, отсортированных по полю order
+ * Используйте этот селектор для отображения категорий в UI
+ */
+export const selectCategoriesWithSubcategoriesSorted = createSelector(
+  [selectCategoriesSorted, selectAllSubcategories],
+  (categories, subcategories) =>
+    categories.map((category) => ({
+      ...category,
+      subcategories: subcategories.filter((sub) => sub.categoryId === category.id),
+    }))
+);
+
+/**
+ * Селектор каталога навыков в формате SkillCategoriesData (для совместимости с legacy кодом)
+ * Категории автоматически отсортированы по полю order
+ */
+export const selectSkillsCatalog = createSelector(
+  [selectCategoriesSorted, selectAllSubcategories],
+  (categories, subcategories) => {
+    if (categories.length === 0 || subcategories.length === 0) {
+      return null;
+    }
+
+    return {
+      skill_categories: categories.map((category) => ({
+        category: category.name,
+        skills: subcategories
+          .filter((sub) => sub.categoryId === category.id)
+          .map((sub) => ({
+            skill_id: sub.id,
+            skill_name: sub.name,
+            skill_image: '',
+          })),
+      })),
+    };
+  }
+);
+
 // ========== UI Options Selectors ==========
 
 /**
@@ -214,10 +262,10 @@ export const selectCityOptions = createSelector([selectCitiesSorted], (cities) =
 );
 
 /**
- * Селектор опций категорий для dropdown
+ * Селектор опций категорий для dropdown (отсортированные по order)
  * Возвращает массив { label: string, value: string (ID категории) }
  */
-export const selectCategoryOptions = createSelector([selectAllCategories], (categories) =>
+export const selectCategoryOptions = createSelector([selectCategoriesSorted], (categories) =>
   categories.map((category) => ({
     label: category.name,
     value: category.id,

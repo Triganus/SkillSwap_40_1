@@ -26,6 +26,23 @@ export const fetchSubcategories = createAsyncThunk<Subcategory[], void, { reject
         error instanceof Error ? error.message : 'Ошибка загрузки подкатегорий'
       );
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const state = getState() as { subcategories: SubcategoriesState };
+      const { loading, ids } = state.subcategories;
+      const shouldFetch = !loading && ids.length === 0;
+
+      if (import.meta.env.DEV) {
+        if (!shouldFetch) {
+          console.log('[Subcategories] Skip fetch:', { loading, idsCount: ids.length });
+        } else {
+          console.log('[Subcategories] Will fetch');
+        }
+      }
+
+      return shouldFetch;
+    },
   }
 );
 

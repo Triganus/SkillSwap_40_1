@@ -12,6 +12,8 @@ export async function fetchUserListItems(params?: {
   cities?: string[];
   gender?: string;
   sortBy?: 'newest' | 'oldest';
+  searchType?: 'all' | 'want_to_learn' | 'can_teach';
+  replace?: boolean;
 }): Promise<{ users: UserListItem[]; hasMore: boolean; total: number }> {
   const searchParams = new URLSearchParams();
 
@@ -24,6 +26,7 @@ export async function fetchUserListItems(params?: {
   if (params?.cities?.length) searchParams.set('cities', params.cities.join(','));
   if (params?.gender) searchParams.set('gender', params.gender);
   if (params?.sortBy) searchParams.set('sort', params.sortBy);
+  if (params?.searchType) searchParams.set('searchType', params.searchType);
 
   const response = await fetch(`/api/users?${searchParams.toString()}`);
 

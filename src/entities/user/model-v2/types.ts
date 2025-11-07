@@ -109,4 +109,6 @@ export interface UsersState {
   profiles: EntityState<UserProfile, string>; // Нормализованное хранилище для профилей
   loading: boolean;
   error: string | null;
+  popularIds?: string[]; // топ популярных
+  newIds?: string[]; // топ новых
 }

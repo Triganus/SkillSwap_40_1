@@ -11,6 +11,9 @@ import notificationsReducer from '@/features/notifications/model/notificationsSl
 
 import { authReducerV2, usersReducerV2 } from '@/entities/user/model-v2';
 import { categoriesReducer, subcategoriesReducer, citiesReducer } from '@/entities/directory/model';
+import { filtersReducer } from '@/features/user-search/model/filtersSlice';
+import { paginationReducer } from '@/features/user-search/model/paginationSlice';
+import { initializeDirectories } from '@/entities/directory';
 
 const PERSIST_VERSION = 1;
 
@@ -35,9 +38,26 @@ const validAuthV2 = validateAuthV2State(loadedAuthV2)
   ? loadedAuthV2
   : { isAuthenticated: false, user: null, isLoading: false, error: null };
 
+// Загрузка справочников из localStorage (браузерное хранилище)
+// Эти данные будут использованы как preloadedState при создании Redux store
+const loadedCategories = loadState('directories_categories', { entities: {}, ids: [], loading: false, error: null }, PERSIST_VERSION);
+const loadedSubcategories = loadState('directories_subcategories', { entities: {}, ids: [], loading: false, error: null }, PERSIST_VERSION);
+const loadedCities = loadState('directories_cities', { entities: {}, ids: [], loading: false, error: null }, PERSIST_VERSION);
+
+if (import.meta.env.DEV) {
+  console.log('[Store Init] Directories from localStorage:', {
+    categoriesCount: loadedCategories.ids.length,
+    subcategoriesCount: loadedSubcategories.ids.length,
+    citiesCount: loadedCities.ids.length,
+  });
+}
+
 const PRELOADED = {
   auth: loadState('auth', { isAuthenticated: false, user: null }, PERSIST_VERSION),
   authV2: validAuthV2,
+  categories: loadedCategories,
+  subcategories: loadedSubcategories,
+  cities: loadedCities,
 };
 
 export const store = configureStore({
@@ -61,14 +81,31 @@ export const store = configureStore({
     categories: categoriesReducer,
     subcategories: subcategoriesReducer,
     cities: citiesReducer,
+
+    // Фильтры каталога пользователей
+    filters: filtersReducer,
+
+    // Пагинация секций пользователей
+    pagination: paginationReducer,
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>
     getDefault({ serializableCheck: false }).concat(
-      createLocalStorageMiddleware({ auth: PERSIST_VERSION, authV2: PERSIST_VERSION })
+      createLocalStorageMiddleware({
+        auth: PERSIST_VERSION,
+        authV2: PERSIST_VERSION,
+        directories_categories: { stateKey: 'categories', version: PERSIST_VERSION },
+        directories_subcategories: { stateKey: 'subcategories', version: PERSIST_VERSION },
+        directories_cities: { stateKey: 'cities', version: PERSIST_VERSION },
+      })
     ),
   devTools: import.meta?.env?.MODE !== 'production',
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+// Инициализация справочников сразу после создания store
+// Если данные есть (ids.length > 0) - запросы НЕ выполнятся
+// Если данных нет - выполнятся fetch запросы, результат сохранится в store + localStorage
+initializeDirectories(store.dispatch);

@@ -24,6 +24,23 @@ export const fetchCities = createAsyncThunk<City[], void, { rejectValue: string 
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Ошибка загрузки городов');
     }
+  },
+  {
+    condition: (_, { getState }) => {
+      const state = getState() as { cities: CitiesState };
+      const { loading, ids } = state.cities;
+      const shouldFetch = !loading && ids.length === 0;
+
+      if (import.meta.env.DEV) {
+        if (!shouldFetch) {
+          console.log('[Cities] Skip fetch:', { loading, idsCount: ids.length });
+        } else {
+          console.log('[Cities] Will fetch');
+        }
+      }
+
+      return shouldFetch;
+    },
   }
 );
 

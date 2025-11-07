@@ -1,0 +1,27 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-surface);
+  border-radius: 24px;
+  padding: 4px 10px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.remove:hover {
+  opacity: .7;
+}

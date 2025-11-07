@@ -29,11 +29,20 @@ const initialState: UsersState = {
 export const fetchUsersWithSkills = createAsyncThunk<
   SkillCardProps[],
   void,
-  { rejectValue: string }
->('users/fetchUsersWithSkills', async (_, { rejectWithValue }) => {
+  { rejectValue: string; state: RootState }
+>('users/fetchUsersWithSkills', async (_, { rejectWithValue, getState }) => {
   try {
-    const data = await fetchUsersAsSkillCards();
-    return data;
+    const state = getState();
+    const subcategoriesState = state.subcategories;
+    const subcategories = subcategoriesState.ids
+      .map(id => subcategoriesState.entities[id])
+      .filter(Boolean) as Array<{ id: string; name: string; categoryId: string }>;
+
+    if (import.meta.env.DEV) {
+      console.log('[fetchUsersWithSkills] Using subcategories from store:', subcategories.length);
+    }
+
+    return await fetchUsersAsSkillCards(subcategories);
   } catch (error) {
     return rejectWithValue(
       error instanceof Error ? error.message : 'Failed to fetch users with skills'

@@ -152,3 +152,16 @@ export const selectUsersByGender = (gender: string) =>
     if (!gender || gender === 'all' || gender === 'not_specified') return users;
     return users.filter((user) => user.gender === gender);
   });
+
+export const selectPopularUserIds = (state: RootState) => selectUsersV2State(state).popularIds || [];
+export const selectNewUserIds = (state: RootState) => selectUsersV2State(state).newIds || [];
+
+export const selectPopularUsers = createSelector(
+  [selectPopularUserIds, selectUserListItemsEntities],
+  (ids, entities) => ids.map(id => entities[id]).filter(Boolean) as UserListItem[]
+);
+
+export const selectNewUsers = createSelector(
+  [selectNewUserIds, selectUserListItemsEntities],
+  (ids, entities) => ids.map(id => entities[id]).filter(Boolean) as UserListItem[]
+);

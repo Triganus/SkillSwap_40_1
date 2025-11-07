@@ -13,8 +13,7 @@ import {
   getAllUsersWithSkills,
   getUsersLoading,
 } from '@entities/user/model/usersSlice';
-import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
-import { getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
+import { setFilter, getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { CardSectionUI } from '@shared/ui/CardSection';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { SkillCard } from '@widgets/Cards/SkillCard';
@@ -22,8 +21,7 @@ import { TitleUI } from '@shared/ui/Title';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
 import type { FilterPayload } from '@/entities/filterSideBar/model';
-import type { SkillCategoriesData } from '@entities/Skill';
-import { fetchSkillsCatalog } from '@/api';
+import { selectSkillsCatalog, selectDirectoriesLoading } from '@/entities/directory';
 import styles from './HomePage.module.scss';
 import { useSidebarFilter } from '@/shared/hooks/useSidebarFilter';
 
@@ -34,18 +32,19 @@ export default function HomePage() {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
 
-  // const [filters, setFilters] = useState<FilterPayload>(EMPTY_FILTERS);
-
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
   const loading = useAppSelector(getSkillsLoading);
   const usersData = useAppSelector(getAllUsersWithSkills);
   const loadingUsers = useAppSelector(getUsersLoading);
 
-  // Локальное состояние для каталога навыков (для фильтров)
-  const [skillsCatalog, setSkillsCatalog] = useState<SkillCategoriesData | null>(null);
-  const [loadingCatalog, setLoadingCatalog] = useState(true);
+  // Справочники из Redux (загружаются централизованно в Provider)
+  const skillsCatalog = useAppSelector(selectSkillsCatalog);
+  const loadingCatalog = useAppSelector(selectDirectoriesLoading);
+
+  // Фильтры из Redux
   const currentFilters = useAppSelector(getSideBarFilters);
+
   // Локальное состояние для бесконечного скролла
   const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
@@ -54,28 +53,6 @@ export default function HomePage() {
   const searchFromUrl = searchParams.get('search') || '';
   const isSearching = searchFromUrl.trim().length > 0;
   console.log('Search from URL:', searchFromUrl);
-  // Загрузка каталога навыков
-  useEffect(() => {
-    let cancelled = false;
-
-    fetchSkillsCatalog()
-      .then((data) => {
-        if (!cancelled) {
-          setSkillsCatalog(data);
-          setLoadingCatalog(false);
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to load skills catalog:', error);
-        if (!cancelled) {
-          setLoadingCatalog(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   // Загрузка навыков и пользователей через Redux
   useEffect(() => {
