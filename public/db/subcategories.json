@@ -1,0 +1,214 @@
+{
+  "subcategories": [
+    {
+      "id": "bus_001",
+      "name": "Управление командой",
+      "categoryId": "business"
+    },
+    {
+      "id": "bus_002",
+      "name": "Маркетинг и реклама",
+      "categoryId": "business"
+    },
+    {
+      "id": "bus_003",
+      "name": "Продажи и переговоры",
+      "categoryId": "business"
+    },
+    {
+      "id": "bus_004",
+      "name": "Личный бренд",
+      "categoryId": "business"
+    },
+    {
+      "id": "bus_005",
+      "name": "Резюме и собеседование",
+      "categoryId": "business"
+    },
+    {
+      "id": "bus_006",
+      "name": "Тайм-менеджмент",
+      "categoryId": "business"
+    },
+    {
+      "id": "bus_007",
+      "name": "Проектное управление",
+      "categoryId": "business"
+    },
+    {
+      "id": "bus_008",
+      "name": "Предпринимательство",
+      "categoryId": "business"
+    },
+    {
+      "id": "art_001",
+      "name": "Рисование и иллюстрация",
+      "categoryId": "art"
+    },
+    {
+      "id": "art_002",
+      "name": "Фотография",
+      "categoryId": "art"
+    },
+    {
+      "id": "art_003",
+      "name": "Видеомонтаж",
+      "categoryId": "art"
+    },
+    {
+      "id": "art_004",
+      "name": "Музыка и звук",
+      "categoryId": "art"
+    },
+    {
+      "id": "art_005",
+      "name": "Актёрское мастерство",
+      "categoryId": "art"
+    },
+    {
+      "id": "art_006",
+      "name": "Креативное письмо",
+      "categoryId": "art"
+    },
+    {
+      "id": "art_007",
+      "name": "Арт-терапия",
+      "categoryId": "art"
+    },
+    {
+      "id": "art_008",
+      "name": "Декор и DIY",
+      "categoryId": "art"
+    },
+    {
+      "id": "lang_001",
+      "name": "Английский",
+      "categoryId": "languages"
+    },
+    {
+      "id": "lang_002",
+      "name": "Французский",
+      "categoryId": "languages"
+    },
+    {
+      "id": "lang_003",
+      "name": "Испанский",
+      "categoryId": "languages"
+    },
+    {
+      "id": "lang_004",
+      "name": "Немецкий",
+      "categoryId": "languages"
+    },
+    {
+      "id": "lang_005",
+      "name": "Китайский",
+      "categoryId": "languages"
+    },
+    {
+      "id": "lang_006",
+      "name": "Японский",
+      "categoryId": "languages"
+    },
+    {
+      "id": "lang_007",
+      "name": "Подготовка к экзаменам (IELTS, TOEFL)",
+      "categoryId": "languages"
+    },
+    {
+      "id": "edu_001",
+      "name": "Личностное развитие",
+      "categoryId": "education"
+    },
+    {
+      "id": "edu_002",
+      "name": "Навыки обучения",
+      "categoryId": "education"
+    },
+    {
+      "id": "edu_003",
+      "name": "Когнитивные техники",
+      "categoryId": "education"
+    },
+    {
+      "id": "edu_004",
+      "name": "Скорочтение",
+      "categoryId": "education"
+    },
+    {
+      "id": "edu_005",
+      "name": "Навыки преподавания",
+      "categoryId": "education"
+    },
+    {
+      "id": "edu_006",
+      "name": "Коучинг",
+      "categoryId": "education"
+    },
+    {
+      "id": "home_001",
+      "name": "Уборка и организация",
+      "categoryId": "home"
+    },
+    {
+      "id": "home_002",
+      "name": "Домашние финансы",
+      "categoryId": "home"
+    },
+    {
+      "id": "home_003",
+      "name": "Приготовление еды",
+      "categoryId": "home"
+    },
+    {
+      "id": "home_004",
+      "name": "Домашние растения",
+      "categoryId": "home"
+    },
+    {
+      "id": "home_005",
+      "name": "Ремонт",
+      "categoryId": "home"
+    },
+    {
+      "id": "home_006",
+      "name": "Хранение вещей",
+      "categoryId": "home"
+    },
+    {
+      "id": "hlth_001",
+      "name": "Йога и медитация",
+      "categoryId": "health"
+    },
+    {
+      "id": "hlth_002",
+      "name": "Питание и ЗОЖ",
+      "categoryId": "health"
+    },
+    {
+      "id": "hlth_003",
+      "name": "Ментальное здоровье",
+      "categoryId": "health"
+    },
+    {
+      "id": "hlth_004",
+      "name": "Осознанность",
+      "categoryId": "health"
+    },
+    {
+      "id": "hlth_005",
+      "name": "Физические тренировки",
+      "categoryId": "health"
+    },
+    {
+      "id": "hlth_006",
+      "name": "Сон и восстановление",
+      "categoryId": "health"
+    },
+    {
+      "id": "hlth_007",
+      "name": "Баланс жизни и работы",
+      "categoryId": "health"
+    }
+  ]
+}

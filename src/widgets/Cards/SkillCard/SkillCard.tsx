@@ -11,7 +11,8 @@ import { LikeButtonUI } from '@/shared/ui/LikeButton';
 import { TagUI } from '@/shared/ui/Tag';
 import { MediaSlider } from '@/shared/ui/MediaSlider';
 import { Icon } from '@/shared/ui/Icon';
-import { tagCategoryToLabel } from '@/shared/lib/categoryMapper';
+import { selectCategoryIdToName } from '@/entities/directory/model/selectors';
+import { useAppSelector } from '@/shared/hooks/redux';
 import type { MediaItem } from '@/shared/ui/MediaSlider/types';
 
 export const SkillCard: React.FC<SkillCardProps> = ({
@@ -31,6 +32,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   title,
   category,
 }) => {
+  const categoryIdToName = useAppSelector(selectCategoryIdToName);
+
   // Преобразуем images в формат MediaItem
   const mediaItems: MediaItem[] = React.useMemo(
     () =>
@@ -105,7 +108,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TitleUI size="large">{title}</TitleUI>
                 {category && (
                   <TagUI
-                    label={tagCategoryToLabel[category] || category}
+                    label={categoryIdToName[category] || category}
                     category={category}
                     className={styles.categoryTag}
                   />

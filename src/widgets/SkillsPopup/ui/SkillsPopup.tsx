@@ -4,7 +4,7 @@ import { fetchSkillsCatalog } from '@/api/skills-api';
 import type { SkillCategoriesData, SkillCategory } from '@/entities/Skill';
 import { TextUI } from '@shared/ui/Text';
 import { Icon } from '@shared/ui/Icon';
-import { getCategoryConfigByName } from '@/shared/lib/constants/categoryColors';
+import { selectCategoryConfigByName } from '@/entities/directory';
 import { useClickOutside } from '@shared/hooks/useClickOutside';
 import type { SkillsPopupProps } from '../types';
 import styles from '../SkillsPopup.module.scss';
@@ -75,7 +75,7 @@ export const SkillsPopup: React.FC<SkillsPopupProps> = ({ isOpen, onClose, butto
   const rightColumn = sortedCategories.slice(3, 6);
 
   const renderCategory = (category: SkillCategory) => {
-    const categoryConfig = getCategoryConfigByName(category.category);
+    const categoryConfig = selectCategoryConfigByName(category.category);
     if (!categoryConfig) return null;
 
     return (

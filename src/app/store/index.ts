@@ -10,6 +10,7 @@ import userReducer from '@/entities/user/model/userSlice';
 import notificationsReducer from '@/features/notifications/model/notificationsSlice';
 
 import { authReducerV2, usersReducerV2 } from '@/entities/user/model-v2';
+import { categoriesReducer, subcategoriesReducer, citiesReducer } from '@/entities/directory/model';
 
 const PERSIST_VERSION = 1;
 
@@ -55,6 +56,11 @@ export const store = configureStore({
     filterSideBar: filterSideBarReducer,
     notifications: notificationsReducer,
     popup: popupReducer,
+
+    // Справочники
+    categories: categoriesReducer,
+    subcategories: subcategoriesReducer,
+    cities: citiesReducer,
   },
   preloadedState: PRELOADED as unknown,
   middleware: (getDefault) =>

@@ -21,8 +21,34 @@ const meta: Meta<StoryProps> = {
 
   loaders: [
     async () => {
-      const res = await fetch('/db/skills.json');
-      const data: SkillCategoriesData = await res.json();
+      const [categoriesRes, subcategoriesRes] = await Promise.all([
+        fetch('/api/directories/categories'),
+        fetch('/api/directories/subcategories'),
+      ]);
+
+      const categoriesData = await categoriesRes.json();
+      const subcategoriesData = await subcategoriesRes.json();
+
+      const categories = categoriesData.categories;
+      const subcategories = subcategoriesData.subcategories;
+
+      const data: SkillCategoriesData = {
+        skill_categories: categories.map((category: { id: string; name: string }) => {
+          const categorySubcategories = subcategories.filter(
+            (sub: { categoryId: string }) => sub.categoryId === category.id
+          );
+
+          return {
+            category: category.name,
+            skills: categorySubcategories.map((sub: { id: string; name: string }) => ({
+              skill_id: sub.id,
+              skill_name: sub.name,
+              skill_image: '',
+            })),
+          };
+        }),
+      };
+
       return { skillsData: data };
     },
   ],

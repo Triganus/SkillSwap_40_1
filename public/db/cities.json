@@ -1,0 +1,19 @@
+{
+  "cities": [
+    { "id": "city_msk", "name": "Москва" },
+    { "id": "city_spb", "name": "Санкт-Петербург" },
+    { "id": "city_nsk", "name": "Новосибирск" },
+    { "id": "city_ekb", "name": "Екатеринбург" },
+    { "id": "city_kzn", "name": "Казань" },
+    { "id": "city_nnv", "name": "Нижний Новгород" },
+    { "id": "city_chel", "name": "Челябинск" },
+    { "id": "city_sam", "name": "Самара" },
+    { "id": "city_ufa", "name": "Уфа" },
+    { "id": "city_rst", "name": "Ростов-на-Дону" },
+    { "id": "city_omsk", "name": "Омск" },
+    { "id": "city_krsk", "name": "Красноярск" },
+    { "id": "city_vrn", "name": "Воронеж" },
+    { "id": "city_perm", "name": "Пермь" },
+    { "id": "city_vlg", "name": "Волгоград" }
+  ]
+}

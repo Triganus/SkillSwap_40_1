@@ -11,9 +11,12 @@ import type { SkillCategoriesData } from '@/entities/Skill';
 import { RadioButtonGroup } from './RadioButtonGroup';
 import { GENDER_OPTIONS } from '@/shared/lib';
 import { GENERAL_RB_FILTER_OPTIONS } from '@/shared/lib/constants/GeneralRbFilter';
-import { CITIES } from '@/shared/lib';
+import { useDirectories } from '@/entities/directory';
+import type { City } from '@/entities/directory/model/types';
 
 export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, onChange }) => {
+  const { cities } = useDirectories();
+
   const [resetFilters, setResetFilters] = useState(false);
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [resetToken, setResetToken] = useState(0);
@@ -129,7 +132,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
         <CitiesSideBar
           title="Города"
-          cities={CITIES.map((city) => city)}
+          cities={(cities as City[]).map((city) => city.name)}
           onChange={handleCitiesChange}
           resetToken={resetToken}
         />

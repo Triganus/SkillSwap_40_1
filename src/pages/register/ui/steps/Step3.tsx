@@ -19,9 +19,12 @@ import {
   SkillConfirmModal,
 } from '@features/registration';
 import type { RegistrationData } from '@features/registration';
+import { useDirectories } from '@/entities/directory';
+import { selectCategoryOptions } from '@/entities/directory/model/selectors';
+import { useAppSelector } from '@/shared/hooks/redux';
+import type { Subcategory } from '@/entities/directory/model/types';
 import {
   useRegisterStep3Form,
-  CATEGORY_OPTIONS,
   buildSubcategoryOptions,
   type RegisterStep3Values,
 } from '@features/registration/hooks/useRegisterStep3Form';
@@ -37,6 +40,11 @@ export default function Step3() {
   const { completeStep, data } = useRegistrationProgress();
   const { login } = useAuthV2();
   const { showPopup } = usePopup();
+  const { subcategories } = useDirectories();
+
+  const CATEGORY_OPTIONS = useAppSelector(selectCategoryOptions);
+
+  const typedSubcategories = subcategories as Subcategory[];
 
   const initial: Partial<RegisterStep3Values> | undefined = data.step3
     ? {
@@ -262,7 +270,10 @@ export default function Step3() {
             id="skillSubcategory"
             aria-label="Подкатегория навыка"
             placeholder="Выберите подкатегорию навыка"
-            options={buildSubcategoryOptions(getValues('category') as TagCategory | '')}
+            options={buildSubcategoryOptions(
+              getValues('category') as TagCategory | '',
+              typedSubcategories
+            )}
             value={getValues('subcategory')}
             onChange={(v) => {
               setSubcategoryTouched(true);

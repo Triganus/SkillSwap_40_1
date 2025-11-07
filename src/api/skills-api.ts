@@ -1,42 +1,43 @@
-import type { Skill } from '../entities/skill/model/types/types';
+import type { Skill } from '@entities/skill/model';
 import type { SkillCategoriesData } from '@/entities/Skill';
-import { mapCategoryToTag } from '@/shared/lib/categoryMapper';
-
-interface RawSkill {
-  skill_id: string;
-  skill_name: string;
-  skill_image?: string;
-}
-
-interface RawSkillCategory {
-  category: string;
-  skills: RawSkill[];
-}
+import type { TagCategory } from '@/shared/ui/Tag';
 
 /**
- * Загружает список всех навыков из JSON файла
+ * Загружает список всех навыков из новой системы справочников
  * @returns Promise с массивом навыков
+ * @deprecated Используйте directoryModel.fetchCategories() и directoryModel.fetchSubcategories() напрямую
  */
 export const fetchSkills = async (): Promise<Skill[]> => {
   try {
-    const response = await fetch('/db/skills.json');
+    // Загружаем категории и подкатегории из новых API
+    const [categoriesRes, subcategoriesRes] = await Promise.all([
+      fetch('/api/directories/categories'),
+      fetch('/api/directories/subcategories'),
+    ]);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!categoriesRes.ok || !subcategoriesRes.ok) {
+      throw new Error('HTTP error while fetching directories');
     }
 
-    const data = (await response.json()) as { skill_categories: RawSkillCategory[] };
+    // const categoriesData = await categoriesRes.json();
+    const subcategoriesData = await subcategoriesRes.json();
 
-    const skills: Skill[] = data.skill_categories.flatMap((cat) =>
-      cat.skills.map((skill) => ({
-        id: skill.skill_id,
-        title: skill.skill_name,
-        description: '', //можно позже добавить в JSON
-        type: 'learning', // временно
-        category: mapCategoryToTag(cat.category),
-        authorId: 'mock-author-id', //временно
-        createdAt: new Date().toISOString(),
-      }))
+    // const categories = categoriesData.categories;
+    const subcategories = subcategoriesData.subcategories;
+
+    // Преобразуем в формат Skill
+    const skills: Skill[] = subcategories.map(
+      (sub: { id: string; name: string; categoryId: string }) => {
+        return {
+          id: sub.id,
+          title: sub.name,
+          description: '',
+          type: 'learning',
+          category: (sub.categoryId || 'other') as TagCategory,
+          authorId: 'mock-author-id',
+          createdAt: new Date().toISOString(),
+        };
+      }
     );
 
     return skills;
@@ -49,17 +50,45 @@ export const fetchSkills = async (): Promise<Skill[]> => {
 /**
  * Загружает каталог навыков в формате для фильтров (с категориями)
  * @returns Promise с данными категорий навыков
+ * @deprecated Используйте convertToLegacyFormat из @/entities/directory
  */
 export const fetchSkillsCatalog = async (): Promise<SkillCategoriesData> => {
   try {
-    const response = await fetch('/db/skills.json');
+    // Загружаем категории и подкатегории из новых API
+    const [categoriesRes, subcategoriesRes] = await Promise.all([
+      fetch('/api/directories/categories'),
+      fetch('/api/directories/subcategories'),
+    ]);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!categoriesRes.ok || !subcategoriesRes.ok) {
+      throw new Error('HTTP error while fetching directories');
     }
 
-    const data: SkillCategoriesData = await response.json();
-    return data;
+    const categoriesData = await categoriesRes.json();
+    const subcategoriesData = await subcategoriesRes.json();
+
+    const categories = categoriesData.categories;
+    const subcategories = subcategoriesData.subcategories;
+
+    // Преобразуем в старый формат SkillCategoriesData
+    const skillCategories = categories.map((category: { id: string; name: string }) => {
+      const categorySubcategories = subcategories.filter(
+        (sub: { categoryId: string }) => sub.categoryId === category.id
+      );
+
+      return {
+        category: category.name,
+        skills: categorySubcategories.map((sub: { id: string; name: string }) => ({
+          skill_id: sub.id,
+          skill_name: sub.name,
+          skill_image: '',
+        })),
+      };
+    });
+
+    return {
+      skill_categories: skillCategories,
+    };
   } catch (error) {
     console.error('Error fetching skills catalog:', error);
     throw error;

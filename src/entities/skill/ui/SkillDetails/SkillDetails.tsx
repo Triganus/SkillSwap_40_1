@@ -6,7 +6,8 @@ import { LikeButtonUI } from '@/shared/ui/LikeButton/LikeButtonUI';
 import { Icon } from '@/shared/ui/Icon/Icon';
 import { Button } from '@/shared/ui/Button/Button';
 import { TagUI } from '@/shared/ui/Tag'; //для отображения категории как тега
-import { tagCategoryToLabel } from '@/shared/lib/categoryMapper'; //для преобразования TagCategory -> человекочитаемые названия категорий
+import { selectCategoryIdToName } from '@/entities/directory/model/selectors';
+import { useAppSelector } from '@/shared/hooks/redux';
 import type { MediaItem } from '@/shared/ui/MediaSlider/types';
 import type { SkillDetailsProps } from './types';
 import styles from './SkillDetails.module.scss';
@@ -28,6 +29,8 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
   onDoneClick,
   className = '',
 }) => {
+  const categoryIdToName = useAppSelector(selectCategoryIdToName);
+
   const mediaItems: MediaItem[] = useMemo(
     () =>
       images.map((src, idx) => ({
@@ -86,7 +89,11 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
       {/* Заголовок и подзаголовок - слева */}
       <div className={styles.header}>
         <TitleUI size="large">{title}</TitleUI>
-        <TagUI label={tagCategoryToLabel[category]} category={category} className={styles.tag} />
+        <TagUI
+          label={categoryIdToName[category] || category}
+          category={category}
+          className={styles.tag}
+        />
       </div>
 
       {/* Описание - слева */}
