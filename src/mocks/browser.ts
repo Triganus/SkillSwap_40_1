@@ -39,13 +39,7 @@ const delegate = async ({ request }: { request: Request }) => {
 };
 
 export const worker = setupWorker(
-  http.get('/api/*', delegate),
-  http.post('/api/*', delegate),
-  http.put('/api/*', delegate),
-  http.patch('/api/*', delegate),
-  http.delete('/api/*', delegate),
-  http.options('/api/*', delegate),
-  http.head('/api/*', delegate)
+  http.all('*/api/*', delegate),
 );
 
 worker.events.on('request:start', ({ request }) => {

@@ -18,7 +18,6 @@ import {
 } from '@/entities/directory/model';
 import { filtersReducer } from '@/features/user-search/model/filtersSlice';
 import { paginationReducer } from '@/features/user-search/model/paginationSlice';
-import { initializeDirectories } from '@/entities/directory';
 
 const PERSIST_VERSION = 1;
 
@@ -131,7 +130,3 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// Инициализация справочников сразу после создания store
-// Если данные есть (ids.length > 0) - запросы НЕ выполнятся
-// Если данных нет - выполнятся fetch запросы, результат сохранится в store + localStorage
-initializeDirectories(store.dispatch);
