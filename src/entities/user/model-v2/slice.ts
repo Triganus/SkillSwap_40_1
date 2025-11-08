@@ -181,11 +181,6 @@ export const usersSliceV2 = createSlice({
       }
     });
 
-    // ========== fetchRecommendedUsersThunk ==========
-    builder.addCase(fetchRecommendedUsersThunk.fulfilled, (state, action) => {
-      listItemsAdapter.addMany(state.listItems, action.payload.users);
-    });
-
     // ========== fetchPopularUsersThunk ==========
     builder.addCase(fetchPopularUsersThunk.fulfilled, (state, action) => {
       listItemsAdapter.upsertMany(state.listItems, action.payload);
@@ -205,11 +200,41 @@ export const usersSliceV2 = createSlice({
     });
     builder.addCase(fetchUsersWithSkillsThunk.fulfilled, (state, action) => {
       state.loading = false;
-      state.skillCards = action.payload;
+
+      if (action.payload.replace) {
+        state.skillCards = action.payload.users;
+      } else {
+        const existingIds = new Set((state.skillCards || []).map((u) => u.user.id));
+        const newUsers = action.payload.users.filter((u) => !existingIds.has(u.user.id));
+
+        state.skillCards = [...(state.skillCards || []), ...newUsers];
+      }
     });
     builder.addCase(fetchUsersWithSkillsThunk.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || 'Failed to fetch users with skills';
+    });
+
+    // ========== fetchRecommendedUsersThunk (для рекомендованных с пагинацией) ==========
+    builder.addCase(fetchRecommendedUsersThunk.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchRecommendedUsersThunk.fulfilled, (state, action) => {
+      state.loading = false;
+
+      if (action.payload.replace) {
+        state.skillCards = action.payload.users;
+      } else {
+        const existingIds = new Set((state.skillCards || []).map((u) => u.user.id));
+        const newUsers = action.payload.users.filter((u) => !existingIds.has(u.user.id));
+
+        state.skillCards = [...(state.skillCards || []), ...newUsers];
+      }
+    });
+    builder.addCase(fetchRecommendedUsersThunk.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || 'Failed to fetch recommended users';
     });
   },
 });

@@ -9,9 +9,9 @@ import {
   fetchSkills,
 } from '@entities/skill/model';
 import {
-  fetchUsersWithSkillsThunk,
   selectSkillCards,
   selectUsersLoading,
+  fetchRecommendedUsersThunk,
 } from '@/entities/user/model-v2';
 import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { useContentFiltering } from '@/entities/filtered-content';
@@ -43,8 +43,8 @@ export default function HomePage() {
   const skillsCatalog = useAppSelector(selectSkillsCatalog);
   const loadingCatalog = useAppSelector(selectDirectoriesLoading);
 
-  // Локальное состояние для бесконечного скролла
-  const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
+  // Локальное состояние для бесконечного скролла рекомендованных
+  const [currentRecommendedPage, setCurrentRecommendedPage] = useState(1);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
 
   // Состояние сортировки
@@ -56,9 +56,7 @@ export default function HomePage() {
   // Функция очистки поискового параметра из URL
   const clearSearch = useCallback(() => {
     const newParams = new URLSearchParams(searchParams);
-
     newParams.delete('search');
-
     setSearchParams(newParams);
   }, [searchParams, setSearchParams]);
 
@@ -67,21 +65,22 @@ export default function HomePage() {
     setSortOrder(order);
   }, []);
 
-  const { filteredContent, activeFilters, removeFilter, hasActiveFilters } =
+  const { filteredContent, activeFilters, removeFilter, hasActiveFilters, loadMore, hasMore } =
     useContentFiltering(searchFromUrl, { clearSearch, sortOrder, onSortChange: handleSortChange });
 
   const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
 
-  // Загрузка навыков и пользователей через Redux
+  // Загрузка навыков для справочника
   useEffect(() => {
     dispatch(fetchSkills());
   }, [dispatch]);
 
+  // Загрузка рекомендованных при первом монтировании
   useEffect(() => {
-    if (usersData.length === 0 && !loadingUsers) {
-      dispatch(fetchUsersWithSkillsThunk());
+    if (!isFiltering && usersData.length === 0) {
+      dispatch(fetchRecommendedUsersThunk({ page: 1, limit: 9, replace: true }));
     }
-  }, [dispatch, usersData.length, loadingUsers]);
+  }, [dispatch, isFiltering, usersData.length]);
 
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
@@ -111,27 +110,42 @@ export default function HomePage() {
     navigate('/new-skills');
   }, [navigate]);
 
-  // Обработчик для бесконечного скролла
+  // Обработчик для бесконечного скролла рекомендованных
   const handleLoadMoreRecommended = useCallback(() => {
-    if (displayedRecommendedCount >= usersData.length) {
-      setHasMoreRecommended(false);
+    if (!hasMoreRecommended || loadingUsers) {
       return;
     }
 
-    // Имитация загрузки
-    setTimeout(() => {
-      setDisplayedRecommendedCount((prev) => Math.min(prev + 9, usersData.length));
-    }, 500);
-  }, [displayedRecommendedCount, usersData.length]);
+    const nextPage = currentRecommendedPage + 1;
+
+    dispatch(
+      fetchRecommendedUsersThunk({
+        page: nextPage,
+        limit: 9,
+        replace: false,
+      })
+    ).then((result) => {
+      if (result.payload && typeof result.payload === 'object' && 'hasMore' in result.payload) {
+        const payload = result.payload as { hasMore: boolean };
+
+        setHasMoreRecommended(payload.hasMore);
+
+        if (payload.hasMore) {
+          setCurrentRecommendedPage(nextPage);
+        }
+      }
+    });
+  }, [dispatch, currentRecommendedPage, hasMoreRecommended, loadingUsers]);
 
   // Данные для отображения
   const popularCards = usersData.slice(0, 3); // Первые 3
   const newCards = usersData.slice(3, 6); // Следующие 3
-  const recommendedCards = usersData.slice(0, displayedRecommendedCount);
+  const recommendedCards = usersData; // Все загруженные (накапливаются)
 
-  // Показываем прелоадер пока загружаются данные
-  const isLoading = loadingCatalog || loadingUsers;
-  if (isLoading) {
+  // Показываем прелоадер только при первоначальной загрузке (когда нет данных)
+  const isInitialLoading = (loadingCatalog || loadingUsers) && usersData.length === 0;
+
+  if (isInitialLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.preloaderContainer}>
@@ -161,15 +175,20 @@ export default function HomePage() {
                 type="button"
                 className={styles.sortButton}
                 onClick={() => handleSortChange(sortOrder === 'newest' ? 'oldest' : 'newest')}
-                aria-label={sortOrder === 'newest' ? 'Сортировать сначала старые' : 'Сортировать сначала новые'}
+                aria-label={
+                  sortOrder === 'newest'
+                    ? 'Сортировать сначала старые'
+                    : 'Сортировать сначала новые'
+                }
               >
                 <Icon name="sort" size={24} className={styles.sortIcon} />
                 {sortOrder === 'newest' ? 'Сначала новые' : 'Сначала старые'}
               </button>
             </div>
             <InfiniteGridUI
-              hasMore={false}
-              loading={false}
+              onLoadMore={loadMore}
+              hasMore={hasMore}
+              loading={loadingUsers}
               columns={{ mobile: 1, tablet: 2, desktop: 3 }}
               gap="24px"
               className={styles.searchGrid}

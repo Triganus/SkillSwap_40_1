@@ -114,7 +114,14 @@ export function useContentFiltering(
       searchQuery: normalizedSearchQuery,
       sortOrder: config.sortOrder || 'newest',
     }),
-    [limitedData, usersData.length, isSearchActive, isSidebarFilterActive, normalizedSearchQuery, config.sortOrder]
+    [
+      limitedData,
+      usersData.length,
+      isSearchActive,
+      isSidebarFilterActive,
+      normalizedSearchQuery,
+      config.sortOrder,
+    ]
   );
 
   // Генерация чипсов активных фильтров
