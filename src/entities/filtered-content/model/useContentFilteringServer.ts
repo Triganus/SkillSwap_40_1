@@ -1,6 +1,10 @@
 import { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@shared/hooks/redux';
-import { selectSkillCards, selectUsersLoading, fetchUsersWithSkillsThunk } from '@/entities/user/model-v2';
+import {
+  selectSkillCards,
+  selectUsersLoading,
+  fetchUsersWithSkillsThunk,
+} from '@/entities/user/model-v2';
 import {
   getSideBarFilters,
   resetFilter,
@@ -77,13 +81,15 @@ export function useContentFiltering(
       });
     });
 
-    const gender = currentFilters.gender && currentFilters.gender !== ''
-      ? currentFilters.gender as 'male' | 'female'
-      : undefined;
+    const gender =
+      currentFilters.gender && currentFilters.gender !== ''
+        ? (currentFilters.gender as 'male' | 'female')
+        : undefined;
 
-    const searchType = currentFilters.general && currentFilters.general !== ''
-      ? currentFilters.general as 'can_teach' | 'want_to_learn'
-      : undefined;
+    const searchType =
+      currentFilters.general && currentFilters.general !== ''
+        ? (currentFilters.general as 'can_teach' | 'want_to_learn')
+        : undefined;
 
     // Создаём уникальный ключ для запроса
     const baseRequestKey = JSON.stringify({
@@ -188,7 +194,15 @@ export function useContentFiltering(
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [dispatch, apiParams.requestKey, loadingUsers, usersData.length, isSidebarFilterActive, isSearchActive, apiParams.params]);
+  }, [
+    dispatch,
+    apiParams.requestKey,
+    loadingUsers,
+    usersData.length,
+    isSidebarFilterActive,
+    isSearchActive,
+    apiParams.params,
+  ]);
 
   // Функция для загрузки следующей страницы
   const loadMore = useCallback(() => {
@@ -223,7 +237,9 @@ export function useContentFiltering(
     }
 
     if (currentFilters.general && currentFilters.general !== '') {
-      const generalOption = GENERAL_RB_FILTER_OPTIONS.find(opt => opt.value === currentFilters.general);
+      const generalOption = GENERAL_RB_FILTER_OPTIONS.find(
+        (opt) => opt.value === currentFilters.general
+      );
 
       if (generalOption) {
         chips.push({
@@ -235,7 +251,7 @@ export function useContentFiltering(
     }
 
     if (currentFilters.gender && currentFilters.gender !== '') {
-      const genderItem = genders.find(g => g.id === currentFilters.gender);
+      const genderItem = genders.find((g) => g.id === currentFilters.gender);
 
       if (genderItem) {
         chips.push({
@@ -263,7 +279,7 @@ export function useContentFiltering(
 
     if (currentFilters.cities && currentFilters.cities.length > 0) {
       currentFilters.cities.forEach((cityId) => {
-        const city = cities.find(c => c.id === cityId);
+        const city = cities.find((c) => c.id === cityId);
         const cityName = city ? city.name : cityId;
 
         chips.push({

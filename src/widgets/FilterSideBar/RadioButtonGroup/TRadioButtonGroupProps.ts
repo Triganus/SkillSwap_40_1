@@ -12,7 +12,7 @@ export type TRadioButtonGroupProps = {
 
   defaultValue?: string | null;
 
-  value?: string | null
+  value?: string | null;
 
   onChange?: (value: string) => void;
 };

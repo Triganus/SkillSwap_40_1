@@ -77,8 +77,12 @@ export default function HomePage() {
     hasActiveFilters,
     loadMore,
     hasMore,
-    isFilteringInProgress
-  } = useContentFiltering(searchFromUrl, { clearSearch, sortOrder, onSortChange: handleSortChange });
+    isFilteringInProgress,
+  } = useContentFiltering(searchFromUrl, {
+    clearSearch,
+    sortOrder,
+    onSortChange: handleSortChange,
+  });
 
   const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
 
@@ -189,7 +193,9 @@ export default function HomePage() {
             </div>
           ) : (
             <>
-              {hasActiveFilters && <ActiveFilters filters={activeFilters} onRemove={removeFilter} />}
+              {hasActiveFilters && (
+                <ActiveFilters filters={activeFilters} onRemove={removeFilter} />
+              )}
               <div className={styles.searchResults}>
                 <div className={styles.searchHeader}>
                   <TitleUI size="large" className={styles.searchTitle}>

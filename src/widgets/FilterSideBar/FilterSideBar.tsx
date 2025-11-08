@@ -28,12 +28,14 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const [skillsData, setSkillsData] = useState<SkillCategoriesData | null>(null);
   const [generalFilterValue, setGeneralFilterValue] = useState<string>('');
 
-  const genderOptions = useMemo(() =>
-    genders.map((gender) => ({
-      label: gender.name,
-      value: gender.id,
-    })),
-  [genders]);
+  const genderOptions = useMemo(
+    () =>
+      genders.map((gender) => ({
+        label: gender.name,
+        value: gender.id,
+      })),
+    [genders]
+  );
 
   const [genderValue, setGenderValue] = useState<string>('');
   const [citiesSelected, setCitiesSelected] = useState<string[]>([]);

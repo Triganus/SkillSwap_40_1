@@ -1,5 +1,10 @@
 import { store } from '@/app/store';
-import { selectAllCategories, selectAllSubcategories, selectAllCities, selectAllGenders } from '../model/selectors';
+import {
+  selectAllCategories,
+  selectAllSubcategories,
+  selectAllCities,
+  selectAllGenders,
+} from '../model/selectors';
 import type { Category, Subcategory, City, Gender } from '../model/types';
 
 /**
@@ -37,4 +42,3 @@ export function getGendersFromStore(): Gender[] {
   const state = store.getState();
   return selectAllGenders(state);
 }
-

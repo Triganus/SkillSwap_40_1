@@ -17,7 +17,7 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
     if (items.length === 0) return [];
 
     if (typeof items[0] === 'string') {
-      return (items as string[]).map(item => ({ label: item, value: item }));
+      return (items as string[]).map((item) => ({ label: item, value: item }));
     }
 
     return items as RadioButtonItem[];

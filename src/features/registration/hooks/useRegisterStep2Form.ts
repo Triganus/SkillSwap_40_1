@@ -95,10 +95,7 @@ export const createRegisterStep2Schema = (
         .required('Укажите дату рождения'),
       gender: yup
         .string()
-        .oneOf(
-          ['', ...genders.map((g) => g.id)],
-          'Некорректное значение'
-        )
+        .oneOf(['', ...genders.map((g) => g.id)], 'Некорректное значение')
         .required('Укажите пол'),
       city: yup
         .string()
