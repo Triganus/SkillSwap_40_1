@@ -12,7 +12,7 @@ import {
 import { setSearchQuery } from '@entities/skill/model';
 import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { FilteredContent, FilterChip, FilterConfig } from './types';
-import { selectAllGenders } from '@/entities/directory/model/selectors';
+import { selectAllGenders, selectAllCities } from '@/entities/directory/model/selectors';
 import { GENERAL_RB_FILTER_OPTIONS } from '@/shared/lib/constants/GeneralRbFilter';
 
 /**
@@ -36,6 +36,7 @@ export function useContentFiltering(
   const loadingUsers = useAppSelector(selectUsersLoading);
   const currentFilters = useAppSelector(getSideBarFilters);
   const genders = useAppSelector(selectAllGenders);
+  const cities = useAppSelector(selectAllCities);
 
   const normalizedSearchQuery = searchQuery.trim();
   const isSearchActive = normalizedSearchQuery.length > 0;
@@ -236,18 +237,21 @@ export function useContentFiltering(
     }
 
     if (currentFilters.cities && currentFilters.cities.length > 0) {
-      currentFilters.cities.forEach((city) => {
+      currentFilters.cities.forEach((cityId) => {
+        const city = cities.find(c => c.id === cityId);
+        const cityName = city ? city.name : cityId;
+
         chips.push({
-          id: `city-${city}`,
-          label: city,
+          id: `city-${cityId}`,
+          label: cityName,
           type: 'city',
-          removePayload: { city },
+          removePayload: { city: cityId },
         });
       });
     }
 
     return chips;
-  }, [isSearchActive, normalizedSearchQuery, currentFilters, genders]);
+  }, [isSearchActive, normalizedSearchQuery, currentFilters, genders, cities]);
 
   const removeFilter = useCallback(
     (chipId: string) => {

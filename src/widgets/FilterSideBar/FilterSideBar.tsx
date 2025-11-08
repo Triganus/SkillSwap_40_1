@@ -36,9 +36,6 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   [genders]);
 
   const [genderValue, setGenderValue] = useState<string>('');
-
-  // Убираем genderLabel - теперь не нужен
-
   const [citiesSelected, setCitiesSelected] = useState<string[]>([]);
   const [filterCount, setFilterCount] = useState(0);
 
@@ -75,7 +72,10 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
     setGenderValue(value);
   }, []);
 
-  const handleCitiesChange = useCallback((val: string[]) => setCitiesSelected(val), []);
+  const handleCitiesChange = useCallback((selectedIds: string[]) => {
+    setCitiesSelected(selectedIds);
+  }, []);
+
   const handleSkillsChange = useCallback((val: SkillCategoriesData) => setSkillsData(val), []);
 
   const EMPTY_SKILLS: SkillCategoriesData = { skill_categories: [] };
@@ -179,7 +179,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
         <CitiesSideBar
           title="Города"
-          cities={(cities as City[]).map((city) => city.name)}
+          cities={cities as City[]}
           value={citiesSelected}
           onChange={handleCitiesChange}
         />

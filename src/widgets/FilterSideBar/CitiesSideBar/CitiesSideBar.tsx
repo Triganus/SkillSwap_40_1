@@ -19,14 +19,14 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
 
   const handleCityToggle = useCallback(
     (_e: React.ChangeEvent<HTMLInputElement>, checked: boolean, val?: unknown) => {
-      const city = String(val ?? '');
+      const cityId = String(val ?? '');
 
       const newSelected = new Set(currentSelected);
 
       if (checked) {
-        newSelected.add(city);
+        newSelected.add(cityId);
       } else {
-        newSelected.delete(city);
+        newSelected.delete(cityId);
       }
 
       onChange?.(Array.from(newSelected));
@@ -47,19 +47,19 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
       <div className={styles.list} id="cities-list">
         {cities.map((city, idx) => {
           const hidden = isCollapsed && idx >= VISIBLE_LIMIT;
-          const checked = currentSelected.has(city);
+          const checked = currentSelected.has(city.id);
 
           return (
             <div
-              key={city}
+              key={city.id}
               className={hidden ? styles['hidden-item'] : undefined}
               aria-hidden={hidden || undefined}
               style={hidden ? { display: 'none' } : undefined}
             >
               <CheckBoxUI
                 name="cities"
-                value={city}
-                label={city}
+                value={city.id}
+                label={city.name}
                 checked={checked}
                 onChange={handleCityToggle}
                 size="lg"
