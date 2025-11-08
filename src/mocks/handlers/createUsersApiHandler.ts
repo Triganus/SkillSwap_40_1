@@ -80,8 +80,6 @@ async function loadDbUsers(): Promise<UserListItem[]> {
     }
 
     const data = await res.json();
-    const skillPool = await loadSkillPool();
-    const skillIdToName = new Map(skillPool.map((s) => [s.id, s.name]));
 
     interface DbUserV2 {
       id: string;

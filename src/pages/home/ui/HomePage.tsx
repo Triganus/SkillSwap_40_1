@@ -52,6 +52,9 @@ export default function HomePage() {
   // Состояние сортировки
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
+  // Состояние для показа лоадера при переходе из режима фильтрации в обычный
+  const [isLoadingDefaultData, setIsLoadingDefaultData] = useState(false);
+
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
 
@@ -67,8 +70,15 @@ export default function HomePage() {
     setSortOrder(order);
   }, []);
 
-  const { filteredContent, activeFilters, removeFilter, hasActiveFilters, loadMore, hasMore } =
-    useContentFiltering(searchFromUrl, { clearSearch, sortOrder, onSortChange: handleSortChange });
+  const {
+    filteredContent,
+    activeFilters,
+    removeFilter,
+    hasActiveFilters,
+    loadMore,
+    hasMore,
+    isFilteringInProgress
+  } = useContentFiltering(searchFromUrl, { clearSearch, sortOrder, onSortChange: handleSortChange });
 
   const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
 
@@ -77,12 +87,18 @@ export default function HomePage() {
     dispatch(fetchSkills());
   }, [dispatch]);
 
-  // Загрузка рекомендованных при первом монтировании
+  // Загрузка рекомендованных при первом монтировании или при выходе из фильтрации
   useEffect(() => {
-    if (!isFiltering && usersData.length === 0) {
-      dispatch(fetchRecommendedUsersThunk({ page: 1, limit: 9, replace: true }));
+    if (!isFiltering && usersData.length === 0 && !loadingUsers) {
+      setIsLoadingDefaultData(true);
+
+      dispatch(fetchRecommendedUsersThunk({ page: 1, limit: 9, replace: true })).then(() => {
+        setTimeout(() => {
+          setIsLoadingDefaultData(false);
+        }, 200);
+      });
     }
-  }, [dispatch, isFiltering, usersData.length]);
+  }, [dispatch, isFiltering, usersData.length, loadingUsers]);
 
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
@@ -167,47 +183,55 @@ export default function HomePage() {
           )}
         </aside>
         <main className={styles.content}>
-          {hasActiveFilters && <ActiveFilters filters={activeFilters} onRemove={removeFilter} />}
-          <div className={styles.searchResults}>
-            <div className={styles.searchHeader}>
-              <TitleUI size="large" className={styles.searchTitle}>
-                Подходящие предложения: {totalUsers}
-              </TitleUI>
-              <button
-                type="button"
-                className={styles.sortButton}
-                onClick={() => handleSortChange(sortOrder === 'newest' ? 'oldest' : 'newest')}
-                aria-label={
-                  sortOrder === 'newest'
-                    ? 'Сортировать сначала старые'
-                    : 'Сортировать сначала новые'
-                }
-              >
-                <Icon name="sort" size={24} className={styles.sortIcon} />
-                {sortOrder === 'newest' ? 'Сначала новые' : 'Сначала старые'}
-              </button>
+          {isFilteringInProgress ? (
+            <div className={styles.preloaderContainer}>
+              <PreloaderUI size="large" ariaLabel="Загрузка результатов" />
             </div>
-            <InfiniteGridUI
-              onLoadMore={loadMore}
-              hasMore={hasMore}
-              loading={loadingUsers}
-              columns={{ mobile: 1, tablet: 2, desktop: 3 }}
-              gap="24px"
-              className={styles.searchGrid}
-            >
-              {filteredContent.items.map((card: SkillCardProps) => (
-                <SkillCard
-                  key={card.user.id}
-                  user={card.user}
-                  teachingSkills={card.teachingSkills}
-                  learningSkills={card.learningSkills}
-                  onDetailsClick={card.onDetailsClick}
-                  onLikeClick={card.onLikeClick}
-                  isLiked={card.isLiked}
-                />
-              ))}
-            </InfiniteGridUI>
-          </div>
+          ) : (
+            <>
+              {hasActiveFilters && <ActiveFilters filters={activeFilters} onRemove={removeFilter} />}
+              <div className={styles.searchResults}>
+                <div className={styles.searchHeader}>
+                  <TitleUI size="large" className={styles.searchTitle}>
+                    Подходящие предложения: {totalUsers}
+                  </TitleUI>
+                  <button
+                    type="button"
+                    className={styles.sortButton}
+                    onClick={() => handleSortChange(sortOrder === 'newest' ? 'oldest' : 'newest')}
+                    aria-label={
+                      sortOrder === 'newest'
+                        ? 'Сортировать сначала старые'
+                        : 'Сортировать сначала новые'
+                    }
+                  >
+                    <Icon name="sort" size={24} className={styles.sortIcon} />
+                    {sortOrder === 'newest' ? 'Сначала новые' : 'Сначала старые'}
+                  </button>
+                </div>
+                <InfiniteGridUI
+                  onLoadMore={loadMore}
+                  hasMore={hasMore}
+                  loading={loadingUsers}
+                  columns={{ mobile: 1, tablet: 2, desktop: 3 }}
+                  gap="24px"
+                  className={styles.searchGrid}
+                >
+                  {filteredContent.items.map((card: SkillCardProps) => (
+                    <SkillCard
+                      key={card.user.id}
+                      user={card.user}
+                      teachingSkills={card.teachingSkills}
+                      learningSkills={card.learningSkills}
+                      onDetailsClick={card.onDetailsClick}
+                      onLikeClick={card.onLikeClick}
+                      isLiked={card.isLiked}
+                    />
+                  ))}
+                </InfiniteGridUI>
+              </div>
+            </>
+          )}
         </main>
       </div>
     );
@@ -222,50 +246,58 @@ export default function HomePage() {
         )}
       </aside>
       <main className={styles.content}>
-        {/* Блок "Популярное" */}
-        <CardSectionUI
-          title="Популярное"
-          cards={popularCards}
-          onLookClick={handleViewAllPopular}
-          maxCards={3}
-          showButton={true}
-        />
+        {isLoadingDefaultData ? (
+          <div className={styles.preloaderContainer}>
+            <PreloaderUI size="large" ariaLabel="Загрузка рекомендаций" />
+          </div>
+        ) : (
+          <>
+            {/* Блок "Популярное" */}
+            <CardSectionUI
+              title="Популярное"
+              cards={popularCards}
+              onLookClick={handleViewAllPopular}
+              maxCards={3}
+              showButton={true}
+            />
 
-        {/* Блок "Новое" */}
-        <CardSectionUI
-          title="Новое"
-          cards={newCards}
-          onLookClick={handleViewAllNew}
-          maxCards={3}
-          showButton={true}
-          className={styles.newSection}
-        />
+            {/* Блок "Новое" */}
+            <CardSectionUI
+              title="Новое"
+              cards={newCards}
+              onLookClick={handleViewAllNew}
+              maxCards={3}
+              showButton={true}
+              className={styles.newSection}
+            />
 
-        {/* Блок "Рекомендуем" с бесконечным скроллом */}
-        <section className={styles.recommendedSection}>
-          <TitleUI size="large" className={styles.sectionTitle}>
-            Рекомендуем
-          </TitleUI>
-          <InfiniteGridUI
-            onLoadMore={handleLoadMoreRecommended}
-            hasMore={hasMoreRecommended}
-            loading={loading}
-            columns={{ mobile: 1, tablet: 2, desktop: 3 }}
-            gap="24px"
-          >
-            {recommendedCards.map((card) => (
-              <SkillCard
-                key={card.user.id}
-                user={card.user}
-                teachingSkills={card.teachingSkills}
-                learningSkills={card.learningSkills}
-                onDetailsClick={card.onDetailsClick}
-                onLikeClick={card.onLikeClick}
-                isLiked={card.isLiked}
-              />
-            ))}
-          </InfiniteGridUI>
-        </section>
+            {/* Блок "Рекомендуем" с бесконечным скроллом */}
+            <section className={styles.recommendedSection}>
+              <TitleUI size="large" className={styles.sectionTitle}>
+                Рекомендуем
+              </TitleUI>
+              <InfiniteGridUI
+                onLoadMore={handleLoadMoreRecommended}
+                hasMore={hasMoreRecommended}
+                loading={loading}
+                columns={{ mobile: 1, tablet: 2, desktop: 3 }}
+                gap="24px"
+              >
+                {recommendedCards.map((card) => (
+                  <SkillCard
+                    key={card.user.id}
+                    user={card.user}
+                    teachingSkills={card.teachingSkills}
+                    learningSkills={card.learningSkills}
+                    onDetailsClick={card.onDetailsClick}
+                    onLikeClick={card.onLikeClick}
+                    isLiked={card.isLiked}
+                  />
+                ))}
+              </InfiniteGridUI>
+            </section>
+          </>
+        )}
       </main>
     </div>
   );

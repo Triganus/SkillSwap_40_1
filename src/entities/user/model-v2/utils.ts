@@ -14,7 +14,8 @@ import {
 export function userListItemToSkillCard(userItem: UserListItem): SkillCardProps {
   const subcategories = getSubcategoriesFromStore();
   const cities = getCitiesFromStore();
-  const skillMap = new Map(subcategories.map((s) => [s.name.toLowerCase(), s]));
+
+  const skillMapById = new Map(subcategories.map((s) => [s.id, s]));
   const cityMap = new Map(cities.map((c) => [c.id, c.name]));
   const cityName = cityMap.get(userItem.cityId) || userItem.cityId;
 
@@ -34,11 +35,12 @@ export function userListItemToSkillCard(userItem: UserListItem): SkillCardProps 
     createdAt: new Date(userItem.createdAt).toISOString(),
   };
 
-  const teachingSkills: Skill[] = userItem.canTeachSkills.map((skillName) => {
-    const skillInfo = skillMap.get(skillName.toLowerCase());
+  const teachingSkills: Skill[] = userItem.canTeachSkills.map((skillId) => {
+    const skillInfo = skillMapById.get(skillId);
+
     return {
-      id: skillInfo?.id || skillName,
-      title: skillName,
+      id: skillId,
+      title: skillInfo?.name || skillId, // Используем название из справочника
       description: '',
       type: 'teaching' as const,
       category: (skillInfo?.categoryId || 'other') as TagCategory,
@@ -47,11 +49,12 @@ export function userListItemToSkillCard(userItem: UserListItem): SkillCardProps 
     };
   });
 
-  const learningSkills: Skill[] = userItem.wantsToLearnSkills.map((skillName) => {
-    const skillInfo = skillMap.get(skillName.toLowerCase());
+  const learningSkills: Skill[] = userItem.wantsToLearnSkills.map((skillId) => {
+    const skillInfo = skillMapById.get(skillId);
+
     return {
-      id: skillInfo?.id || skillName,
-      title: skillName,
+      id: skillId,
+      title: skillInfo?.name || skillId, // Используем название из справочника
       description: '',
       type: 'learning' as const,
       category: (skillInfo?.categoryId || 'other') as TagCategory,

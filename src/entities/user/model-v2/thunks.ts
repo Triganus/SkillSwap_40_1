@@ -27,7 +27,7 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
     const [popularData, newData, recommendedData] = await Promise.all([
       usersApi.fetchPopularUsers(),
       usersApi.fetchNewUsers(),
-      usersApi.fetchRecommendedUsers({ limit: 30 }),
+      usersApi.fetchRecommendedUsers({ limit: 9 }),
     ]);
     const allUsers = new Map<string, UserListItem>();
 
