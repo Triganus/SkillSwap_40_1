@@ -28,6 +28,8 @@ export interface FilterConfig {
   sortDirection?: 'asc' | 'desc';
   /** Лимит отображаемых элементов */
   limit?: number;
+  /** Функция для очистки поискового запроса в URL */
+  clearSearch?: () => void;
 }
 
 /**

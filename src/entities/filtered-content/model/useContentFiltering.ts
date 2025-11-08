@@ -213,7 +213,11 @@ export function useContentFiltering(
     (chipId: string) => {
       // Удаление поискового запроса
       if (chipId === 'search') {
+        // Очищаем URL параметр если функция передана
         dispatch(setSearchQuery(''));
+
+        config.clearSearch?.();
+
         return;
       }
 
@@ -275,7 +279,7 @@ export function useContentFiltering(
         return;
       }
     },
-    [dispatch, currentFilters]
+    [dispatch, currentFilters, config]
   );
 
   // Функция очистки всех фильтров

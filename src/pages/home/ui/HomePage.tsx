@@ -30,7 +30,7 @@ import styles from './HomePage.module.scss';
 export default function HomePage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
@@ -49,8 +49,17 @@ export default function HomePage() {
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
 
+  // Функция очистки поискового параметра из URL
+  const clearSearch = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams);
+
+    newParams.delete('search');
+
+    setSearchParams(newParams);
+  }, [searchParams, setSearchParams]);
+
   const { filteredContent, activeFilters, removeFilter, hasActiveFilters } =
-    useContentFiltering(searchFromUrl);
+    useContentFiltering(searchFromUrl, { clearSearch });
 
   const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
 
