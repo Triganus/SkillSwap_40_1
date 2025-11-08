@@ -431,7 +431,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
           cities: url.searchParams.get('cities') || undefined,
           gender: url.searchParams.get('gender') || undefined,
           sort: (url.searchParams.get('sort') as QueryParams['sort']) || 'newest',
-          searchType: (url.searchParams.get('searchType') as QueryParams['searchType']) || 'all',
+          searchType: url.searchParams.get('searchType') as QueryParams['searchType'] || undefined,
         };
         const filtered = applyQuery(users, params);
         const total = filtered.length;
