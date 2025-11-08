@@ -29,6 +29,7 @@ const initialState: UsersState = {
   profiles: profilesAdapter.getInitialState(),
   loading: false,
   error: null,
+  total: 0,
   skillCards: [],
 };
 
@@ -200,6 +201,7 @@ export const usersSliceV2 = createSlice({
     });
     builder.addCase(fetchUsersWithSkillsThunk.fulfilled, (state, action) => {
       state.loading = false;
+      state.total = action.payload.total || 0;
 
       if (action.payload.replace) {
         state.skillCards = action.payload.users;

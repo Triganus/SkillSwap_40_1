@@ -9,7 +9,7 @@ import type { SkillCardProps } from '@/widgets/Cards/SkillCard';
  * Возвращает данные в формате для SkillCard
  */
 export const fetchUsersWithSkillsThunk = createAsyncThunk<
-  { users: SkillCardProps[]; replace: boolean },
+  { users: SkillCardProps[]; replace: boolean; total?: number },
   {
     page?: number;
     limit?: number;
@@ -38,6 +38,7 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
     return {
       users: Array.from(allUsers.values()).map(userListItemToSkillCard),
       replace: true, // Данные по умолчанию всегда заменяют
+      total: allUsers.size, // Общее количество для данных по умолчанию
     };
   }
 
@@ -56,6 +57,7 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
   return {
     users: result.users.map(userListItemToSkillCard),
     replace: params.replace !== undefined ? params.replace : true,
+    total: result.total,
   };
 });
 

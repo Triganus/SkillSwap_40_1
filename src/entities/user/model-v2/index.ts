@@ -47,6 +47,7 @@ export {
   selectUserProfilesEntities,
   selectUsersLoading,
   selectUsersError,
+  selectUsersTotal,
   selectSkillCards,
   selectPopularIds,
   selectNewIds,

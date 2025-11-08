@@ -44,6 +44,12 @@ export const selectUsersError = (state: RootState) => {
   return usersState?.error || null;
 };
 
+export const selectUsersTotal = (state: RootState) => {
+  const usersState = selectUsersV2State(state);
+
+  return usersState?.total || 0;
+};
+
 /**
  * Селектор для skillCards (совместимость с HomePage)
  * Возвращает any[] чтобы избежать циклических зависимостей,

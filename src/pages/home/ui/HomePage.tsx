@@ -11,6 +11,7 @@ import {
 import {
   selectSkillCards,
   selectUsersLoading,
+  selectUsersTotal,
   fetchRecommendedUsersThunk,
 } from '@/entities/user/model-v2';
 import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
@@ -38,6 +39,7 @@ export default function HomePage() {
   const loading = useAppSelector(getSkillsLoading);
   const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
   const loadingUsers = useAppSelector(selectUsersLoading);
+  const totalUsers = useAppSelector(selectUsersTotal);
 
   // Справочники из Redux (загружаются централизованно в Provider)
   const skillsCatalog = useAppSelector(selectSkillsCatalog);
@@ -169,7 +171,7 @@ export default function HomePage() {
           <div className={styles.searchResults}>
             <div className={styles.searchHeader}>
               <TitleUI size="large" className={styles.searchTitle}>
-                Подходящие предложения: {filteredContent.filteredCount}
+                Подходящие предложения: {totalUsers}
               </TitleUI>
               <button
                 type="button"
