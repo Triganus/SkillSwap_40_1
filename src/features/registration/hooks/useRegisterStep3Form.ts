@@ -125,7 +125,7 @@ export function useRegisterStep3Form(initial?: Partial<RegisterStep3Values>) {
 
   const canSubmit = useMemo(() => {
     try {
-      return registerStep3Schema.isValidSync(
+      return schema.isValidSync(
         {
           title: titleVal,
           category: categoryVal as TagCategory | '',
@@ -138,7 +138,7 @@ export function useRegisterStep3Form(initial?: Partial<RegisterStep3Values>) {
     } catch {
       return false;
     }
-  }, [titleVal, categoryVal, subcategoryVal, descriptionVal, imagesVal]);
+  }, [schema, titleVal, categoryVal, subcategoryVal, descriptionVal, imagesVal]);
 
   const titleUI = form.getFieldUI('title');
   const categoryUI = form.getFieldUI('category');

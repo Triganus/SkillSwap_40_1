@@ -12,7 +12,7 @@ export type RegistrationStep2Data = {
   name: string;
   birthDate: string; // формат: дд.мм.гггг
   gender: string; // см. константы GENDER_OPTIONS
-  city: string; // название города из справочника (см. useDirectories)
+  city: string; // ID города из справочника (см. useDirectories)
   categories: TagCategory[]; // идентификаторы категорий
   subcategories: string[]; // ID подкатегорий из справочника
 };

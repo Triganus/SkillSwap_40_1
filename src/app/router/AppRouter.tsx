@@ -26,7 +26,9 @@ function RequireAuth() {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+    const redirectTo = location.pathname === '/profile' ? '/' : '/login';
+
+    return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
 
   return <Outlet />;

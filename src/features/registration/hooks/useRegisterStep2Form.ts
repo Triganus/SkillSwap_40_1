@@ -13,7 +13,7 @@ import type { Subcategory } from '@/entities/directory/model/types';
  * Используется в компонентах, которые загружают данные через useDirectories
  */
 export const getCityDropdownOptions = (cities: Array<{ id: string; name: string }>) =>
-  cities.map((c) => ({ label: c.name, value: c.name }));
+  cities.map((c) => ({ label: c.name, value: c.id }));
 
 /**
  * Хелпер для получения опций полов из справочника
@@ -24,8 +24,8 @@ export const getGenderDropdownOptions = (genders: Array<{ id: string; name: stri
 /**
  * Валидация города - проверяет, что город существует в справочнике
  */
-export const isValidCity = (cityName: string, cities: Array<{ id: string; name: string }>) =>
-  cities.some((c) => c.name === cityName);
+export const isValidCity = (cityId: string, cities: Array<{ id: string; name: string }>) =>
+  cities.some((c) => c.id === cityId);
 
 export type RegisterStep2Values = {
   avatarFile: File | null;
