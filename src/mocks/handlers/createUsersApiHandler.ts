@@ -103,8 +103,8 @@ async function loadDbUsers(): Promise<UserListItem[]> {
         const birthDate = new Date(u.birthDate);
         const age = new Date().getFullYear() - birthDate.getFullYear();
 
-        const canTeachSkills = u.canTeachSkillIds.map((id) => skillIdToName.get(id) || id);
-        const wantsToLearnSkills = u.wantsToLearnSkillIds.map((id) => skillIdToName.get(id) || id);
+        const canTeachSkills = u.canTeachSkillIds;
+        const wantsToLearnSkills = u.wantsToLearnSkillIds;
 
         return {
           id: u.id,
@@ -236,12 +236,12 @@ function generateAdditionalUsers(
     const genderParam = gender === 'male' ? 'men' : 'women';
     const avatar = `https://randomuser.me/api/portraits/${genderParam}/${avatarSeed % 100}.jpg`;
 
-    const canTeachSkills = pickMany(skillPool, 1 + Math.floor(seed() * 3), seed).map((s) => s.name);
+    const canTeachSkills = pickMany(skillPool, 1 + Math.floor(seed() * 3), seed).map((s) => s.id); // ✅ ID
     const wantsToLearnSkills = pickMany(
-      skillPool.filter((s) => !canTeachSkills.includes(s.name)),
+      skillPool.filter((s) => !canTeachSkills.includes(s.id)),
       1 + Math.floor(seed() * 4),
       seed
-    ).map((s) => s.name);
+    ).map((s) => s.id);
 
     users.push({
       id: `generated_${startId + i}`,

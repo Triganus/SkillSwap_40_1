@@ -28,7 +28,9 @@ const filterSideBarSlice = createSlice({
 
       state.skills.skill_categories = state.skills.skill_categories
         .map((cat) => {
-          if (cat.category === action.payload.category) {
+          const categoryKey = cat.categoryId || cat.category;
+
+          if (categoryKey === action.payload.category) {
             return {
               ...cat,
               skills: cat.skills.filter((skill) => skill.skill_id !== action.payload.skillId),

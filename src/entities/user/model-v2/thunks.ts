@@ -50,12 +50,12 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
     cities: params.cities,
     gender: params.gender,
     sortBy: params.sortBy || 'newest',
-    searchType: params.searchType || 'all',
+    searchType: params.searchType,
   });
 
   return {
     users: result.users.map(userListItemToSkillCard),
-    replace: params.replace !== undefined ? params.replace : true, // По умолчанию заменяем при фильтрации
+    replace: params.replace !== undefined ? params.replace : true,
   };
 });
 

@@ -68,7 +68,7 @@ export function useContentFiltering(
 
     currentFilters.skills?.skill_categories.forEach((cat) => {
       cat.skills.forEach((skill) => {
-        subcategoryIds.push(skill.skill_name);
+        subcategoryIds.push(skill.skill_id);
       });
     });
 
@@ -78,7 +78,7 @@ export function useContentFiltering(
 
     const searchType = currentFilters.general && currentFilters.general !== ''
       ? currentFilters.general as 'can_teach' | 'want_to_learn'
-      : 'all';
+      : undefined;
 
     // Создаём уникальный ключ для запроса
     const baseRequestKey = JSON.stringify({
@@ -101,7 +101,7 @@ export function useContentFiltering(
               cities: currentFilters.cities.length > 0 ? currentFilters.cities : undefined,
               gender,
               sortBy: config.sortOrder || 'newest',
-              searchType: searchType as 'all' | 'want_to_learn' | 'can_teach',
+              searchType,
               page: currentPage,
               limit: 9, // Запрашиваем только 9 карточек
               replace: currentPage === 1, // Заменяем данные только на первой странице
@@ -226,11 +226,13 @@ export function useContentFiltering(
     if (currentFilters.skills) {
       currentFilters.skills.skill_categories.forEach((cat) => {
         cat.skills.forEach((skill) => {
+          const categoryKey = cat.categoryId || cat.category;
+
           chips.push({
-            id: `skill-${cat.category}-${skill.skill_id}`,
+            id: `skill-${categoryKey}-${skill.skill_id}`,
             label: skill.skill_name,
             type: 'skill',
-            removePayload: { category: cat.category, skillId: skill.skill_id },
+            removePayload: { category: categoryKey, skillId: skill.skill_id },
           });
         });
       });

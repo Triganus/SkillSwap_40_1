@@ -40,8 +40,9 @@ export function AccordionUI({
       const next = checked
         ? [...new Set([...currentSelected, value])]
         : currentSelected.filter((v) => v !== value);
+      const categoryIdentifier = data.categoryId || data.category;
 
-      onSelectChange?.(data.category, next);
+      onSelectChange?.(categoryIdentifier, next);
     },
     [data, currentSelected, onSelectChange]
   );
@@ -52,8 +53,9 @@ export function AccordionUI({
       if (!data) return;
 
       const next = checked ? skillIds : [];
+      const categoryIdentifier = data.categoryId || data.category;
 
-      onSelectChange?.(data.category, next);
+      onSelectChange?.(categoryIdentifier, next);
     },
     [data, skillIds, onSelectChange]
   );

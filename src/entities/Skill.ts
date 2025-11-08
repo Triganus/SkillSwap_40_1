@@ -25,6 +25,7 @@ export interface SkillListItem {
 }
 
 export interface SkillCategory {
+  categoryId?: string;
   category: string;
   skills: SkillListItem[];
 }

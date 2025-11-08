@@ -271,6 +271,7 @@ export const selectSkillsCatalog = createSelector(
 
     return {
       skill_categories: categories.map((category) => ({
+        categoryId: category.id,
         category: category.name,
         skills: subcategories
           .filter((sub) => sub.categoryId === category.id)
