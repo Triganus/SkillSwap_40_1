@@ -18,7 +18,7 @@ import type { Subcategory } from '@/entities/directory/model/types';
 import { useAppSelector } from '@/shared/hooks/redux';
 import {
   useRegisterStep2Form,
-  GENDER_DROPDOWN_OPTIONS,
+  getGenderDropdownOptions,
   getCityDropdownOptions,
 } from '@features/registration/hooks/useRegisterStep2Form';
 import type { RegisterStep2Values } from '@features/registration/hooks/useRegisterStep2Form';
@@ -30,11 +30,14 @@ import { parseDateFromString, formatDateToString } from '../../lib/dateUtils';
 export default function Step2() {
   const navigate = useNavigate();
   const { completeStep, data } = useRegistrationProgress();
-  const { cities, subcategories } = useDirectories();
+  const { cities, subcategories, genders } = useDirectories();
 
   const CATEGORY_OPTIONS = useAppSelector(selectCategoryOptions);
   const CITY_DROPDOWN_OPTIONS = getCityDropdownOptions(
     cities as Array<{ id: string; name: string }>
+  );
+  const GENDER_DROPDOWN_OPTIONS = getGenderDropdownOptions(
+    genders as Array<{ id: string; name: string }>
   );
 
   const typedSubcategories = subcategories as Subcategory[];

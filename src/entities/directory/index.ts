@@ -50,6 +50,12 @@ export {
   selectSubcategoryOptionsWithIds,
   selectSubcategoryOptionsWithIdsByCategoryId,
   selectCategoryConfigByName,
+  selectGendersState,
+  selectGendersLoading,
+  selectGendersError,
+  selectAllGenders,
+  selectGenderById,
+  selectGendersEntities,
 } from './model/selectors';
 
 export type { CategoryConfig } from './model/selectors';
@@ -59,7 +65,9 @@ export type {
   Category,
   Subcategory,
   City,
+  Gender,
   CategoriesState,
   SubcategoriesState,
   CitiesState,
+  GendersState,
 } from './model/types';

@@ -13,7 +13,7 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ProfileForm.module.scss';
 import {
-  GENDER_DROPDOWN_OPTIONS,
+  getGenderDropdownOptions,
   getCityDropdownOptions,
 } from '@features/registration/hooks/useRegisterStep2Form';
 import { parseDateFromString, formatDateToString } from '@/pages/register/lib/dateUtils';
@@ -45,24 +45,15 @@ export const ProfileForm: React.FC<ProfileFormPops> = ({
   // updateUserError
 }) => {
   const avatarRef = useRef<UserAvatarUploadHandle>(null);
-  const { cities } = useDirectories();
+  const { cities, genders } = useDirectories();
 
   const CITY_DROPDOWN_OPTIONS = getCityDropdownOptions(
     cities as Array<{ id: string; name: string }>
   );
 
-  //     const [editingFields, setEditingFields] = useState({
-  //         email: false,
-  //         name: false,
-  //         about: false,
-  //     });
-
-  //     const toggleEdit = (field: keyof typeof editingFields) => {
-  //     setEditingFields(prev => ({
-  //         ...prev,
-  //         [field]: !prev[field]
-  //     }));
-  // };
+  const GENDER_DROPDOWN_OPTIONS = getGenderDropdownOptions(
+    genders as Array<{ id: string; name: string }>
+  );
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>

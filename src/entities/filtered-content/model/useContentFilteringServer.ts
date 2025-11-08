@@ -1,10 +1,6 @@
 import { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@shared/hooks/redux';
-import {
-  selectSkillCards,
-  selectUsersLoading,
-  fetchUsersWithSkillsThunk,
-} from '@/entities/user/model-v2';
+import { selectSkillCards, selectUsersLoading, fetchUsersWithSkillsThunk } from '@/entities/user/model-v2';
 import {
   getSideBarFilters,
   resetFilter,
@@ -16,6 +12,8 @@ import {
 import { setSearchQuery } from '@entities/skill/model';
 import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { FilteredContent, FilterChip, FilterConfig } from './types';
+import { selectAllGenders } from '@/entities/directory/model/selectors';
+import { GENERAL_RB_FILTER_OPTIONS } from '@/shared/lib/constants/GeneralRbFilter';
 
 /**
  * Хук для фильтрации через API (серверная фильтрация с пагинацией)
@@ -37,6 +35,7 @@ export function useContentFiltering(
   const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
   const loadingUsers = useAppSelector(selectUsersLoading);
   const currentFilters = useAppSelector(getSideBarFilters);
+  const genders = useAppSelector(selectAllGenders);
 
   const normalizedSearchQuery = searchQuery.trim();
   const isSearchActive = normalizedSearchQuery.length > 0;
@@ -53,9 +52,8 @@ export function useContentFiltering(
   const isSidebarFilterActive = useMemo(() => {
     return (
       !!currentFilters &&
-      ((currentFilters.general && currentFilters.general !== 'Всё') ||
-        (currentFilters.gender &&
-          ['мужской', 'женский'].includes(currentFilters.gender.toLowerCase())) ||
+      ((currentFilters.general && currentFilters.general !== 'Всё' && currentFilters.general !== '') ||
+        (currentFilters.gender && currentFilters.gender !== '') ||
         !!currentFilters.skills?.skill_categories.some(
           (cat) => cat.skills && cat.skills.length > 0
         ) ||
@@ -73,19 +71,13 @@ export function useContentFiltering(
       });
     });
 
-    const gender =
-      currentFilters.gender?.toLowerCase() === 'мужской'
-        ? 'male'
-        : currentFilters.gender?.toLowerCase() === 'женский'
-          ? 'female'
-          : undefined;
+    const gender = currentFilters.gender && currentFilters.gender !== ''
+      ? currentFilters.gender as 'male' | 'female'
+      : undefined;
 
-    const searchType =
-      currentFilters.general === 'Могу научить'
-        ? 'can_teach'
-        : currentFilters.general === 'Хочу научиться'
-          ? 'want_to_learn'
-          : 'all';
+    const searchType = currentFilters.general && currentFilters.general !== ''
+      ? currentFilters.general as 'can_teach' | 'want_to_learn'
+      : 'all';
 
     // Создаём уникальный ключ для запроса
     const baseRequestKey = JSON.stringify({
@@ -206,23 +198,28 @@ export function useContentFiltering(
       });
     }
 
-    if (currentFilters.general && currentFilters.general !== 'Всё') {
-      chips.push({
-        id: 'general',
-        label: currentFilters.general,
-        type: 'general',
-      });
+    if (currentFilters.general && currentFilters.general !== '') {
+      const generalOption = GENERAL_RB_FILTER_OPTIONS.find(opt => opt.value === currentFilters.general);
+
+      if (generalOption) {
+        chips.push({
+          id: 'general',
+          label: generalOption.label,
+          type: 'general',
+        });
+      }
     }
 
-    if (
-      currentFilters.gender &&
-      ['мужской', 'женский'].includes(currentFilters.gender.toLowerCase())
-    ) {
-      chips.push({
-        id: 'gender',
-        label: `Пол: ${currentFilters.gender}`,
-        type: 'gender',
-      });
+    if (currentFilters.gender && currentFilters.gender !== '') {
+      const genderItem = genders.find(g => g.id === currentFilters.gender);
+
+      if (genderItem) {
+        chips.push({
+          id: 'gender',
+          label: `Пол: ${genderItem.name}`,
+          type: 'gender',
+        });
+      }
     }
 
     if (currentFilters.skills) {
@@ -250,7 +247,7 @@ export function useContentFiltering(
     }
 
     return chips;
-  }, [isSearchActive, normalizedSearchQuery, currentFilters]);
+  }, [isSearchActive, normalizedSearchQuery, currentFilters, genders]);
 
   const removeFilter = useCallback(
     (chipId: string) => {

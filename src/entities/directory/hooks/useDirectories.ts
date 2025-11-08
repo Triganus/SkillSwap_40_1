@@ -4,15 +4,19 @@ import {
   fetchCategories,
   fetchSubcategories,
   fetchCities,
+  fetchGenders,
   selectAllCategories,
   selectAllSubcategories,
   selectAllCities,
+  selectAllGenders,
   selectCategoriesLoading,
   selectSubcategoriesLoading,
   selectCitiesLoading,
+  selectGendersLoading,
   selectCategoriesError,
   selectSubcategoriesError,
   selectCitiesError,
+  selectGendersError,
   selectDirectoriesReady,
   selectAllCategoriesWithSubcategories,
 } from '../model';
@@ -27,20 +31,23 @@ export function useDirectories(options: { autoLoad?: boolean } = { autoLoad: tru
   const categories = useAppSelector(selectAllCategories);
   const subcategories = useAppSelector(selectAllSubcategories);
   const cities = useAppSelector(selectAllCities);
+  const genders = useAppSelector(selectAllGenders);
 
   const categoriesLoading = useAppSelector(selectCategoriesLoading);
   const subcategoriesLoading = useAppSelector(selectSubcategoriesLoading);
   const citiesLoading = useAppSelector(selectCitiesLoading);
+  const gendersLoading = useAppSelector(selectGendersLoading);
 
   const categoriesError = useAppSelector(selectCategoriesError);
   const subcategoriesError = useAppSelector(selectSubcategoriesError);
   const citiesError = useAppSelector(selectCitiesError);
+  const gendersError = useAppSelector(selectGendersError);
 
   const isReady = useAppSelector(selectDirectoriesReady);
   const categoriesWithSubcategories = useAppSelector(selectAllCategoriesWithSubcategories);
 
-  const isLoading = categoriesLoading || subcategoriesLoading || citiesLoading;
-  const error = categoriesError || subcategoriesError || citiesError;
+  const isLoading = categoriesLoading || subcategoriesLoading || citiesLoading || gendersLoading;
+  const error = categoriesError || subcategoriesError || citiesError || gendersError;
 
   useEffect(() => {
     if (options.autoLoad) {
@@ -48,6 +55,7 @@ export function useDirectories(options: { autoLoad?: boolean } = { autoLoad: tru
       dispatch(fetchCategories());
       dispatch(fetchSubcategories());
       dispatch(fetchCities());
+      dispatch(fetchGenders());
     }
   }, [dispatch, options.autoLoad]);
 
@@ -56,6 +64,7 @@ export function useDirectories(options: { autoLoad?: boolean } = { autoLoad: tru
     categories,
     subcategories,
     cities,
+    genders,
     categoriesWithSubcategories,
 
     // Статусы
@@ -67,13 +76,16 @@ export function useDirectories(options: { autoLoad?: boolean } = { autoLoad: tru
     categoriesLoading,
     subcategoriesLoading,
     citiesLoading,
+    gendersLoading,
     categoriesError,
     subcategoriesError,
     citiesError,
+    gendersError,
 
     // Методы для ручной загрузки
     loadCategories: () => dispatch(fetchCategories()),
     loadSubcategories: () => dispatch(fetchSubcategories()),
     loadCities: () => dispatch(fetchCities()),
+    loadGenders: () => dispatch(fetchGenders()),
   };
 }

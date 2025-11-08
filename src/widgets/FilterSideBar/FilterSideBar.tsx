@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { TextUI } from '@/shared/ui/Text';
 import { Icon } from '@/shared/ui';
-import { useState, useCallback } from 'react';
 import type { TFilterSideBarProps } from './TFilterSideBarProps';
 import styles from './FilterSideBar.module.scss';
 import { TitleUI } from '@/shared/ui/Title';
@@ -9,7 +8,6 @@ import { SkillsSideBar } from './SkillsSideBar/SkillsSideBar';
 import { CitiesSideBar } from './CitiesSideBar/CitiesSideBar';
 import type { SkillCategoriesData } from '@/entities/Skill';
 import { RadioButtonGroup } from './RadioButtonGroup';
-import { GENDER_OPTIONS } from '@/shared/lib';
 import { GENERAL_RB_FILTER_OPTIONS } from '@/shared/lib/constants/GeneralRbFilter';
 import { useDirectories } from '@/entities/directory';
 import type { City } from '@/entities/directory/model/types';
@@ -17,7 +15,7 @@ import { useAppSelector } from '@shared/hooks/redux';
 import { getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 
 export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, onChange }) => {
-  const { cities } = useDirectories();
+  const { cities, genders } = useDirectories();
   const reduxFilters = useAppSelector(getSideBarFilters);
   const onChangeRef = useRef(onChange);
 
@@ -29,7 +27,22 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [skillsData, setSkillsData] = useState<SkillCategoriesData | null>(null);
   const [generalFilterValue, setGeneralFilterValue] = useState<string>('Всё');
-  const [genderValue, setGenderValue] = useState<string>('Не имеет значения');
+
+  const genderOptions = useMemo(() =>
+    genders.map((gender) => ({
+      label: gender.name,
+      value: gender.id,
+    })),
+  [genders]);
+
+  const [genderValue, setGenderValue] = useState<string>('');
+
+  const genderLabel = useMemo(() => {
+    const found = genderOptions.find(opt => opt.value === genderValue);
+
+    return found ? found.label : genderOptions[0]?.label || '';
+  }, [genderValue, genderOptions]);
+
   const [citiesSelected, setCitiesSelected] = useState<string[]>([]);
   const [filterCount, setFilterCount] = useState(0);
 
@@ -38,7 +51,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
   useEffect(() => {
     const newGeneral = reduxFilters.general || 'Всё';
-    const newGender = reduxFilters.gender || 'Не имеет значения';
+    const newGender = reduxFilters.gender || '';
 
     if (generalFilterValue !== newGeneral) {
       setGeneralFilterValue(newGeneral);
@@ -59,7 +72,15 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   }, [reduxFilters.general, reduxFilters.gender, reduxSkillsKey, reduxCitiesKey]);
 
   const handleGeneralChange = useCallback((val: string) => setGeneralFilterValue(val), []);
-  const handleGenderChange = useCallback((val: string) => setGenderValue(val), []);
+
+  const handleGenderChange = useCallback((label: string) => {
+    const found = genderOptions.find(opt => opt.label === label);
+
+    if (found) {
+      setGenderValue(found.value);
+    }
+  }, [genderOptions]);
+
   const handleCitiesChange = useCallback((val: string[]) => setCitiesSelected(val), []);
   const handleSkillsChange = useCallback((val: SkillCategoriesData) => setSkillsData(val), []);
 
@@ -68,7 +89,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const handleReset = () => {
     setResetFilters(true);
     setGeneralFilterValue('Всё');
-    setGenderValue('Не имеет значения');
+    setGenderValue('');
     setSkillsData(null);
     setCitiesSelected([]);
     setFiltersApplied(false);
@@ -85,14 +106,14 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   useEffect(() => {
     const nextApplied =
       generalFilterValue !== 'Всё' ||
-      genderValue !== 'Не имеет значения' ||
+      genderValue !== '' ||
       skillsData?.skill_categories?.some((cat) => cat.skills.length > 0) ||
       citiesSelected.length > 0;
 
     setFiltersApplied(nextApplied);
     setFilterCount(
       (generalFilterValue !== 'Всё' ? 1 : 0) +
-        (genderValue !== 'Не имеет значения' ? 1 : 0) +
+        (genderValue !== '' ? 1 : 0) +
         (skillsData?.skill_categories?.some((cat) => cat.skills.length > 0) ? 1 : 0) +
         (citiesSelected.length > 0 ? 1 : 0)
     );
@@ -155,10 +176,10 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
       <div className={styles.content}>
         <RadioButtonGroup
           title="Пол автора"
-          items={GENDER_OPTIONS.map((opt) => opt.label)}
+          items={genderOptions.map((opt) => opt.label)}
           name="Пол автора"
-          defaultValue={GENDER_OPTIONS[0].label}
-          value={genderValue}
+          defaultValue={genderOptions[0].label}
+          value={genderLabel}
           onChange={handleGenderChange}
         />
 

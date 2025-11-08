@@ -5,14 +5,8 @@ import { useWatch } from 'react-hook-form';
 import { useDirectories } from '@/entities/directory';
 import { selectCategoryIds } from '@/entities/directory/model/selectors';
 import { useAppSelector } from '@/shared/hooks/redux';
-import { GENDER_OPTIONS } from '@shared/lib/constants/gender';
 import type { TagCategory } from '@shared/ui/Tag';
 import type { Subcategory } from '@/entities/directory/model/types';
-
-export const GENDER_DROPDOWN_OPTIONS = GENDER_OPTIONS.map((o) => ({
-  label: o.label,
-  value: o.value,
-}));
 
 /**
  * Хелпер для получения опций городов из новой системы справочников
@@ -20,6 +14,12 @@ export const GENDER_DROPDOWN_OPTIONS = GENDER_OPTIONS.map((o) => ({
  */
 export const getCityDropdownOptions = (cities: Array<{ id: string; name: string }>) =>
   cities.map((c) => ({ label: c.name, value: c.name }));
+
+/**
+ * Хелпер для получения опций полов из справочника
+ */
+export const getGenderDropdownOptions = (genders: Array<{ id: string; name: string }>) =>
+  genders.map((g) => ({ label: g.name, value: g.id }));
 
 /**
  * Валидация города - проверяет, что город существует в справочнике
@@ -44,11 +44,13 @@ const dateRegex = /^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[012])\.(19|20)\d\d$/;
  * @param cities - список городов из справочника
  * @param categoryIds - список валидных ID категорий
  * @param subcategories - список подкатегорий из справочника
+ * @param genders - список полов из справочника
  */
 export const createRegisterStep2Schema = (
   cities: Array<{ id: string; name: string }>,
   categoryIds: string[],
-  subcategories: Subcategory[]
+  subcategories: Subcategory[],
+  genders: Array<{ id: string; name: string }>
 ) => {
   const validSubcategoryIds = new Set(subcategories.map((s) => s.id));
   const categoryToSubcategories = new Map<string, Set<string>>();
@@ -94,7 +96,7 @@ export const createRegisterStep2Schema = (
       gender: yup
         .string()
         .oneOf(
-          GENDER_OPTIONS.map((g) => g.value),
+          ['', ...genders.map((g) => g.id)],
           'Некорректное значение'
         )
         .required('Укажите пол'),
@@ -143,10 +145,10 @@ export const createRegisterStep2Schema = (
 /**
  * @deprecated Используйте createRegisterStep2Schema(...) для создания схемы с актуальными данными
  */
-export const registerStep2Schema = createRegisterStep2Schema([], [], []);
+export const registerStep2Schema = createRegisterStep2Schema([], [], [], []);
 
 export function useRegisterStep2Form(initial?: Partial<RegisterStep2Values>) {
-  const { cities, subcategories } = useDirectories();
+  const { cities, subcategories, genders } = useDirectories();
   const categoryIds = useAppSelector(selectCategoryIds);
 
   const schema = useMemo(
@@ -154,9 +156,10 @@ export function useRegisterStep2Form(initial?: Partial<RegisterStep2Values>) {
       createRegisterStep2Schema(
         cities as Array<{ id: string; name: string }>,
         categoryIds,
-        subcategories as Subcategory[]
+        subcategories as Subcategory[],
+        genders as Array<{ id: string; name: string }>
       ),
-    [cities, categoryIds, subcategories]
+    [cities, categoryIds, subcategories, genders]
   );
 
   const form = useValidatedForm<RegisterStep2Values>({
