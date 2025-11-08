@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import styles from './CitiesSideBar.module.scss';
 import type { TCitiesSideBarProps } from './TCitiesSideBarProps';
 import { TextUI, Icon, CheckBoxUI } from '@/shared/ui';
@@ -8,38 +8,30 @@ const VISIBLE_LIMIT = 5;
 export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
   cities,
   title,
+  value = [],
   onChange,
-  defaultSelected = [],
-  resetToken,
 }: TCitiesSideBarProps) => {
   const [opened, setOpened] = useState(false);
-  const [selected, setSelected] = useState<Set<string>>(() => new Set(defaultSelected));
 
   const handleToggle = useCallback(() => setOpened((v) => !v), []);
 
-  const selectedList = useMemo(() => Array.from(selected), [selected]);
-  console.log('Selected cities:', selected);
-  // Сброс при изменении resetToken
-  useEffect(() => {
-    onChange?.(selectedList);
-  }, [selectedList, onChange]);
-
-  useEffect(() => {
-    setSelected(new Set());
-  }, [resetToken]);
+  const currentSelected = useMemo(() => new Set(value), [value]);
 
   const handleCityToggle = useCallback(
-    (_e: React.ChangeEvent<HTMLInputElement>, checked: boolean, value?: unknown) => {
-      const city = String(value ?? '');
+    (_e: React.ChangeEvent<HTMLInputElement>, checked: boolean, val?: unknown) => {
+      const city = String(val ?? '');
 
-      setSelected((prev) => {
-        const next = new Set(prev);
-        if (checked) next.add(city);
-        else next.delete(city);
-        return next;
-      });
+      const newSelected = new Set(currentSelected);
+
+      if (checked) {
+        newSelected.add(city);
+      } else {
+        newSelected.delete(city);
+      }
+
+      onChange?.(Array.from(newSelected));
     },
-    []
+    [currentSelected, onChange]
   );
 
   const isCollapsed = !opened;
@@ -55,7 +47,8 @@ export const CitiesSideBar: React.FC<TCitiesSideBarProps> = ({
       <div className={styles.list} id="cities-list">
         {cities.map((city, idx) => {
           const hidden = isCollapsed && idx >= VISIBLE_LIMIT;
-          const checked = selected.has(city);
+          const checked = currentSelected.has(city);
+
           return (
             <div
               key={city}

@@ -345,7 +345,7 @@ function applyQuery(users: UserListItem[], params: QueryParams): UserListItem[] 
     });
   } else if (searchType && searchType !== 'all') {
     // Если выбран тип поиска без конкретных навыков, исключаем пользователей без соответствующих массивов
-    list = list.filter(u => {
+    list = list.filter((u) => {
       if (searchType === 'want_to_learn') return u.canTeachSkills.length > 0;
       if (searchType === 'can_teach') return u.wantsToLearnSkills.length > 0;
       return true;

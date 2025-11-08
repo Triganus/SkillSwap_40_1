@@ -9,27 +9,29 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
   title,
   name = 'radio-group',
   defaultValue = null,
+  value: externalValue,
   onChange,
-  resetToken,
 }) => {
   const [selected, setSelected] = useState<string | null>(defaultValue);
+
+  const currentValue = externalValue !== undefined ? externalValue : selected;
 
   const handleRadioChange = useCallback(
     (_e: React.ChangeEvent<HTMLInputElement>, value?: unknown) => {
       const val = String(value ?? '');
+
       setSelected(val);
+
+      onChange?.(val);
     },
-    []
+    [onChange]
   );
 
   useEffect(() => {
-    if (selected !== null) onChange?.(selected);
-  }, [selected, onChange]);
-
-  useEffect(() => {
-    setSelected(defaultValue ?? '');
-    onChange?.(defaultValue ?? '');
-  }, [resetToken, defaultValue, onChange]);
+    if (externalValue !== undefined) {
+      setSelected(externalValue);
+    }
+  }, [externalValue]);
 
   return (
     <div className={styles.wrapper}>
@@ -48,9 +50,9 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
             name={name}
             value={item}
             label={item}
-            checked={selected === item}
+            checked={currentValue === item}
             onChange={handleRadioChange}
-            aria-checked={selected === item}
+            aria-checked={currentValue === item}
             size="md"
           />
         ))}

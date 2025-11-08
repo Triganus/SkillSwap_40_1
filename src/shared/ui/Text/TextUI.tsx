@@ -1,5 +1,5 @@
 import styles from './TextUI.module.scss';
-import type { TTextUIProps } from './TTextUIProps';
+import type { TTextUIProps } from '@shared/ui';
 
 export const TextUI: React.FC<TTextUIProps> = ({
   children,

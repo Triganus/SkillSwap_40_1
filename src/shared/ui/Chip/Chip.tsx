@@ -20,7 +20,7 @@ export const Chip: React.FC<ChipProps> = ({ label, onRemove, className = '', tit
           aria-label={`Убрать фильтр ${label}`}
           onClick={onRemove}
         >
-          <Icon name="cross" size={16} />
+          <Icon name="cross" size={20} />
         </button>
       )}
     </span>

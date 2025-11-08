@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
@@ -13,7 +13,9 @@ import {
   selectSkillCards,
   selectUsersLoading,
 } from '@/entities/user/model-v2';
-import { setFilter, getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
+import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
+import { useContentFiltering } from '@/entities/filtered-content';
+import { ActiveFilters } from '@/features/filters';
 import { CardSectionUI } from '@shared/ui/CardSection';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { SkillCard } from '@widgets/Cards/SkillCard';
@@ -24,9 +26,6 @@ import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
 import type { FilterPayload } from '@/entities/filterSideBar/model';
 import { selectSkillsCatalog, selectDirectoriesLoading } from '@/entities/directory';
 import styles from './HomePage.module.scss';
-import { useSidebarFilter } from '@/shared/hooks/useSidebarFilter';
-
-// Мок-данные удалены - теперь используются данные из API (fetchSkillsCatalog и fetchUsersAsSkillCards)
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -43,17 +42,17 @@ export default function HomePage() {
   const skillsCatalog = useAppSelector(selectSkillsCatalog);
   const loadingCatalog = useAppSelector(selectDirectoriesLoading);
 
-  // Фильтры из Redux
-  const currentFilters = useAppSelector(getSideBarFilters);
-
   // Локальное состояние для бесконечного скролла
   const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
 
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
-  const isSearching = searchFromUrl.trim().length > 0;
-  console.log('Search from URL:', searchFromUrl);
+
+  const { filteredContent, activeFilters, removeFilter, hasActiveFilters } =
+    useContentFiltering(searchFromUrl);
+
+  const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
 
   // Загрузка навыков и пользователей через Redux
   useEffect(() => {
@@ -66,20 +65,6 @@ export default function HomePage() {
     }
   }, [dispatch, usersData.length, loadingUsers]);
 
-  const isSidebarActive =
-    !!currentFilters &&
-    ((currentFilters.general && currentFilters.general !== 'Всё') ||
-      (currentFilters.gender &&
-        ['мужской', 'женский'].includes(currentFilters.gender.toLowerCase())) ||
-      !!currentFilters.skills?.skill_categories.some(
-        (cat) => cat.skills && cat.skills.length > 0
-      ) ||
-      (currentFilters.cities && currentFilters.cities.length > 0));
-
-  console.log(currentFilters);
-  // Режим фильтрации активен, если есть либо строка поиска, либо боковые фильтры
-  const isFiltering = isSearching || isSidebarActive;
-  console.log(currentFilters.gender);
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
     if (searchFromUrl !== searchQuery) {
@@ -126,29 +111,6 @@ export default function HomePage() {
   const newCards = usersData.slice(3, 6); // Следующие 3
   const recommendedCards = usersData.slice(0, displayedRecommendedCount);
 
-  // Для поиска - фильтруем по имени или навыкам
-
-  console.log(searchFromUrl);
-  const searchResultCards = isSearching
-    ? usersData.filter(
-        (card) =>
-          card.user.name.toLowerCase().includes(searchFromUrl.toLowerCase()) ||
-          card.teachingSkills.some((skill) =>
-            skill.title.toLowerCase().includes(searchFromUrl.toLowerCase())
-          ) ||
-          card.learningSkills.some((skill) =>
-            skill.title.toLowerCase().includes(searchFromUrl.toLowerCase())
-          )
-      )
-    : [];
-  const baseForFilter = searchFromUrl.trim() ? searchResultCards : usersData;
-
-  const { matchesSidebar } = useSidebarFilter(currentFilters);
-  const visibleSearchResultCards = useMemo(
-    () => baseForFilter.filter(matchesSidebar),
-    [baseForFilter, matchesSidebar]
-  );
-
   // Показываем прелоадер пока загружаются данные
   const isLoading = loadingCatalog || loadingUsers;
   if (isLoading) {
@@ -171,10 +133,10 @@ export default function HomePage() {
           )}
         </aside>
         <main className={styles.content}>
+          {hasActiveFilters && <ActiveFilters filters={activeFilters} onRemove={removeFilter} />}
           <div className={styles.searchResults}>
             <TitleUI size="large" className={styles.searchTitle}>
-              {/* Подходящие предложения: {searchResultCards.length} */}
-              Подходящие предложения: {visibleSearchResultCards.length}
+              Подходящие предложения: {filteredContent.filteredCount}
             </TitleUI>
             <InfiniteGridUI
               hasMore={false}
@@ -183,7 +145,7 @@ export default function HomePage() {
               gap="24px"
               className={styles.searchGrid}
             >
-              {visibleSearchResultCards.map((card) => (
+              {filteredContent.items.map((card: SkillCardProps) => (
                 <SkillCard
                   key={card.user.id}
                   user={card.user}

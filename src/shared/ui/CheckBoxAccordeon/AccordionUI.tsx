@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Icon } from '../Icon';
 import { CheckBoxUI } from '../CheckBox';
 import styles from './AccordionUI.module.scss';
@@ -11,11 +11,12 @@ export function AccordionUI({
   onToggle,
   checkboxProps,
   disabled = false,
+  selectedValues = [],
   onSelectChange,
-  resetToken,
 }: TAccordionUIProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const open = isOpen ?? internalOpen;
+  const currentSelected = selectedValues;
 
   const handleToggle = useCallback(() => {
     const next = !open;
@@ -23,19 +24,10 @@ export function AccordionUI({
     onToggle?.(next);
   }, [open, isOpen, onToggle]);
 
-  // Выбранные навыки
-  const [selected, setSelected] = useState<(string | number)[]>([]);
-
-  // При смене категории сбрасываем выбор
-  useEffect(() => {
-    setSelected([]);
-    onSelectChange?.(data?.category || '', []);
-  }, [data?.category, resetToken, onSelectChange]);
-
   const skillIds = useMemo(() => (data ? data.skills.map((s) => s.skill_id) : []), [data]);
 
   const total = skillIds.length;
-  const selectedCount = selected.length;
+  const selectedCount = currentSelected.length;
 
   const headerChecked = total > 0 && selectedCount === total;
   const indeterminate = selectedCount > 0 && selectedCount < total;
@@ -44,24 +36,24 @@ export function AccordionUI({
   const handleSkillChange = useCallback(
     (_: React.ChangeEvent<HTMLInputElement>, checked: boolean, value?: string | number) => {
       if (!data || value == null) return;
-      setSelected((prev) => {
-        const next = checked ? [...new Set([...prev, value])] : prev.filter((v) => v !== value);
-        onSelectChange?.(data.category, next);
-        return next;
-      });
+
+      const next = checked
+        ? [...new Set([...currentSelected, value])]
+        : currentSelected.filter((v) => v !== value);
+
+      onSelectChange?.(data.category, next);
     },
-    [data, onSelectChange]
+    [data, currentSelected, onSelectChange]
   );
 
   // Выбрать / снять все
   const handleSetAllChange = useCallback(
     (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
       if (!data) return;
-      setSelected(() => {
-        const next = checked ? skillIds : [];
-        onSelectChange?.(data.category, next);
-        return next;
-      });
+
+      const next = checked ? skillIds : [];
+
+      onSelectChange?.(data.category, next);
     },
     [data, skillIds, onSelectChange]
   );
@@ -98,7 +90,7 @@ export function AccordionUI({
                 name={`${data.category}-${item.skill_id}`}
                 value={item.skill_id}
                 label={item.skill_name}
-                checked={selected.includes(item.skill_id)}
+                checked={currentSelected.includes(item.skill_id)}
                 onChange={handleSkillChange}
               />
             ))}

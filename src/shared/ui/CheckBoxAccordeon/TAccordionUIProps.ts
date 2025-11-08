@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import type { TCheckBoxUIProps } from '../CheckBox/TCheckBoxUIProps';
+import type { TCheckBoxUIProps } from '@shared/ui';
 import type { SkillCategory } from '@/entities/Skill';
 export interface TAccordionUIProps {
   /** Заголовок категории (передаётся также в label чекбокса, если label не задан) */
@@ -17,6 +17,8 @@ export interface TAccordionUIProps {
   /** Пропсы для CheckBoxUI */
   checkboxProps?: Omit<TCheckBoxUIProps, 'label' | 'id'>;
   data: SkillCategory;
+  /** Выбранные значения (управляемый режим - обязательно) */
+  selectedValues: (string | number)[];
   /** Стилизация */
   onSelectChange?: (category: string, selectedSkills: (string | number)[]) => void;
   disabled?: boolean;
@@ -24,5 +26,4 @@ export interface TAccordionUIProps {
   style?: CSSProperties;
   forceChevron?: boolean; //
   id?: string;
-  resetToken?: number;
 }
