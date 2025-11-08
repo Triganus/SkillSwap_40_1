@@ -81,23 +81,20 @@ export function useContentFiltering(
     return searchFilteredData.filter(matchesSidebar);
   }, [searchFilteredData, isSidebarFilterActive, matchesSidebar]);
 
-  // Сортировка (если требуется)
+  // Сортировка по дате
   const sortedData = useMemo(() => {
-    if (!config.sortBy) return finalFilteredData;
-
     const sorted = [...finalFilteredData];
+    const sortOrder = config.sortOrder || 'newest';
 
-    // Здесь можно добавить различные типы сортировки
-    // Пока оставляем базовую реализацию
-    switch (config.sortBy) {
-      case 'popular':
-      case 'new':
-      case 'recommended':
-      case 'relevance':
-      default:
-        return sorted;
-    }
-  }, [finalFilteredData, config.sortBy]);
+    sorted.sort((a, b) => {
+      const dateA = new Date(a.user.createdAt).getTime();
+      const dateB = new Date(b.user.createdAt).getTime();
+
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    return sorted;
+  }, [finalFilteredData, config.sortOrder]);
 
   // Применение лимита (если требуется)
   const limitedData = useMemo(() => {
@@ -115,8 +112,9 @@ export function useContentFiltering(
       isSearchActive,
       isSidebarFilterActive,
       searchQuery: normalizedSearchQuery,
+      sortOrder: config.sortOrder || 'newest',
     }),
-    [limitedData, usersData.length, isSearchActive, isSidebarFilterActive, normalizedSearchQuery]
+    [limitedData, usersData.length, isSearchActive, isSidebarFilterActive, normalizedSearchQuery, config.sortOrder]
   );
 
   // Генерация чипсов активных фильтров

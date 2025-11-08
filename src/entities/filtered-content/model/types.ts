@@ -16,6 +16,8 @@ export interface FilteredContent {
   isSidebarFilterActive: boolean;
   /** Строка поиска */
   searchQuery: string;
+  /** Текущая сортировка */
+  sortOrder: 'newest' | 'oldest';
 }
 
 /**
@@ -30,6 +32,10 @@ export interface FilterConfig {
   limit?: number;
   /** Функция для очистки поискового запроса в URL */
   clearSearch?: () => void;
+  /** Текущий порядок сортировки */
+  sortOrder?: 'newest' | 'oldest';
+  /** Функция для переключения сортировки */
+  onSortChange?: (order: 'newest' | 'oldest') => void;
 }
 
 /**

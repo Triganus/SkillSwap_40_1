@@ -16,6 +16,7 @@ import {
 import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { useContentFiltering } from '@/entities/filtered-content';
 import { ActiveFilters } from '@/features/filters';
+import { Icon } from '@/shared/ui';
 import { CardSectionUI } from '@shared/ui/CardSection';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { SkillCard } from '@widgets/Cards/SkillCard';
@@ -46,6 +47,9 @@ export default function HomePage() {
   const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
 
+  // Состояние сортировки
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
 
@@ -58,8 +62,13 @@ export default function HomePage() {
     setSearchParams(newParams);
   }, [searchParams, setSearchParams]);
 
+  // Функция переключения сортировки
+  const handleSortChange = useCallback((order: 'newest' | 'oldest') => {
+    setSortOrder(order);
+  }, []);
+
   const { filteredContent, activeFilters, removeFilter, hasActiveFilters } =
-    useContentFiltering(searchFromUrl, { clearSearch });
+    useContentFiltering(searchFromUrl, { clearSearch, sortOrder, onSortChange: handleSortChange });
 
   const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
 
@@ -144,9 +153,20 @@ export default function HomePage() {
         <main className={styles.content}>
           {hasActiveFilters && <ActiveFilters filters={activeFilters} onRemove={removeFilter} />}
           <div className={styles.searchResults}>
-            <TitleUI size="large" className={styles.searchTitle}>
-              Подходящие предложения: {filteredContent.filteredCount}
-            </TitleUI>
+            <div className={styles.searchHeader}>
+              <TitleUI size="large" className={styles.searchTitle}>
+                Подходящие предложения: {filteredContent.filteredCount}
+              </TitleUI>
+              <button
+                type="button"
+                className={styles.sortButton}
+                onClick={() => handleSortChange(sortOrder === 'newest' ? 'oldest' : 'newest')}
+                aria-label={sortOrder === 'newest' ? 'Сортировать сначала старые' : 'Сортировать сначала новые'}
+              >
+                <Icon name="sort" size={24} className={styles.sortIcon} />
+                {sortOrder === 'newest' ? 'Сначала новые' : 'Сначала старые'}
+              </button>
+            </div>
             <InfiniteGridUI
               hasMore={false}
               loading={false}
