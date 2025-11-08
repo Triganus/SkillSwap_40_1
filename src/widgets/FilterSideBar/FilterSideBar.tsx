@@ -26,7 +26,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const [resetFilters, setResetFilters] = useState(false);
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [skillsData, setSkillsData] = useState<SkillCategoriesData | null>(null);
-  const [generalFilterValue, setGeneralFilterValue] = useState<string>('Всё');
+  const [generalFilterValue, setGeneralFilterValue] = useState<string>('');
 
   const genderOptions = useMemo(() =>
     genders.map((gender) => ({
@@ -37,11 +37,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
   const [genderValue, setGenderValue] = useState<string>('');
 
-  const genderLabel = useMemo(() => {
-    const found = genderOptions.find(opt => opt.value === genderValue);
-
-    return found ? found.label : genderOptions[0]?.label || '';
-  }, [genderValue, genderOptions]);
+  // Убираем genderLabel - теперь не нужен
 
   const [citiesSelected, setCitiesSelected] = useState<string[]>([]);
   const [filterCount, setFilterCount] = useState(0);
@@ -50,7 +46,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const reduxSkillsKey = useMemo(() => JSON.stringify(reduxFilters.skills), [reduxFilters.skills]);
 
   useEffect(() => {
-    const newGeneral = reduxFilters.general || 'Всё';
+    const newGeneral = reduxFilters.general || '';
     const newGender = reduxFilters.gender || '';
 
     if (generalFilterValue !== newGeneral) {
@@ -71,15 +67,13 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
     }
   }, [reduxFilters.general, reduxFilters.gender, reduxSkillsKey, reduxCitiesKey]);
 
-  const handleGeneralChange = useCallback((val: string) => setGeneralFilterValue(val), []);
+  const handleGeneralChange = useCallback((value: string) => {
+    setGeneralFilterValue(value);
+  }, []);
 
-  const handleGenderChange = useCallback((label: string) => {
-    const found = genderOptions.find(opt => opt.label === label);
-
-    if (found) {
-      setGenderValue(found.value);
-    }
-  }, [genderOptions]);
+  const handleGenderChange = useCallback((value: string) => {
+    setGenderValue(value);
+  }, []);
 
   const handleCitiesChange = useCallback((val: string[]) => setCitiesSelected(val), []);
   const handleSkillsChange = useCallback((val: SkillCategoriesData) => setSkillsData(val), []);
@@ -88,7 +82,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
   const handleReset = () => {
     setResetFilters(true);
-    setGeneralFilterValue('Всё');
+    setGeneralFilterValue('');
     setGenderValue('');
     setSkillsData(null);
     setCitiesSelected([]);
@@ -105,14 +99,14 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
   useEffect(() => {
     const nextApplied =
-      generalFilterValue !== 'Всё' ||
+      generalFilterValue !== '' ||
       genderValue !== '' ||
       skillsData?.skill_categories?.some((cat) => cat.skills.length > 0) ||
       citiesSelected.length > 0;
 
     setFiltersApplied(nextApplied);
     setFilterCount(
-      (generalFilterValue !== 'Всё' ? 1 : 0) +
+      (generalFilterValue !== '' ? 1 : 0) +
         (genderValue !== '' ? 1 : 0) +
         (skillsData?.skill_categories?.some((cat) => cat.skills.length > 0) ? 1 : 0) +
         (citiesSelected.length > 0 ? 1 : 0)
@@ -158,9 +152,9 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
       <div className={styles.content}>
         <RadioButtonGroup
-          items={GENERAL_RB_FILTER_OPTIONS.map((opt) => opt.label)}
+          items={GENERAL_RB_FILTER_OPTIONS}
           name="Общий фильтр"
-          defaultValue={GENERAL_RB_FILTER_OPTIONS[0].label}
+          defaultValue={GENERAL_RB_FILTER_OPTIONS[0].value}
           value={generalFilterValue}
           onChange={handleGeneralChange}
         />
@@ -176,10 +170,10 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
       <div className={styles.content}>
         <RadioButtonGroup
           title="Пол автора"
-          items={genderOptions.map((opt) => opt.label)}
+          items={genderOptions}
           name="Пол автора"
-          defaultValue={genderOptions[0].label}
-          value={genderLabel}
+          defaultValue={genderOptions[0]?.value || ''}
+          value={genderValue}
           onChange={handleGenderChange}
         />
 

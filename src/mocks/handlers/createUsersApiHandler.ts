@@ -296,7 +296,7 @@ interface QueryParams {
   cities?: string;
   gender?: string;
   sort?: 'newest' | 'oldest';
-  searchType?: 'all' | 'want_to_learn' | 'can_teach';
+  searchType?: 'want_to_learn' | 'can_teach';
 }
 
 function applyQuery(users: UserListItem[], params: QueryParams): UserListItem[] {
@@ -333,18 +333,21 @@ function applyQuery(users: UserListItem[], params: QueryParams): UserListItem[] 
       const teachHit = u.canTeachSkills.some((s) => selected.has(s.toLowerCase()));
       const learnHit = u.wantsToLearnSkills.some((s) => selected.has(s.toLowerCase()));
 
-      switch (searchType) {
-        case 'want_to_learn':
-          return teachHit;
-        case 'can_teach':
-          return learnHit;
-        case 'all':
-        default:
-          return teachHit || learnHit;
+      if (!searchType) {
+        return teachHit || learnHit;
       }
+
+      if (searchType === 'want_to_learn') {
+        return teachHit;
+      }
+      if (searchType === 'can_teach') {
+        return learnHit;
+      }
+
+      return teachHit || learnHit;
     });
-  } else if (searchType && searchType !== 'all') {
-    // Если выбран тип поиска без конкретных навыков, исключаем пользователей без соответствующих массивов
+  } else if (searchType) {
+    // Если выбран тип поиска без конкретных навыков
     list = list.filter((u) => {
       if (searchType === 'want_to_learn') return u.canTeachSkills.length > 0;
       if (searchType === 'can_teach') return u.wantsToLearnSkills.length > 0;

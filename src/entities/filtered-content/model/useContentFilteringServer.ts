@@ -52,7 +52,7 @@ export function useContentFiltering(
   const isSidebarFilterActive = useMemo(() => {
     return (
       !!currentFilters &&
-      ((currentFilters.general && currentFilters.general !== 'Всё' && currentFilters.general !== '') ||
+      ((currentFilters.general && currentFilters.general !== '') ||
         (currentFilters.gender && currentFilters.gender !== '') ||
         !!currentFilters.skills?.skill_categories.some(
           (cat) => cat.skills && cat.skills.length > 0

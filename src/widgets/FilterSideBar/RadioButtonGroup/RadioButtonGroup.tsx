@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import styles from './RadioButtonGroup.module.scss';
-import type { TRadioButtonGroupProps } from './TRadioButtonGroupProps';
+import type { TRadioButtonGroupProps, RadioButtonItem } from './TRadioButtonGroupProps';
 import { TitleUI } from '@/shared/ui/Title';
 import { RadioButtonUI } from '@/shared/ui';
 
@@ -12,6 +12,17 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
   value: externalValue,
   onChange,
 }) => {
+  // Нормализуем items в массив объектов {label, value}
+  const normalizedItems = useMemo<RadioButtonItem[]>(() => {
+    if (items.length === 0) return [];
+
+    if (typeof items[0] === 'string') {
+      return (items as string[]).map(item => ({ label: item, value: item }));
+    }
+
+    return items as RadioButtonItem[];
+  }, [items]);
+
   const [selected, setSelected] = useState<string | null>(defaultValue);
 
   const currentValue = externalValue !== undefined ? externalValue : selected;
@@ -44,15 +55,15 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
       )}
 
       <div className={styles.list} aria-labelledby={title ? `${name}-label` : undefined}>
-        {items.map((item) => (
+        {normalizedItems.map((item) => (
           <RadioButtonUI
-            key={item}
+            key={item.value}
             name={name}
-            value={item}
-            label={item}
-            checked={currentValue === item}
+            value={item.value}
+            label={item.label}
+            checked={currentValue === item.value}
             onChange={handleRadioChange}
-            aria-checked={currentValue === item}
+            aria-checked={currentValue === item.value}
             size="md"
           />
         ))}
