@@ -41,8 +41,6 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 16px;
-  height: 16px;
   border: none;
   border-radius: 50%;
   display: inline-flex;
@@ -57,12 +55,6 @@
 
 .badge-btn:focus-visible {
   outline: none;
-}
-
-.badge-icon {
-  width: 16px;
-  height: 16px;
-  display: block;
 }
 
 .input {

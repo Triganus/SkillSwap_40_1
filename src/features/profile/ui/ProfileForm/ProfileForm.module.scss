@@ -4,13 +4,21 @@
   justify-content: center;
   gap: 196px;
   padding: 60px;
-  width: 100%;
+  min-width: 1020px;
+  max-width: 100%;
   background: var(--color-surface);
   border-radius: 24px;
 }
 
-.avatar-user {
-  align-items: flex-start;
+.icon {
+  width: 56px;
+  height: 56px;
+}
+
+.gallery-edit {
+  position: absolute;
+  right: 16px;
+  top: 16px;
 }
 
 .form-actions {
@@ -30,7 +38,6 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
   width: 100%;
 }
 
@@ -48,15 +55,37 @@
   .edit {
     position: absolute;
     right: 20px;
-    top: 12px;
-    pointer-events: none;
   }
+}
+
+.edit-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 8px;
+
+  &:focus {
+    outline: 2px solid #69735d;
+    border-radius: 4px;
+  }
+}
+
+.change-password-link {
+  padding-top: 12px;
 }
 
 .row {
   display: flex;
-  gap: 24px;
+  gap: var(--space-6);
+}
+
+.full-width {
   width: 100%;
+  display: block;
 }
 
 .city {
@@ -65,4 +94,55 @@
 
 .button {
   width: 100%;
+}
+
+/* можно убрать */
+
+@media (width <= 768px) {
+  .form {
+    flex-direction: column;
+    gap: 40px;
+    padding: 32px;
+    width: 100%;
+    border-radius: 16px;
+  }
+
+  .form-actions,
+  .section-forms {
+    width: 100%;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .input-with-edit .input {
+    padding: 14px 20px;
+  }
+
+  .edit-button {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+@media (width <= 480px) {
+  .form {
+    padding: 24px;
+    gap: 32px;
+  }
+
+  .form-actions,
+  .section-forms {
+    gap: 24px;
+  }
+
+  .field {
+    gap: 8px;
+  }
+
+  .button {
+    padding: 14px;
+  }
 }

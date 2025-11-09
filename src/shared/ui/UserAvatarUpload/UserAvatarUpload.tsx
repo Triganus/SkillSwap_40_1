@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 import styles from './UserAvatarUpload.module.scss';
 import DefaultUserIconUrl from '@shared/assets/images/user-circle.svg?url';
-import { Icon } from '@shared/ui';
 
 export type UserAvatarUploadHandle = {
   getFile: () => File | null;
@@ -35,6 +34,8 @@ export type UserAvatarUploadProps = {
   onChange?: (file: File | null) => void;
   /** Отключить взаимодействие */
   disabled?: boolean;
+
+  children?: React.ReactNode;
 };
 
 export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUploadProps>(
@@ -48,6 +49,7 @@ export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUpl
       initialSrc,
       onChange,
       disabled = false,
+      children,
     },
     ref
   ) => {
@@ -184,13 +186,7 @@ export const UserAvatarUpload = forwardRef<UserAvatarUploadHandle, UserAvatarUpl
             aria-label={hasImage ? 'Изменить аватар' : 'Выбрать аватар'}
             onClick={pickFile}
           >
-            <Icon
-              name="add"
-              size={16}
-              title={hasImage ? 'Изменить' : 'Добавить'}
-              className={styles.badgeIcon}
-              stroke="currentColor"
-            />
+            {children}
           </button>
         )}
 
