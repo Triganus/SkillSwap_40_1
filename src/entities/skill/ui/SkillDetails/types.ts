@@ -5,7 +5,8 @@ export type SkillDetailsVariant = 'can' | 'want';
 export interface SkillDetailsProps {
   // Основной контент
   title: string; // Название навыка
-  category: TagCategory; // Категория / Подкатегория (было subTitle: string)
+  category: TagCategory; // Категория
+  categoryLabel?: string; // Полная категория с подкатегорией (например, "Творчество и искусство / Музыка и звук")
   text: string; // Описание навыка
   images: string[]; // Массив URL изображений
   // Режим отображения
@@ -14,6 +15,7 @@ export interface SkillDetailsProps {
   isLiked?: boolean; // В избранном ли
   isLikeActive?: boolean; // Можно ли лайкать (авторизован?)
   isRequestSent?: boolean; // Отправлен ли запрос на обмен
+  likesCount?: number; // Счетчик лайков
   onLikeClick?: () => void;
   onExchangeClick?: () => void;
   onShareClick?: () => void;

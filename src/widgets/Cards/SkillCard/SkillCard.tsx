@@ -24,12 +24,16 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   onShareClick,
   onMoreClick,
   isLiked = false,
+  likesCount = 0,
   ariaLabel,
   mode = 'compact',
   description,
   images = [],
   title,
   category,
+  isProposed = false,
+  userBio,
+  locationAndAge,
 }) => {
   // Преобразуем images в формат MediaItem
   const mediaItems: MediaItem[] = React.useMemo(
@@ -56,6 +60,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({
               isActive={isLiked}
               onClick={onLikeClick}
               ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+              likesCount={likesCount}
+              showCount={true}
             />
           )}
           {onShareClick && (
@@ -147,17 +153,28 @@ export const SkillCard: React.FC<SkillCardProps> = ({
               </div>
             )}
 
-            {/* Кнопка "Предложить обмен" */}
-            {onExchangeClick && (
+            {/* Кнопка "Предложить обмен" или "Обмен предложен" */}
+            {isProposed ? (
               <Button
-                onClick={onExchangeClick}
-                variant="primary"
+                variant="secondary"
                 type="button"
                 className={styles.exchangeButton}
-                aria-label="Предложить обмен навыками"
+                aria-label="Обмен уже предложен"
               >
-                Предложить обмен
+                Обмен предложен
               </Button>
+            ) : (
+              onExchangeClick && (
+                <Button
+                  onClick={onExchangeClick}
+                  variant="primary"
+                  type="button"
+                  className={styles.exchangeButton}
+                  aria-label="Предложить обмен навыками"
+                >
+                  Предложить обмен
+                </Button>
+              )
             )}
           </div>
 
@@ -167,6 +184,65 @@ export const SkillCard: React.FC<SkillCardProps> = ({
               <MediaSlider items={mediaItems} mainSize={480} />
             </div>
           )}
+        </div>
+      </article>
+    );
+  }
+
+  // Режим для страницы навыка (по дизайну Figma)
+  if (mode === 'skill-page') {
+    return (
+      <article
+        className={styles.card}
+        aria-label={ariaLabel || `Карточка пользователя ${user.name}`}
+      >
+        {/* Большое фото профиля сверху */}
+        <div className={styles.skillPageAvatar}>
+          <AvatarUI
+            src={user.avatar || '/default-avatar.png'}
+            alt={`Аватар пользователя ${user.name}`}
+            size={120}
+          />
+        </div>
+
+        {/* Имя, город и возраст */}
+        <div className={styles.skillPageHeader}>
+          <TitleUI size="medium">{user.name}</TitleUI>
+          {locationAndAge && (
+            <TextUI variant="body" color="primary">
+              {locationAndAge}
+            </TextUI>
+          )}
+        </div>
+
+        {/* Биография пользователя */}
+        {userBio && userBio.trim() && (
+          <div className={styles.skillPageBio}>
+            <TextUI variant="body" color="primary">
+              {userBio}
+            </TextUI>
+          </div>
+        )}
+
+        {/* Навыки */}
+        <div className={styles.skillsSection}>
+          <div className={styles.skillGroup}>
+            <TitleUI size="xsmall">Может научить:</TitleUI>
+            <div className={styles.skillTags} aria-label="Может научить">
+              {teachingSkills.map((skill) => (
+                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.skillGroup}>
+            <TitleUI size="xsmall">Хочет научиться:</TitleUI>
+            <div className={styles.skillTags} aria-label="Хочет научиться">
+              {learningSkills.map((skill) => (
+                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+              ))}
+            </div>
+          </div>
         </div>
       </article>
     );
@@ -193,6 +269,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             isLiked ? `Убрать ${user.name} из избранного` : `Добавить ${user.name} в избранное`
           }
           className={styles.likeButton}
+          likesCount={likesCount}
+          showCount={true}
         />
       </div>
       <div className={styles.basicContent}>
@@ -218,16 +296,24 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             </div>
           </div>
         </div>
-        <div className={styles.buttonWrapper}>
-          <Button
-            onClick={onDetailsClick}
-            variant="primary"
-            type="button"
-            aria-label={`Подробнее о пользователе ${user.name}`}
-          >
-            Подробнее
-          </Button>
-        </div>
+        {onDetailsClick && (
+          <div className={styles.buttonWrapper}>
+            <Button
+              onClick={(e) => {
+                console.log('[SkillCard] Button clicked for user:', user.name);
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('[SkillCard] Calling onDetailsClick');
+                onDetailsClick();
+              }}
+              variant="primary"
+              type="button"
+              aria-label={`Подробнее о пользователе ${user.name}`}
+            >
+              Подробнее
+            </Button>
+          </div>
+        )}
       </div>
     </article>
   );

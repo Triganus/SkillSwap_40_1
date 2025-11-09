@@ -38,6 +38,22 @@ export interface TwoColumnLayoutProps {
   columnBackground?: string;
 
   /**
+   * Индивидуальный цвет фона для левого блока. Если не указан, используется columnBackground.
+   */
+  leftColumnBackground?: string;
+
+  /**
+   * Индивидуальный цвет фона для правого блока. Если не указан, используется columnBackground.
+   */
+  rightColumnBackground?: string;
+
+  /**
+   * Ширины столбцов грид-контейнера (grid-template-columns).
+   * @default '1fr 1fr'
+   */
+  columnsTemplate?: string;
+
+  /**
    * Цвет фона контейнера
    * @default 'transparent'
    */
@@ -48,6 +64,16 @@ export interface TwoColumnLayoutProps {
    * @default 0
    */
   containerPadding?: number | string;
+
+  /**
+   * Индивидуальный паддинг для левого блока. Если не указан, используется columnPadding.
+   */
+  leftColumnPadding?: number | string;
+
+  /**
+   * Индивидуальный паддинг для правого блока. Если не указан, используется columnPadding.
+   */
+  rightColumnPadding?: number | string;
 
   /**
    * Минимальная высота контейнера
