@@ -98,6 +98,7 @@
   width: var(--header-actions-width);
   display: flex;
   flex-wrap: nowrap;
+  position: relative;
 }
 
 .actions > * {

@@ -123,8 +123,17 @@ const notificationsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchNotifications.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
+        state.loading = false;
         state.data = action.payload;
+      })
+      .addCase(fetchNotifications.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       })
       .addCase(viewNotification.fulfilled, (state, action) => {
         const viewed = action.payload;

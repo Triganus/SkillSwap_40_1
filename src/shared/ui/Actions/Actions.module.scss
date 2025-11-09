@@ -14,6 +14,7 @@
   line-height: 0;
   border-radius: 8px;
   cursor: pointer;
+  position: relative;
 }
 
 .btn:hover,
@@ -34,4 +35,23 @@
   height: 12px;
   border-radius: 50%;
   background: #e53935; /* red dot */
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #e53935;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }

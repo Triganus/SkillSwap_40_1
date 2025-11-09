@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import type { AppDispatch } from '@/app/store';
 import type { INotification } from '@entities/notification/model/types/types';
 
@@ -7,17 +8,23 @@ import {
   fetchNotifications,
   viewAllNotifications,
   removeViewedNotifications,
+  viewNotification,
 } from '@/features/notifications/model/notificationsSlice';
 import {
   selectNewNotifications,
   selectViewedNotifications,
+  selectNotificationsLoading,
+  selectNotificationsError,
 } from '@/features/notifications/model/selectors';
 import { NotificationsList } from '@/features/notifications/ui/NotificationsList';
 
 const NotificationsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const newNotifications = useSelector(selectNewNotifications);
   const viewedNotifications = useSelector(selectViewedNotifications);
+  const loading = useSelector(selectNotificationsLoading);
+  const error = useSelector(selectNotificationsError);
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -32,13 +39,19 @@ const NotificationsPage: React.FC = () => {
   };
 
   const handleNotificationClick = (notification: INotification) => {
-    // Пока просто логируем
-    console.log('Переход по ссылке:', notification.link);
-    // Позже: можно dispatch(viewNotification(notification.id)) + navigate
+    if (!notification.isViewed) {
+      dispatch(viewNotification(notification.id));
+    }
+    if (notification.link) {
+      navigate(notification.link);
+    }
   };
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+      {loading && <p>Загрузка уведомлений...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
       {/* Новые уведомления */}
       <section>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
