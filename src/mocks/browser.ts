@@ -38,9 +38,7 @@ const delegate = async ({ request }: { request: Request }) => {
   }
 };
 
-export const worker = setupWorker(
-  http.all('*/api/*', delegate),
-);
+export const worker = setupWorker(http.all('*/api/*', delegate));
 
 worker.events.on('request:start', ({ request }) => {
   const { method, url } = request;

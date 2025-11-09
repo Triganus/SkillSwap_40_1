@@ -1,12 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
-import {
-  getSearchQuery,
-  setSearchQuery,
-  filterSkills,
-  fetchSkills,
-} from '@entities/skill/model';
+import { getSearchQuery, setSearchQuery, filterSkills, fetchSkills } from '@entities/skill/model';
 import {
   selectSkillCards,
   selectUsersLoading,
@@ -59,18 +54,12 @@ export default function HomePage() {
     setSortOrder(order);
   }, []);
 
-  const {
-    filteredContent,
-    activeFilters,
-    removeFilter,
-    hasActiveFilters,
-    loadMore,
-    hasMore,
-  } = useContentFiltering(searchFromUrl, {
-    clearSearch,
-    sortOrder,
-    onSortChange: handleSortChange,
-  });
+  const { filteredContent, activeFilters, removeFilter, hasActiveFilters, loadMore, hasMore } =
+    useContentFiltering(searchFromUrl, {
+      clearSearch,
+      sortOrder,
+      onSortChange: handleSortChange,
+    });
 
   const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
 
