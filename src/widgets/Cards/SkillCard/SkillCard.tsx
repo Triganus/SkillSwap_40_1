@@ -141,7 +141,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                         <TagUI
                           key={skill.id}
                           label={skill.title}
-                          category={skill.categoryId as TagCategory}
+                          category={skill.category as TagCategory}
                         />
                       ))}
                     </div>
@@ -156,7 +156,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                         <TagUI
                           key={skill.id}
                           label={skill.title}
-                          category={skill.categoryId as TagCategory}
+                          category={skill.category as TagCategory}
                         />
                       ))}
                     </div>
@@ -243,7 +243,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TagUI
                   key={skill.id}
                   label={skill.title}
-                  category={skill.categoryId as TagCategory}
+                  category={skill.category as TagCategory}
                 />
               ))}
             </div>
@@ -256,7 +256,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TagUI
                   key={skill.id}
                   label={skill.title}
-                  category={skill.categoryId as TagCategory}
+                  category={skill.category as TagCategory}
                 />
               ))}
             </div>
@@ -300,7 +300,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TagUI
                   key={skill.id}
                   label={skill.title}
-                  category={skill.categoryId as TagCategory}
+                  category={skill.category as TagCategory}
                 />
               ))}
             </div>
@@ -313,11 +313,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TagUI
                   key={skill.id}
                   label={skill.title}
-                  category={skill.categoryId as TagCategory}
+                  category={skill.category as TagCategory}
                 />
               ))}
               {learningSkills.length > 2 && (
-                <span className={styles.moreTag}>+{learningSkills.length - 2}</span>
+                <TagUI label={`+${learningSkills.length - 2}`} category="other" />
               )}
             </div>
           </div>

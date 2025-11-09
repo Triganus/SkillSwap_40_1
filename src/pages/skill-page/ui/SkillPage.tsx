@@ -15,27 +15,27 @@ import {
   getSubcategoriesFromStore,
   getCategoriesFromStore,
 } from '@/entities/directory/lib/getFromStore';
-import { selectSkillCards, fetchUsersWithSkillsThunk } from '@/entities/user/model-v2';
-import { useAppSelector, useAppDispatch } from '@shared/hooks/redux';
+import { fetchSimilarUsers } from '@/api/users-api-v2';
 import type { User } from '@/entities/user/model/types/types';
 import type { Skill } from '@/entities/skill/model/types/types';
 import type { TagCategory } from '@/shared/ui/Tag';
 import type { SkillCardProps, SkillReference } from '@widgets/Cards/SkillCard/type';
+import type { UserListItem } from '@/entities/user/model-v2';
 import styles from './SkillPage.module.scss';
 
 export default function SkillPage() {
   const { id: userId } = useParams<{ id: string }>();
   const { auth } = useAuth();
-  const dispatch = useAppDispatch();
 
   // Состояние модального окна
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Состояние похожих пользователей
+  const [similarUsers, setSimilarUsers] = useState<UserListItem[]>([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
+
   // Загрузка профиля пользователя
   const { profile, skills, loading: profileLoading, error: profileError } = useUserProfile(userId);
-
-  // Загрузка пользователей для похожих предложений
-  const allUsers = useAppSelector(selectSkillCards) as SkillCardProps[];
 
   // Загрузка справочников
   const cities = getCitiesFromStore();
@@ -90,7 +90,7 @@ export default function SkillPage() {
       return {
         id: subcategoryId,
         title: subcategory?.name || subcategoryId,
-        categoryId: subcategory?.categoryId || 'other',
+        category: subcategory?.categoryId || 'other',
       };
     });
   }, [profile, subcategories]);
@@ -104,7 +104,7 @@ export default function SkillPage() {
       return {
         id: subcategoryId,
         title: subcategory?.name || subcategoryId,
-        categoryId: subcategory?.categoryId || 'other',
+        category: subcategory?.categoryId || 'other',
       };
     });
   }, [profile, subcategories]);
@@ -132,36 +132,47 @@ export default function SkillPage() {
     return primarySkill?.images || [];
   }, [primarySkill]);
 
-  // Похожие карточки - пользователи с похожими навыками
-  const similarCards = useMemo(() => {
-    if (!profile || !allUsers.length) return [];
+  // Преобразование похожих пользователей в карточки
+  const similarCards: SkillCardProps[] = useMemo(() => {
+    return similarUsers.map((u) => {
+      const cityName = cities.find((c) => c.id === u.cityId)?.name || u.cityId;
 
-    const currentUserSkillIds = new Set(profile.canTeachSkills); // ID подкатегорий
-    const currentUserWantsIds = new Set(profile.wantsToLearnSkills); // ID подкатегорий
-
-    // Фильтруем пользователей, исключая текущего
-    return allUsers
-      .filter((card) => card.user.id !== userId)
-      .map((card) => {
-        // Подсчитываем совпадения навыков
-        const teachingMatches = card.teachingSkills.filter(
-          (skill) => currentUserSkillIds.has(skill.id) || currentUserWantsIds.has(skill.title)
-        ).length;
-
-        const learningMatches = card.learningSkills.filter(
-          (skill) => currentUserSkillIds.has(skill.id) || currentUserWantsIds.has(skill.title)
-        ).length;
-
+      const teachingSkillsRefs: SkillReference[] = u.canTeachSkills.map((subcategoryId) => {
+        const subcategory = subcategories.find((s) => s.id === subcategoryId);
         return {
-          card,
-          matchScore: teachingMatches + learningMatches,
+          id: subcategoryId,
+          title: subcategory?.name || subcategoryId,
+          category: subcategory?.categoryId || 'other',
         };
-      })
-      .filter((item) => item.matchScore > 0) // Только с совпадениями
-      .sort((a, b) => b.matchScore - a.matchScore) // Сортируем по количеству совпадений
-      .slice(0, 10) // Берем топ 10
-      .map((item) => item.card);
-  }, [profile, allUsers, userId]);
+      });
+
+      const learningSkillsRefs: SkillReference[] = u.wantsToLearnSkills.map((subcategoryId) => {
+        const subcategory = subcategories.find((s) => s.id === subcategoryId);
+        return {
+          id: subcategoryId,
+          title: subcategory?.name || subcategoryId,
+          category: subcategory?.categoryId || 'other',
+        };
+      });
+
+      return {
+        user: {
+          id: u.id,
+          name: u.name,
+          email: '',
+          avatar: u.avatar || undefined,
+          gender: u.gender === 'male' ? 'мужской' : u.gender === 'female' ? 'женский' : 'не указан',
+          bio: `${cityName}, ${u.age} лет`,
+          skills: [],
+          createdAt: u.createdAt ? new Date(u.createdAt).toISOString() : new Date().toISOString(),
+        },
+        teachingSkills: teachingSkillsRefs,
+        learningSkills: learningSkillsRefs,
+        isLiked: false,
+        likesCount: 0,
+      };
+    });
+  }, [similarUsers, cities, subcategories]);
 
   // Обработчики событий
   const onShareClick = useCallback(() => {
@@ -202,12 +213,28 @@ export default function SkillPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [userId]);
 
-  // Загрузка пользователей для похожих предложений
+  // Загрузка похожих пользователей через API
   useEffect(() => {
-    if (allUsers.length === 0) {
-      dispatch(fetchUsersWithSkillsThunk());
-    }
-  }, [dispatch, allUsers.length]);
+    if (!profile) return;
+
+    setLoadingSimilar(true);
+    fetchSimilarUsers({
+      userId: profile.id,
+      canTeachSkills: profile.canTeachSkills,
+      wantsToLearnSkills: profile.wantsToLearnSkills,
+      limit: 10,
+    })
+      .then((users) => {
+        setSimilarUsers(users);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch similar users:', error);
+        setSimilarUsers([]);
+      })
+      .finally(() => {
+        setLoadingSimilar(false);
+      });
+  }, [profile]);
 
   // Закрываем модальное окно при смене пользователя
   useEffect(() => {
@@ -296,7 +323,7 @@ export default function SkillPage() {
         <CardSlider
           title="Похожие предложения"
           skillsList={similarCards}
-          loading={profileLoading}
+          loading={loadingSimilar}
         />
       </div>
 

@@ -7,7 +7,7 @@ export type SkillCardMode = 'compact' | 'full' | 'skill-page';
 export interface SkillReference {
   id: string; // ID подкатегории
   title: string; // Название подкатегории
-  categoryId: string; // ID категории
+  category: string; // ID категории
 }
 
 export interface SkillCardProps {

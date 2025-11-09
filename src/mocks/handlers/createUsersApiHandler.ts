@@ -412,6 +412,48 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         return Response.json({ users: slice, hasMore: start + limit < sorted.length });
       }
 
+      // /api/users/similar - похожие пользователи
+      if (base === '/api/users/similar') {
+        const userId = url.searchParams.get('userId');
+        const canTeachSkills =
+          url.searchParams.get('canTeachSkills')?.split(',').filter(Boolean) || [];
+        const wantsToLearnSkills =
+          url.searchParams.get('wantsToLearnSkills')?.split(',').filter(Boolean) || [];
+        const limit = Number(url.searchParams.get('limit') || '10');
+
+        if (!userId) {
+          return Response.json({ message: 'userId is required' }, { status: 400 });
+        }
+
+        const currentUserSkillIds = new Set(canTeachSkills);
+        const currentUserWantsIds = new Set(wantsToLearnSkills);
+
+        // Фильтруем пользователей, исключая текущего
+        const similarUsers = users
+          .filter((u) => u.id !== userId)
+          .map((u) => {
+            // Подсчитываем совпадения навыков
+            const teachingMatches = u.canTeachSkills.filter(
+              (skillId) => currentUserSkillIds.has(skillId) || currentUserWantsIds.has(skillId)
+            ).length;
+
+            const learningMatches = u.wantsToLearnSkills.filter(
+              (skillId) => currentUserSkillIds.has(skillId) || currentUserWantsIds.has(skillId)
+            ).length;
+
+            return {
+              user: u,
+              matchScore: teachingMatches + learningMatches,
+            };
+          })
+          .filter((item) => item.matchScore > 0) // Только с совпадениями
+          .sort((a, b) => b.matchScore - a.matchScore) // Сортируем по количеству совпадений
+          .slice(0, limit) // Берем топ N
+          .map((item) => item.user);
+
+        return Response.json({ users: similarUsers });
+      }
+
       // /api/users/:id
       const profileMatch = base.match(/^\/api\/users\/(.+)$/);
 

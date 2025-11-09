@@ -139,3 +139,29 @@ export async function fetchNewUsers(): Promise<UserListItem[]> {
   const data = await response.json();
   return data.users || data;
 }
+
+/**
+ * Получить похожих пользователей на основе навыков текущего пользователя
+ */
+export async function fetchSimilarUsers(params: {
+  userId: string;
+  canTeachSkills: string[];
+  wantsToLearnSkills: string[];
+  limit?: number;
+}): Promise<UserListItem[]> {
+  const searchParams = new URLSearchParams();
+
+  searchParams.set('userId', params.userId);
+  searchParams.set('canTeachSkills', params.canTeachSkills.join(','));
+  searchParams.set('wantsToLearnSkills', params.wantsToLearnSkills.join(','));
+  if (params.limit) searchParams.set('limit', String(params.limit));
+
+  const response = await fetch(`/api/users/similar?${searchParams.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch similar users: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.users || data;
+}
