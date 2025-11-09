@@ -205,9 +205,10 @@ export const usersSliceV2 = createSlice({
     builder.addCase(fetchUsersWithSkillsThunk.pending, (state, action) => {
       state.loading = true;
       state.error = null;
-
-      // Очищаем карточки только при замене данных (смена фильтров)
-      if (action.meta.arg && action.meta.arg.replace) {
+      // Очищаем карточки при замене данных:
+      // 1. Если вызов без параметров (загрузка по умолчанию)
+      // 2. Если явно указан replace: true (смена фильтров)
+      if (!action.meta.arg || action.meta.arg.replace) {
         state.skillCards = [];
       }
     });

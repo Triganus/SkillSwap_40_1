@@ -92,10 +92,9 @@ export default function HomePage() {
   // Отслеживаем переход из режима фильтрации в обычный режим
   useEffect(() => {
     const wasFiltering = prevIsFilteringRef.current;
-    const isNowFiltering = isFiltering;
 
     // Если были в фильтрации и вышли из неё - загружаем данные по умолчанию
-    if (wasFiltering && !isNowFiltering && !loadingUsers) {
+    if (wasFiltering && !isFiltering && !loadingUsers) {
       dispatch(fetchUsersWithSkillsThunk());
       setCurrentRecommendedPage(1);
       setHasMoreRecommended(true);
@@ -168,7 +167,7 @@ export default function HomePage() {
             <FilterSideBar skillsCatalog={skillsCatalog} onChange={handleFiltersChange} />
           )}
         </aside>
-        <main className={styles.content}>
+        <section className={styles.content}>
           <HomeContent
             cards={filteredContent.items}
             isLoading={loadingUsers}
@@ -182,7 +181,7 @@ export default function HomePage() {
             onSortChange={handleSortChange}
             onRemoveFilter={removeFilter}
           />
-        </main>
+        </section>
       </div>
     );
   }
@@ -195,7 +194,7 @@ export default function HomePage() {
           <FilterSideBar skillsCatalog={skillsCatalog} onChange={handleFiltersChange} />
         )}
       </aside>
-      <main className={styles.content}>
+      <section className={styles.content}>
         <HomeContent
           cards={usersData}
           isLoading={loadingUsers}
@@ -204,7 +203,7 @@ export default function HomePage() {
           onViewAllPopular={handleViewAllPopular}
           onViewAllNew={handleViewAllNew}
         />
-      </main>
+      </section>
     </div>
   );
 }
