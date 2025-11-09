@@ -153,7 +153,15 @@ export const DatePickerUI = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, focusedDate, currentMonth, currentYear, isMonthDropdownOpen, isYearDropdownOpen, maxDate]);
+  }, [
+    isOpen,
+    focusedDate,
+    currentMonth,
+    currentYear,
+    isMonthDropdownOpen,
+    isYearDropdownOpen,
+    maxDate,
+  ]);
 
   // генерация 42 ячеек календаря (6 недель) с мемоизацией
   const days = useMemo((): DayItem[] => {
@@ -360,7 +368,8 @@ export const DatePickerUI = ({
                 const isSelectedDay =
                   tempSelectedDate && item.date.toDateString() === tempSelectedDate.toDateString();
                 const isTodayDay = isToday(item.date);
-                const isFocusedDay = focusedDate && item.date.toDateString() === focusedDate.toDateString();
+                const isFocusedDay =
+                  focusedDate && item.date.toDateString() === focusedDate.toDateString();
 
                 return (
                   <div
