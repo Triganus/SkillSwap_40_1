@@ -122,8 +122,8 @@ export default function HomePage() {
 
   // Обработчик клика на "Подробнее" - переход на страницу навыка
   const handleSkillDetailsClick = useCallback(
-    (skillId: string) => {
-      navigate(`/skill/${skillId}`);
+    (userId: string) => {
+      navigate(`/skill/${userId}`);
     },
     [navigate]
   );

@@ -13,7 +13,7 @@ import {
  */
 export function userListItemToSkillCard(
   userItem: UserListItem,
-  onDetailsClick?: (skillId: string) => void
+  onDetailsClick?: (userId: string) => void
 ): SkillCardProps {
   const subcategories = getSubcategoriesFromStore();
   const cities = getCitiesFromStore();
@@ -70,10 +70,7 @@ export function userListItemToSkillCard(
     user,
     teachingSkills,
     learningSkills,
-    onDetailsClick:
-      onDetailsClick && teachingSkills.length > 0
-        ? () => onDetailsClick(teachingSkills[0].id)
-        : undefined,
+    onDetailsClick: onDetailsClick ? () => onDetailsClick(userItem.id) : undefined,
     onLikeClick: () => console.log(`Like clicked for ${userItem.name}`),
     isLiked: false,
   };

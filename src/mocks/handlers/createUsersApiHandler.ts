@@ -447,18 +447,18 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
 
 function toProfile(u: UserListItem): UserProfile {
   const { skillPool } = cache || { skillPool: [] };
-  const skillMap = new Map(skillPool.map((s) => [s.name.toLowerCase(), s.id]));
+  const skillMap = new Map(skillPool.map((s) => [s.id, s.name]));
 
   return {
     id: u.id,
     name: u.name,
-    cityId: u.cityId, // Используем cityId
+    cityId: u.cityId,
     age: u.age,
     gender: u.gender,
     avatar: u.avatar,
-    bio: `${u.cityId}, ${u.age} лет`, // Используем cityId (название получим в компоненте)
-    canTeachSkillIds: u.canTeachSkills.map((name) => skillMap.get(name.toLowerCase()) || name),
-    wantsToLearnSkills: u.wantsToLearnSkills,
+    bio: `Привет! Меня зовут ${u.name}. Я готов делиться своими знаниями и навыками.`,
+    canTeachSkillIds: u.canTeachSkills,
+    wantsToLearnSkills: u.wantsToLearnSkills.map((id) => skillMap.get(id) || id),
     likedSkillIds: [],
   };
 }

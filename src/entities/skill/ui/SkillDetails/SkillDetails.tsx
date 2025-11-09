@@ -1,20 +1,16 @@
 import React, { useMemo } from 'react';
-import { TitleUI } from '@/shared/ui/Title/TitleUI';
-import { TextUI } from '@/shared/ui/Text/TextUI';
-import { MediaSlider } from '@/shared/ui/MediaSlider/MediaSlider';
 import { LikeButtonUI } from '@/shared/ui/LikeButton/LikeButtonUI';
 import { Icon } from '@/shared/ui/Icon/Icon';
 import { Button } from '@/shared/ui/Button/Button';
-import { TagUI } from '@/shared/ui/Tag'; //для отображения категории как тега
-import { selectCategoryIdToName } from '@/entities/directory/model/selectors';
-import { useAppSelector } from '@/shared/hooks/redux';
-import type { MediaItem } from '@/shared/ui/MediaSlider/types';
+import { SkillContent } from '@/entities/skill/ui/SkillContent';
 import type { SkillDetailsProps } from './types';
 import styles from './SkillDetails.module.scss';
 
 export const SkillDetails: React.FC<SkillDetailsProps> = ({
   title,
   category,
+  categoryLabel,
+  subcategory,
   text,
   images,
   variant,
@@ -30,20 +26,8 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
   onDoneClick,
   className = '',
 }) => {
-  const categoryIdToName = useAppSelector(selectCategoryIdToName);
-
-  const mediaItems: MediaItem[] = useMemo(
-    () =>
-      images.map((src, idx) => ({
-        id: `img-${idx}`,
-        src,
-        alt: `${title} - изображение ${idx + 1}`,
-      })),
-    [images, title]
-  );
-
   const rootClassName = useMemo(() => {
-    const classes = [styles['skill-details'], className];
+    const classes = [styles.skillDetails, className];
     if (variant === 'can') {
       classes.push(styles.modal);
     }
@@ -52,7 +36,7 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
 
   return (
     <div className={rootClassName}>
-      {/* Блок (лайк, поделиться, ещё) - сверху справа */}
+      {/* Блок действий (лайк, поделиться, ещё) - сверху справа */}
       {variant === 'want' && (
         <div className={styles.actionbar}>
           {isLikeActive && (
@@ -89,23 +73,16 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
         </div>
       )}
 
-      {/* Заголовок и подзаголовок - слева */}
-      <div className={styles.header}>
-        <TitleUI size="large">{title}</TitleUI>
-        <TagUI
-          label={categoryIdToName[category] || category}
-          category={category}
-          className={styles.tag}
-        />
-      </div>
-
-      {/* Описание - слева */}
-      <div className={styles.content}>
-        <TextUI variant="body" className={styles.description}>
-          {text}
-        </TextUI>
-
-        {/* Кнопка "Предложить обмен" - под описанием (режим "want") */}
+      {/* Основное содержимое навыка с кнопками действий */}
+      <SkillContent
+        title={title}
+        category={category}
+        categoryLabel={categoryLabel}
+        subcategory={subcategory}
+        description={text}
+        images={images}
+      >
+        {/* Кнопка "Предложить обмен" (режим "want") */}
         {variant === 'want' && (
           <div className={styles.cta}>
             {isRequestSent ? (
@@ -148,12 +125,7 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
             </Button>
           </div>
         )}
-      </div>
-
-      {/* Галерея изображений - справа */}
-      <div className={styles.gallery}>
-        <MediaSlider items={mediaItems} mainSize={480} />
-      </div>
+      </SkillContent>
     </div>
   );
 };

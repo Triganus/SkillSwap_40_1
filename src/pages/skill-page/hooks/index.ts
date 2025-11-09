@@ -10,3 +10,4 @@ export { useLocationState } from './useLocationState';
 export { useSimilarCards } from './useSimilarCards';
 export { useSkillLikes } from './useSkillLikes';
 export { useSkillExchange } from './useSkillExchange';
+export { useUserProfile } from './useUserProfile';
