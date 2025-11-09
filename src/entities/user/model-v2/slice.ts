@@ -122,6 +122,13 @@ export const usersSliceV2 = createSlice({
     // ========== Reset ==========
 
     /**
+     * Очистить карточки навыков (для HomePage)
+     */
+    clearSkillCards: (state) => {
+      state.skillCards = [];
+    },
+
+    /**
      * Сброс всего состояния
      */
     resetUsers: () => initialState,
@@ -195,9 +202,14 @@ export const usersSliceV2 = createSlice({
     });
 
     // ========== fetchUsersWithSkillsThunk (для HomePage) ==========
-    builder.addCase(fetchUsersWithSkillsThunk.pending, (state) => {
+    builder.addCase(fetchUsersWithSkillsThunk.pending, (state, action) => {
       state.loading = true;
       state.error = null;
+
+      // Очищаем карточки только при замене данных (смена фильтров)
+      if (action.meta.arg && action.meta.arg.replace) {
+        state.skillCards = [];
+      }
     });
     builder.addCase(fetchUsersWithSkillsThunk.fulfilled, (state, action) => {
       state.loading = false;
@@ -218,9 +230,14 @@ export const usersSliceV2 = createSlice({
     });
 
     // ========== fetchRecommendedUsersThunk (для рекомендованных с пагинацией) ==========
-    builder.addCase(fetchRecommendedUsersThunk.pending, (state) => {
+    builder.addCase(fetchRecommendedUsersThunk.pending, (state, action) => {
       state.loading = true;
       state.error = null;
+
+      // Очищаем карточки только при замене данных (переход из фильтрации)
+      if (action.meta.arg && action.meta.arg.replace) {
+        state.skillCards = [];
+      }
     });
     builder.addCase(fetchRecommendedUsersThunk.fulfilled, (state, action) => {
       state.loading = false;
@@ -251,6 +268,7 @@ export const {
   toggleLikedSkill,
   setLoading,
   setError,
+  clearSkillCards,
   resetUsers,
 } = usersSliceV2.actions;
 

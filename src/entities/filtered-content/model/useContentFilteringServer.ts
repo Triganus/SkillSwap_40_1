@@ -29,7 +29,6 @@ export function useContentFiltering(
   filteredContent: FilteredContent;
   activeFilters: FilterChip[];
   isLoading: boolean;
-  isFilteringInProgress: boolean;
   removeFilter: (chipId: string) => void;
   clearAllFilters: () => void;
   hasActiveFilters: boolean;
@@ -50,13 +49,9 @@ export function useContentFiltering(
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  // Состояние для показа лоадера при фильтрации
-  const [isFilteringInProgress, setIsFilteringInProgress] = useState(false);
-
   // Ref для отслеживания последнего запроса
   const lastRequestRef = useRef<string>('');
   const isInitialMount = useRef(true);
-  const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Проверяем активность боковых фильтров
   const isSidebarFilterActive = useMemo(() => {
@@ -140,19 +135,16 @@ export function useContentFiltering(
     prevBaseKeyRef.current = apiParams.baseRequestKey;
   }, [apiParams.baseRequestKey]);
 
-  // Debounce для запроса: показываем лоадер СРАЗУ, запрос задерживаем
+  // Выполняем запрос при изменении параметров
   useEffect(() => {
     // Пропускаем первый рендер, если данные уже есть
     if (isInitialMount.current && usersData.length > 0) {
       isInitialMount.current = false;
+
       return;
     }
 
     isInitialMount.current = false;
-
-    if (loadingUsers) {
-      return;
-    }
 
     const paramsChanged = apiParams.requestKey !== lastRequestRef.current;
 
@@ -160,49 +152,22 @@ export function useContentFiltering(
       return;
     }
 
-    if (isSidebarFilterActive || isSearchActive) {
-      setIsFilteringInProgress(true);
+    lastRequestRef.current = apiParams.requestKey;
+
+    if (apiParams.params) {
+      dispatch(fetchUsersWithSkillsThunk(apiParams.params)).then((result) => {
+        if (result.payload && typeof result.payload === 'object' && 'users' in result.payload) {
+          const payload = result.payload as { users: unknown[] };
+
+          setHasMore(payload.users.length === 9);
+        }
+      });
+    } else {
+      dispatch(fetchUsersWithSkillsThunk()).then(() => {
+        setHasMore(false);
+      });
     }
-
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-
-    debounceTimerRef.current = setTimeout(() => {
-      lastRequestRef.current = apiParams.requestKey;
-
-      if (apiParams.params) {
-        dispatch(fetchUsersWithSkillsThunk(apiParams.params)).then((result) => {
-          setIsFilteringInProgress(false);
-
-          if (result.payload && typeof result.payload === 'object' && 'users' in result.payload) {
-            const payload = result.payload as { users: unknown[] };
-
-            setHasMore(payload.users.length === 9);
-          }
-        });
-      } else {
-        dispatch(fetchUsersWithSkillsThunk()).then(() => {
-          setIsFilteringInProgress(false);
-          setHasMore(false);
-        });
-      }
-    }, 500);
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [
-    dispatch,
-    apiParams.requestKey,
-    loadingUsers,
-    usersData.length,
-    isSidebarFilterActive,
-    isSearchActive,
-    apiParams.params,
-  ]);
+  }, [dispatch, apiParams.requestKey, apiParams.params, usersData.length]);
 
   // Функция для загрузки следующей страницы
   const loadMore = useCallback(() => {
@@ -351,7 +316,6 @@ export function useContentFiltering(
     filteredContent,
     activeFilters,
     isLoading: loadingUsers,
-    isFilteringInProgress,
     removeFilter,
     clearAllFilters,
     hasActiveFilters,
