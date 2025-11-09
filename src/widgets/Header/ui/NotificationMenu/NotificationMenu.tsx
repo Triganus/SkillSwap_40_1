@@ -70,45 +70,59 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ anchorRef, o
 
   return (
     <div ref={menuRef} className={styles.menu} role="dialog" aria-label="Уведомления">
-      <header className={styles.header}>
-        <span className={styles.title}>Новые уведомления</span>
-        <button
-          type="button"
-          className={styles.action}
-          onClick={handleViewAll}
-          disabled={!hasUnread}
-        >
-          Прочитать всё
-        </button>
-      </header>
+      <section className={`${styles.section} ${styles.sectionNew}`}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitleGroup}>
+            <span className={styles.title}>Новые уведомления</span>
+          </div>
+          <button
+            type="button"
+            className={styles.action}
+            onClick={handleViewAll}
+            disabled={!hasUnread}
+          >
+            Прочитать всё
+          </button>
+        </div>
 
-      {loading ? (
-        <div className={styles.loading}>Загрузка...</div>
-      ) : (
-        <NotificationsList
-          notifications={newNotifications}
-          onNotificationClick={handleNotificationClick}
-          emptyMessage="Нет новых уведомлений"
-        />
-      )}
+        <div className={styles.sectionBody}>
+          {loading ? (
+            <div className={styles.loading}>Загрузка...</div>
+          ) : (
+            <NotificationsList
+              notifications={newNotifications}
+              onNotificationClick={handleNotificationClick}
+              emptyMessage="Нет новых уведомлений"
+            />
+          )}
+        </div>
+      </section>
 
-      <header className={styles.header}>
-        <span className={styles.title}>Просмотренные</span>
-        <button
-          type="button"
-          className={styles.action}
-          onClick={handleClearViewed}
-          disabled={!hasViewed}
-        >
-          Очистить
-        </button>
-      </header>
+      <div className={styles.divider} />
 
-      <NotificationsList
-        notifications={viewedNotifications}
-        onNotificationClick={handleNotificationClick}
-        emptyMessage="Нет просмотренных уведомлений"
-      />
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitleGroup}>
+            <span className={styles.title}>Просмотренные</span>
+          </div>
+          <button
+            type="button"
+            className={styles.action}
+            onClick={handleClearViewed}
+            disabled={!hasViewed}
+          >
+            Очистить
+          </button>
+        </div>
+
+        <div className={styles.sectionBody}>
+          <NotificationsList
+            notifications={viewedNotifications}
+            onNotificationClick={handleNotificationClick}
+            emptyMessage="Нет просмотренных уведомлений"
+          />
+        </div>
+      </section>
 
       {errorMessage}
     </div>
