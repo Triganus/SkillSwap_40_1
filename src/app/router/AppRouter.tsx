@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
-import { useAuth } from '../Provider';
+import { useAuthV2 } from '../Provider';
 import { Layout } from '@app/layouts/Layout.tsx';
 import { GuestLayout } from '@app/layouts/GuestLayout.tsx';
 import { clearRegistrationData, setEntryPath } from '@features/registration';
@@ -22,21 +22,25 @@ const ServerErrorPage = lazy(() =>
 const NotificationsPage = lazy(() => import('@pages/notifications/ui/NotificationsPage'));
 
 function RequireAuth() {
-  const { auth } = useAuth();
+  const { isAuthenticated } = useAuthV2();
   const location = useLocation();
 
-  if (!auth.isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+  if (!isAuthenticated) {
+    const redirectTo = location.pathname === '/profile' ? '/' : '/login';
+
+    return <Navigate to={redirectTo} replace state={{ from: location }} />;
   }
 
   return <Outlet />;
 }
 
 function GuestOnly() {
-  const { auth } = useAuth();
-  if (auth.isAuthenticated) {
+  const { isAuthenticated } = useAuthV2();
+
+  if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
+
   return <Outlet />;
 }
 

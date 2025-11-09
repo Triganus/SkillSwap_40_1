@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { LogoUI } from '@shared/ui/Logo';
 import { NavMenu } from '@widgets/NavMenu';
 import { baseNavItems } from '@/shared/config/navigation';
@@ -11,24 +11,35 @@ import { useHeaderActions } from './model/useHeaderActions';
 import { HeaderUserBlock } from './ui/HeaderUserBlock';
 import { SkillsPopup } from '@widgets/SkillsPopup';
 import cls from './Header.module.scss';
-import { useAuth } from '@app/Provider.tsx';
+import { useAuthV2 } from '@app/Provider.tsx';
 
 export const HeaderWidget: React.FC = () => {
-  const { auth } = useAuth();
+  const { isAuthenticated } = useAuthV2();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const items = useHeaderActions();
-  // const [searchValue, setSearchValue] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchValue, setSearchValue] = useState(searchParams.get('search') ?? '');
   const [isSkillsPopupOpen, setIsSkillsPopupOpen] = useState(false);
   const skillsButtonRef = useRef<HTMLButtonElement>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     const urlVal = searchParams.get('search') ?? '';
+
     setSearchValue((prev) => (prev !== urlVal ? urlVal : prev));
   }, [searchParams]);
 
-  const classes = [cls.header, auth.isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  const classes = [cls.header, isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
 
   // Создаем кнопку "Все навыки" для NavMenu
   const skillsNavItem = useMemo(
@@ -62,17 +73,32 @@ export const HeaderWidget: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const next = e.target.value;
       setSearchValue(next);
-      setSearchParams(
-        (prev) => {
-          const sp = new URLSearchParams(prev);
-          if (next.trim()) sp.set('search', next);
-          else sp.delete('search');
-          return sp;
-        },
-        { replace: true }
-      );
+
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      debounceTimerRef.current = setTimeout(() => {
+        if (location.pathname !== '/') {
+          if (next.trim()) {
+            navigate(`/?search=${encodeURIComponent(next)}`, { replace: true });
+          } else {
+            navigate('/', { replace: true });
+          }
+        } else {
+          setSearchParams(
+            (prev) => {
+              const sp = new URLSearchParams(prev);
+              if (next.trim()) sp.set('search', next);
+              else sp.delete('search');
+              return sp;
+            },
+            { replace: true }
+          );
+        }
+      }, 500);
     },
-    [setSearchParams]
+    [setSearchParams, navigate, location.pathname]
   );
 
   return (

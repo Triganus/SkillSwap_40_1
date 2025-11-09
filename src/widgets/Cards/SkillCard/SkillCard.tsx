@@ -9,9 +9,11 @@ import { TitleUI } from '@/shared/ui/Title';
 import { TextUI } from '@/shared/ui/Text';
 import { LikeButtonUI } from '@/shared/ui/LikeButton';
 import { TagUI } from '@/shared/ui/Tag';
+import type { TagCategory } from '@/shared/ui/Tag';
 import { MediaSlider } from '@/shared/ui/MediaSlider';
 import { Icon } from '@/shared/ui/Icon';
-import { tagCategoryToLabel } from '@/shared/lib/categoryMapper';
+import { selectCategoryIdToName } from '@/entities/directory/model/selectors';
+import { useAppSelector } from '@/shared/hooks/redux';
 import type { MediaItem } from '@/shared/ui/MediaSlider/types';
 
 export const SkillCard: React.FC<SkillCardProps> = ({
@@ -35,6 +37,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   userBio,
   locationAndAge,
 }) => {
+  const categoryIdToName = useAppSelector(selectCategoryIdToName);
+
   // Преобразуем images в формат MediaItem
   const mediaItems: MediaItem[] = React.useMemo(
     () =>
@@ -111,7 +115,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TitleUI size="large">{title}</TitleUI>
                 {category && (
                   <TagUI
-                    label={tagCategoryToLabel[category] || category}
+                    label={categoryIdToName[category] || category}
                     category={category}
                     className={styles.categoryTag}
                   />
@@ -134,7 +138,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                     <TitleUI size="xsmall">Может научить:</TitleUI>
                     <div className={styles.skillTags} aria-label="Может научить">
                       {teachingSkills.map((skill) => (
-                        <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                        <TagUI
+                          key={skill.id}
+                          label={skill.title}
+                          category={skill.category as TagCategory}
+                        />
                       ))}
                     </div>
                   </div>
@@ -145,7 +153,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                     <TitleUI size="xsmall">Хочет научиться:</TitleUI>
                     <div className={styles.skillTags} aria-label="Хочет научиться">
                       {learningSkills.map((skill) => (
-                        <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                        <TagUI
+                          key={skill.id}
+                          label={skill.title}
+                          category={skill.category as TagCategory}
+                        />
                       ))}
                     </div>
                   </div>
@@ -193,26 +205,24 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   if (mode === 'skill-page') {
     return (
       <article
-        className={styles.card}
+        className={`${styles.card} ${styles.cardSkillPage}`}
         aria-label={ariaLabel || `Карточка пользователя ${user.name}`}
       >
-        {/* Большое фото профиля сверху */}
-        <div className={styles.skillPageAvatar}>
+        {/* Аватар и имя в одной строке */}
+        <div className={styles.skillPageUserInfo}>
           <AvatarUI
             src={user.avatar || '/default-avatar.png'}
             alt={`Аватар пользователя ${user.name}`}
-            size={120}
+            size={100}
           />
-        </div>
-
-        {/* Имя, город и возраст */}
-        <div className={styles.skillPageHeader}>
-          <TitleUI size="medium">{user.name}</TitleUI>
-          {locationAndAge && (
-            <TextUI variant="body" color="primary">
-              {locationAndAge}
-            </TextUI>
-          )}
+          <div className={styles.skillPageUserDetails}>
+            <TitleUI size="medium">{user.name}</TitleUI>
+            {locationAndAge && (
+              <TextUI variant="caption" color="primary">
+                {locationAndAge}
+              </TextUI>
+            )}
+          </div>
         </div>
 
         {/* Биография пользователя */}
@@ -230,7 +240,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Может научить:</TitleUI>
             <div className={styles.skillTags} aria-label="Может научить">
               {teachingSkills.map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.category as TagCategory}
+                />
               ))}
             </div>
           </div>
@@ -239,7 +253,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Хочет научиться:</TitleUI>
             <div className={styles.skillTags} aria-label="Хочет научиться">
               {learningSkills.map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.category as TagCategory}
+                />
               ))}
             </div>
           </div>
@@ -279,7 +297,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Может научить:</TitleUI>
             <div className={styles.skillTags} aria-label="Может научить">
               {teachingSkills.map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.category as TagCategory}
+                />
               ))}
             </div>
           </div>
@@ -288,7 +310,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Хочет научиться:</TitleUI>
             <div className={styles.skillTags} aria-label="Хочет научиться">
               {learningSkills.slice(0, 2).map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.category as TagCategory}
+                />
               ))}
               {learningSkills.length > 2 && (
                 <TagUI label={`+${learningSkills.length - 2}`} category="other" />

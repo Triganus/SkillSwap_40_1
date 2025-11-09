@@ -1,0 +1,73 @@
+export * as directoryModel from './model';
+export * from './hooks';
+export * from './lib';
+
+// Явный экспорт селекторов
+export {
+  selectCategoriesState,
+  selectCategoriesLoading,
+  selectCategoriesError,
+  selectAllCategories,
+  selectCategoriesSorted,
+  selectCategoryById,
+  selectCategoriesCount,
+  selectCategoriesEntities,
+  selectSubcategoriesState,
+  selectSubcategoriesLoading,
+  selectSubcategoriesError,
+  selectAllSubcategories,
+  selectSubcategoryById,
+  selectSubcategoriesByCategoryId,
+  selectSubcategoriesEntities,
+  selectSubcategoriesCount,
+  selectCitiesState,
+  selectCitiesLoading,
+  selectCitiesError,
+  selectAllCities,
+  selectCityById,
+  selectCitiesSorted,
+  selectCitiesEntities,
+  selectCitiesCount,
+  selectDirectoriesLoading,
+  selectDirectoriesReady,
+  selectCategoryWithSubcategories,
+  selectAllCategoriesWithSubcategories,
+  selectCategoriesWithSubcategoriesSorted,
+  selectSkillsCatalog,
+  selectCityOptions,
+  selectCategoryOptions,
+  selectSubcategoryOptions,
+  selectSubcategoryOptionsByCategoryId,
+  selectCategoryIds,
+  selectCategoryIdToName,
+  selectCategoryNameToId,
+  selectCategoryNameById,
+  selectCategoryIdByName,
+  selectSubcategoryIdToName,
+  selectSubcategoryNameToId,
+  selectSubcategoryNameById,
+  selectSubcategoryIdByName,
+  selectSubcategoryOptionsWithIds,
+  selectSubcategoryOptionsWithIdsByCategoryId,
+  selectCategoryConfigByName,
+  selectGendersState,
+  selectGendersLoading,
+  selectGendersError,
+  selectAllGenders,
+  selectGenderById,
+  selectGendersEntities,
+} from './model/selectors';
+
+export type { CategoryConfig } from './model/selectors';
+
+// Явный экспорт типов
+export type {
+  Category,
+  Subcategory,
+  City,
+  Gender,
+  CategoriesState,
+  SubcategoriesState,
+  CitiesState,
+  GendersState,
+} from './model/types';

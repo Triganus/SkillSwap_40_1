@@ -1,18 +1,19 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { fetchSkillsCatalog } from '@/api/skills-api';
-import type { SkillCategoriesData, SkillCategory } from '@/entities/Skill';
+import { useAppSelector } from '@/shared/hooks/redux';
+import { selectSkillsCatalog, selectDirectoriesLoading } from '@/entities/directory';
+import type { SkillCategory } from '@/entities/Skill';
 import { TextUI } from '@shared/ui/Text';
 import { Icon } from '@shared/ui/Icon';
-import { getCategoryConfigByName } from '@/shared/lib/constants/categoryColors';
+import { selectCategoryConfigByName } from '@/entities/directory';
 import { useClickOutside } from '@shared/hooks/useClickOutside';
 import type { SkillsPopupProps } from '../types';
 import styles from '../SkillsPopup.module.scss';
 
 export const SkillsPopup: React.FC<SkillsPopupProps> = ({ isOpen, onClose, buttonRef }) => {
-  const [categoriesData, setCategoriesData] = useState<SkillCategory[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+  const skillsCatalog = useAppSelector(selectSkillsCatalog);
+  const isLoading = useAppSelector(selectDirectoriesLoading);
 
   // Используем useClickOutside для закрытия по клику вне попапа
   useClickOutside(
@@ -20,23 +21,6 @@ export const SkillsPopup: React.FC<SkillsPopupProps> = ({ isOpen, onClose, butto
     onClose,
     isOpen
   );
-
-  // Загружаем данные один раз при монтировании компонента
-  useEffect(() => {
-    const loadSkillsData = async () => {
-      try {
-        setIsLoading(true);
-        const data: SkillCategoriesData = await fetchSkillsCatalog();
-        setCategoriesData(data.skill_categories);
-      } catch (error) {
-        console.error('Error loading skills:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadSkillsData();
-  }, []); // Загружаем только один раз при монтировании
 
   useEffect(() => {
     if (isOpen) {
@@ -53,29 +37,14 @@ export const SkillsPopup: React.FC<SkillsPopupProps> = ({ isOpen, onClose, butto
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
-  // Определяем порядок категорий согласно макету
-  const categoryOrder = [
-    'Бизнес и карьера',
-    'Иностранные языки',
-    'Дом и уют',
-    'Творчество и искусство',
-    'Образование и развитие',
-    'Здоровье и образ жизни',
-  ];
-
-  // Сортируем категории согласно макету
-  const sortedCategories = categoryOrder
-    .map((categoryName) => categoriesData.find((cat) => cat.category === categoryName))
-    .filter((cat): cat is SkillCategory => cat !== undefined);
+  const categories = skillsCatalog?.skill_categories || [];
 
   // Разделяем категории на две колонки согласно макету
-  const leftColumn = sortedCategories.slice(0, 3);
-  const rightColumn = sortedCategories.slice(3, 6);
+  const leftColumn = categories.slice(0, 3);
+  const rightColumn = categories.slice(3, 6);
 
   const renderCategory = (category: SkillCategory) => {
-    const categoryConfig = getCategoryConfigByName(category.category);
+    const categoryConfig = selectCategoryConfigByName(category.category);
     if (!categoryConfig) return null;
 
     return (
@@ -102,6 +71,8 @@ export const SkillsPopup: React.FC<SkillsPopupProps> = ({ isOpen, onClose, butto
       </div>
     );
   };
+
+  if (!isOpen) return null;
 
   return createPortal(
     <div

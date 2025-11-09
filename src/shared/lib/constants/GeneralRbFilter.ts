@@ -1,7 +1,5 @@
 export const GENERAL_RB_FILTER_OPTIONS = [
   { label: 'Всё', value: '' },
-  { label: 'Хочу научиться', value: 'Хочу научиться' },
-  { label: 'Могу научить', value: 'Могу научить' },
+  { label: 'Хочу научиться', value: 'want_to_learn' },
+  { label: 'Могу научить', value: 'can_teach' },
 ] as const;
-
-export type GeneralRbFilterValue = (typeof GENERAL_RB_FILTER_OPTIONS)[number]['value'];

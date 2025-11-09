@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@app/Provider';
+import { useAuthV2 } from '@app/Provider';
 import { useGuestHeaderContent } from '@app/layouts';
 import { TwoColumnLayout } from '@shared/ui';
 import { SocialAuthGroup } from '@shared/ui/AuthButton';
@@ -16,7 +16,7 @@ export default function LoginPage() {
 
   useGuestHeaderContent(headerContent);
 
-  const { auth, login } = useAuth();
+  const { isAuthenticated, isLoading, login, startLogin, failLogin } = useAuthV2();
   const navigate = useNavigate();
   const location = useLocation() as unknown as { state?: { from?: Location } };
   const from = location.state?.from?.pathname ?? '/profile';
@@ -34,12 +34,13 @@ export default function LoginPage() {
     passwordUI,
   } = useLoginForm();
 
-  if (auth.isAuthenticated) {
+  if (isAuthenticated) {
     return <Navigate to={from} replace />;
   }
 
   const onSubmit = handleSubmit(async (values) => {
     clearServerError();
+    startLogin();
 
     try {
       const result = await authLogin({
@@ -47,7 +48,13 @@ export default function LoginPage() {
         password: values.password.trim(),
       });
 
-      login(result.user);
+      login({
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        avatar: result.user.avatar_image || null,
+        token: result.accessToken,
+      });
 
       navigate(from, { replace: true });
     } catch {
@@ -55,6 +62,7 @@ export default function LoginPage() {
         'Email или пароль введён неверно. Пожалуйста проверьте правильность введённых данных';
 
       setServerErrorForAllFields(message);
+      failLogin(message);
     }
   });
 
@@ -68,7 +76,7 @@ export default function LoginPage() {
           onSubmit={onSubmit}
           onEmailChange={() => {}}
           onPasswordChange={() => {}}
-          loading={false}
+          loading={isLoading}
           error={rootErrorMessage}
           submitText="Войти"
           registerLinkTo="/register/1"

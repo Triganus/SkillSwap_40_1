@@ -19,15 +19,18 @@ import {
   SkillConfirmModal,
 } from '@features/registration';
 import type { RegistrationData } from '@features/registration';
+import { useDirectories } from '@/entities/directory';
+import { selectCategoryOptions } from '@/entities/directory/model/selectors';
+import { useAppSelector } from '@/shared/hooks/redux';
+import type { Subcategory } from '@/entities/directory/model/types';
 import {
   useRegisterStep3Form,
-  CATEGORY_OPTIONS,
   buildSubcategoryOptions,
   type RegisterStep3Values,
 } from '@features/registration/hooks/useRegisterStep3Form';
 import type { TagCategory } from '@shared/ui/Tag';
 import { completeRegistration } from '@api/registration';
-import { useAuth } from '@app/Provider';
+import { useAuthV2 } from '@app/Provider';
 import { usePopup } from '@app/hooks/usePopup';
 import { CheckIcon } from '@shared/ui/icons/CheckIcon';
 import styles from './Step3.module.scss';
@@ -35,8 +38,13 @@ import styles from './Step3.module.scss';
 export default function Step3() {
   const navigate = useNavigate();
   const { completeStep, data } = useRegistrationProgress();
-  const { login } = useAuth();
+  const { login } = useAuthV2();
   const { showPopup } = usePopup();
+  const { subcategories } = useDirectories();
+
+  const CATEGORY_OPTIONS = useAppSelector(selectCategoryOptions);
+
+  const typedSubcategories = subcategories as Subcategory[];
 
   const initial: Partial<RegisterStep3Values> | undefined = data.step3
     ? {
@@ -160,7 +168,13 @@ export default function Step3() {
       const result = await completeRegistration(requestData);
 
       // Авторизуем пользователя
-      login(result.user);
+      login({
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        avatar: result.user.avatar_image || null,
+        token: result.accessToken,
+      });
 
       // Очищаем данные регистрации
       clearRegistrationData();
@@ -256,7 +270,10 @@ export default function Step3() {
             id="skillSubcategory"
             aria-label="Подкатегория навыка"
             placeholder="Выберите подкатегорию навыка"
-            options={buildSubcategoryOptions(getValues('category') as TagCategory | '')}
+            options={buildSubcategoryOptions(
+              getValues('category') as TagCategory | '',
+              typedSubcategories
+            )}
             value={getValues('subcategory')}
             onChange={(v) => {
               setSubcategoryTouched(true);

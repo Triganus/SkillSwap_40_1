@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CitiesSideBar } from './CitiesSideBar';
+import type { TCitiesSideBarProps } from './TCitiesSideBarProps';
 
-export const CitiesSideBarWithOutput = (args: React.ComponentProps<typeof CitiesSideBar>) => {
-  const [selected, setSelected] = useState<string[]>(args.defaultSelected ?? []);
+export const CitiesSideBarWithOutput = (
+  args: TCitiesSideBarProps & { defaultSelected?: string[] }
+) => {
+  const [selected, setSelected] = useState<string[]>(args.defaultSelected ?? args.value ?? []);
 
   return (
     <div style={{ maxWidth: 360 }}>
-      <CitiesSideBar {...args} onChange={setSelected} />
+      <CitiesSideBar {...args} value={selected} onChange={setSelected} />
 
       <div style={{ marginTop: 12 }}>
         <div style={{ opacity: 0.7, marginBottom: 6 }}>Выбранные города:</div>

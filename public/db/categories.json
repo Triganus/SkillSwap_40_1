@@ -1,0 +1,88 @@
+{
+  "categories": [
+    {
+      "id": "business",
+      "name": "Бизнес и карьера",
+      "order": 1,
+      "subcategoryIds": [
+        "bus_001",
+        "bus_002",
+        "bus_003",
+        "bus_004",
+        "bus_005",
+        "bus_006",
+        "bus_007",
+        "bus_008"
+      ]
+    },
+    {
+      "id": "languages",
+      "name": "Иностранные языки",
+      "order": 2,
+      "subcategoryIds": [
+        "lang_001",
+        "lang_002",
+        "lang_003",
+        "lang_004",
+        "lang_005",
+        "lang_006",
+        "lang_007"
+      ]
+    },
+    {
+      "id": "home",
+      "name": "Дом и уют",
+      "order": 3,
+      "subcategoryIds": [
+        "home_001",
+        "home_002",
+        "home_003",
+        "home_004",
+        "home_005",
+        "home_006"
+      ]
+    },
+    {
+      "id": "art",
+      "name": "Творчество и искусство",
+      "order": 4,
+      "subcategoryIds": [
+        "art_001",
+        "art_002",
+        "art_003",
+        "art_004",
+        "art_005",
+        "art_006",
+        "art_007",
+        "art_008"
+      ]
+    },
+    {
+      "id": "education",
+      "name": "Образование и развитие",
+      "order": 5,
+      "subcategoryIds": [
+        "edu_001",
+        "edu_002",
+        "edu_003",
+        "edu_004",
+        "edu_005",
+        "edu_006"
+      ]
+    },
+    {
+      "id": "health",
+      "name": "Здоровье и образ жизни",
+      "order": 6,
+      "subcategoryIds": [
+        "hlth_001",
+        "hlth_002",
+        "hlth_003",
+        "hlth_004",
+        "hlth_005",
+        "hlth_006",
+        "hlth_007"
+      ]
+    }
+  ]
+}

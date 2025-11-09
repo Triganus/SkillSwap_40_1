@@ -1,90 +1,152 @@
-import { useEffect, useMemo, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useMemo, useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchSkills, getSkills, getSkillsError, getSkillsLoading } from '@entities/skill/model';
-import type { AppDispatch } from '@app/Provider';
-import { useAppSelector } from '@shared/hooks/redux';
 import { SkillCard } from '@widgets/Cards/SkillCard';
 import { CardSlider } from '@widgets/Cards/CardSlider';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { TextUI } from '@shared/ui/Text';
-import { ModalUI } from '@shared/ui/Modal';
-import { Button } from '@shared/ui/Button';
 import { TwoColumnLayout } from '@shared/ui/TwoColumnLayout';
 import { SkillDetails } from '@entities/skill/ui/SkillDetails';
-import { useAuth } from '@app/Provider';
-import { useAgeFormatter } from '../hooks';
+import { ModalUI } from '@shared/ui/Modal';
+import { Button } from '@shared/ui/Button';
+import { useAuthV2 } from '@app/Provider';
+import { useUserProfile } from '../hooks';
+import { useAppDispatch } from '@shared/hooks/redux';
 import {
-  useLocationState,
-  useSkillsCatalog,
-  useSkillAuthor,
-  useSkillImages,
-  useSkillCategoryLabel,
-  useUsersLoader,
-  useAuthorSkills,
-  useSkillDescription,
-  useSimilarCards,
-  useSkillLikes,
-  useSkillExchange,
-} from '../hooks';
+  getCitiesFromStore,
+  getSubcategoriesFromStore,
+  getCategoriesFromStore,
+} from '@/entities/directory/lib/getFromStore';
+import { fetchSimilarUsers } from '@/api/users-api-v2';
+import { toggleSkillLikeThunk, toggleSkillLikeByUserIdThunk } from '@/entities/user/model-v2';
+import type { User } from '@/entities/user/model/types/types';
+import type { Skill } from '@/entities/skill/model/types/types';
+import type { TagCategory } from '@/shared/ui/Tag';
+import type { SkillCardProps, SkillReference } from '@widgets/Cards/SkillCard/type';
+import type { UserListItem } from '@/entities/user/model-v2';
 import styles from './SkillPage.module.scss';
 
 export default function SkillPage() {
-  const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch<AppDispatch>();
-  const { auth } = useAuth();
-  const formatAge = useAgeFormatter();
+  const { id: userId } = useParams<{ id: string }>();
+  const { isAuthenticated, user: currentUser } = useAuthV2();
+  const dispatch = useAppDispatch();
 
-  // Загрузка данных
-  const loading = useAppSelector(getSkillsLoading);
-  const error = useAppSelector(getSkillsError);
-  const skills = useAppSelector(getSkills);
-  const skill = useMemo(() => skills.find((s) => s.id === id), [skills, id]);
+  // Состояние модального окна
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Загрузка пользователей и каталога
-  const { loading: usersLoading } = useUsersLoader();
-  const { catalog: skillsCatalog } = useSkillsCatalog();
+  // Состояние похожих пользователей
+  const [similarUsers, setSimilarUsers] = useState<UserListItem[]>([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
 
-  // Получение состояния из location.state
-  const { stateUserId, stateTimestamp } = useLocationState();
+  // Состояние лайков
+  const [likedSkills, setLikedSkills] = useState<Set<string>>(new Set());
+  const [skillLikesCount, setSkillLikesCount] = useState<Map<string, number>>(new Map());
+  const [likingInProgress, setLikingInProgress] = useState(false);
 
-  // Поиск автора навыка
-  const { author, authorRaw } = useSkillAuthor(skill, stateUserId);
+  // Загрузка профиля пользователя
+  const { profile, skills, loading: profileLoading, error: profileError } = useUserProfile(userId);
 
-  // Получение данных о навыке
-  const skillDescription = useSkillDescription(skill, authorRaw);
-  const categoryLabel = useSkillCategoryLabel(skill, skillsCatalog);
-  const skillImages = useSkillImages(skill, skillsCatalog);
+  // Загрузка справочников
+  const cities = getCitiesFromStore();
+  const subcategories = getSubcategoriesFromStore();
+  const categories = getCategoriesFromStore();
 
-  // Навыки автора
-  const teachingSkills = useAuthorSkills(authorRaw, skills, skill, 'teaching');
-  const learningSkills = useAuthorSkills(authorRaw, skills, skill, 'learning');
+  // Преобразуем профиль в User и Skills для отображения
+  const user: User | null = useMemo(() => {
+    if (!profile) return null;
 
-  // Лайки и обмены
-  const currentUser = auth.user;
-  const { liked, likesCount, onLikeClick } = useSkillLikes(skill, authorRaw, currentUser);
-  const { isAlreadyProposed, isModalOpen, setIsModalOpen, onExchangeClick } = useSkillExchange(
-    skill,
-    authorRaw,
-    currentUser,
-    auth.isAuthenticated
-  );
+    const cityName = cities.find((c) => c.id === profile.cityId)?.name || profile.cityId;
 
-  // Похожие карточки
-  const similarCards = useSimilarCards(skill, authorRaw, skills, skillsCatalog, currentUser);
+    return {
+      id: profile.id,
+      name: profile.name,
+      email: '',
+      avatar: profile.avatar || undefined,
+      gender:
+        profile.gender === 'male'
+          ? 'мужской'
+          : profile.gender === 'female'
+            ? 'женский'
+            : 'не указан',
+      bio: `${cityName}, ${profile.age} лет`,
+      skills: [],
+      createdAt: new Date().toISOString(),
+    };
+  }, [profile, cities]);
 
-  // Создаем уникальный key для принудительного перерендера при смене пользователя
-  const containerKey = useMemo(() => {
-    return stateUserId ? `${id}-${stateUserId}-${stateTimestamp || Date.now()}` : id;
-  }, [id, stateUserId, stateTimestamp]);
+  const teachingSkills: Skill[] = useMemo(() => {
+    if (!skills || !skills.length) return [];
+
+    return skills.map((skill) => ({
+      id: skill.id,
+      title: skill.title,
+      description: skill.description,
+      type: 'teaching' as const,
+      category: skill.categoryId as TagCategory,
+      subcategory: skill.subcategoryId,
+      images: skill.images,
+      authorId: skill.userId,
+      createdAt: skill.createdAt,
+    }));
+  }, [skills]);
+
+  const teachingSkillsForCard: SkillReference[] = useMemo(() => {
+    if (!profile) return [];
+
+    return profile.canTeachSkills.map((subcategoryId) => {
+      const subcategory = subcategories.find((s) => s.id === subcategoryId);
+
+      return {
+        id: subcategoryId,
+        title: subcategory?.name || subcategoryId,
+        category: subcategory?.categoryId || 'other',
+      };
+    });
+  }, [profile, subcategories]);
+
+  const learningSkillsForCard: SkillReference[] = useMemo(() => {
+    if (!profile) return [];
+
+    return profile.wantsToLearnSkills.map((subcategoryId) => {
+      const subcategory = subcategories.find((s) => s.id === subcategoryId);
+
+      return {
+        id: subcategoryId,
+        title: subcategory?.name || subcategoryId,
+        category: subcategory?.categoryId || 'other',
+      };
+    });
+  }, [profile, subcategories]);
+
+  // Первый навык для отображения в деталях
+  const primarySkill = teachingSkills[0] || null;
+
+  const categoryLabel = useMemo(() => {
+    if (!primarySkill) return '';
+
+    const category = categories.find((c) => c.id === primarySkill.category);
+
+    return category?.name || '';
+  }, [primarySkill, categories]);
+
+  const subcategoryLabel = useMemo(() => {
+    if (!primarySkill?.subcategory) return '';
+
+    const subcategory = subcategories.find((s) => s.id === primarySkill.subcategory);
+
+    return subcategory?.name || '';
+  }, [primarySkill, subcategories]);
+
+  const skillImages = useMemo(() => {
+    return primarySkill?.images || [];
+  }, [primarySkill]);
 
   // Обработчики событий
   const onShareClick = useCallback(() => {
-    if (navigator.share && skill) {
+    if (navigator.share) {
       navigator
         .share({
-          title: skill.title,
-          text: skill.description,
+          title: profile?.name || 'Навык',
+          text: profile?.bio || '',
           url: window.location.href,
         })
         .catch(() => {
@@ -93,94 +155,285 @@ export default function SkillPage() {
     } else if (navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href).catch(() => {});
     }
-  }, [skill]);
+  }, [profile]);
+
+  // Обработчик лайка на странице навыка (есть skillId)
+  const onLikeClick = useCallback(async () => {
+    if (!isAuthenticated || !currentUser || !primarySkill || likingInProgress) {
+      console.log('Cannot like: not authenticated or already in progress');
+      return;
+    }
+
+    setLikingInProgress(true);
+
+    try {
+      const result = await dispatch(
+        toggleSkillLikeThunk({
+          userId: currentUser.id,
+          skillId: primarySkill.id,
+        })
+      ).unwrap();
+
+      // Обновляем локальное состояние лайков
+      setLikedSkills((prev) => {
+        const newSet = new Set(prev);
+
+        if (result.liked) {
+          newSet.add(primarySkill.id);
+        } else {
+          newSet.delete(primarySkill.id);
+        }
+        return newSet;
+      });
+
+      // Обновляем количество лайков
+      setSkillLikesCount((prev) => {
+        const newMap = new Map(prev);
+
+        newMap.set(primarySkill.id, result.likesCount);
+
+        return newMap;
+      });
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+    } finally {
+      setLikingInProgress(false);
+    }
+  }, [isAuthenticated, currentUser, primarySkill, dispatch, likingInProgress]);
+
+  // Обработчик лайка в карточке (только userId владельца навыка)
+  const onCardLikeClick = useCallback(
+    async (skillOwnerUserId: string) => {
+      if (!isAuthenticated || !currentUser || likingInProgress) {
+        console.log('Cannot like: not authenticated or already in progress');
+
+        return;
+      }
+
+      setLikingInProgress(true);
+
+      try {
+        const result = await dispatch(
+          toggleSkillLikeByUserIdThunk({
+            currentUserId: currentUser.id,
+            skillOwnerUserId,
+          })
+        ).unwrap();
+
+        // Обновляем локальное состояние лайков
+        setLikedSkills((prev) => {
+          const newSet = new Set(prev);
+
+          if (result.liked) {
+            newSet.add(result.skillId);
+          } else {
+            newSet.delete(result.skillId);
+          }
+          return newSet;
+        });
+
+        // Обновляем количество лайков для этого навыка
+        setSkillLikesCount((prev) => {
+          const newMap = new Map(prev);
+
+          newMap.set(result.skillId, result.likesCount);
+
+          return newMap;
+        });
+
+        // Обновляем похожих пользователей с новым количеством лайков
+        setSimilarUsers((prev) =>
+          prev.map((u) =>
+            u.primarySkillId === result.skillId
+              ? { ...u, primarySkillLikesCount: result.likesCount }
+              : u
+          )
+        );
+      } catch (error) {
+        console.error('Failed to toggle like:', error);
+      } finally {
+        setLikingInProgress(false);
+      }
+    },
+    [isAuthenticated, currentUser, dispatch, likingInProgress]
+  );
+
+  // Преобразование похожих пользователей в карточки
+  const similarCards: SkillCardProps[] = useMemo(() => {
+    return similarUsers.map((u) => {
+      const cityName = cities.find((c) => c.id === u.cityId)?.name || u.cityId;
+
+      const teachingSkillsRefs: SkillReference[] = u.canTeachSkills.map((subcategoryId) => {
+        const subcategory = subcategories.find((s) => s.id === subcategoryId);
+        return {
+          id: subcategoryId,
+          title: subcategory?.name || subcategoryId,
+          category: subcategory?.categoryId || 'other',
+        };
+      });
+
+      const learningSkillsRefs: SkillReference[] = u.wantsToLearnSkills.map((subcategoryId) => {
+        const subcategory = subcategories.find((s) => s.id === subcategoryId);
+        return {
+          id: subcategoryId,
+          title: subcategory?.name || subcategoryId,
+          category: subcategory?.categoryId || 'other',
+        };
+      });
+
+      const isLiked = u.primarySkillId ? likedSkills.has(u.primarySkillId) : false;
+      const likesCount = u.primarySkillId
+        ? (skillLikesCount.get(u.primarySkillId) ?? u.primarySkillLikesCount ?? 0)
+        : 0;
+
+      return {
+        user: {
+          id: u.id,
+          name: u.name,
+          email: '',
+          avatar: u.avatar || undefined,
+          gender: u.gender === 'male' ? 'мужской' : u.gender === 'female' ? 'женский' : 'не указан',
+          bio: `${cityName}, ${u.age} лет`,
+          skills: [],
+          createdAt: u.createdAt ? new Date(u.createdAt).toISOString() : new Date().toISOString(),
+        },
+        teachingSkills: teachingSkillsRefs,
+        learningSkills: learningSkillsRefs,
+        isLiked,
+        likesCount,
+        onLikeClick: () => onCardLikeClick(u.id),
+      };
+    });
+  }, [similarUsers, cities, subcategories, likedSkills, skillLikesCount, onCardLikeClick]);
+
+  const onExchangeClick = useCallback(() => {
+    if (isAuthenticated) {
+      setIsModalOpen(true);
+      console.log('Exchange clicked - modal opened');
+    } else {
+      console.log('User not authenticated');
+    }
+  }, [isAuthenticated]);
 
   const onMoreClick = useCallback(() => {
-    // TODO: implement more actions menu
     console.log('More actions clicked');
   }, []);
 
-  // Загрузка навыков и скролл
-  useEffect(() => {
-    dispatch(fetchSkills());
-  }, [dispatch, id]);
-
+  // Скролл вверх при смене пользователя
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [id]);
+  }, [userId]);
 
+  // Инициализация количества лайков и состояния лайков из навыков
+  useEffect(() => {
+    if (!skills || skills.length === 0 || !currentUser) return;
+
+    const likesMap = new Map<string, number>();
+    const likedSet = new Set<string>();
+
+    skills.forEach((skill) => {
+      likesMap.set(skill.id, skill.likesCount || 0);
+
+      if (skill.likedByUserIds?.includes(currentUser.id)) {
+        likedSet.add(skill.id);
+      }
+    });
+
+    setSkillLikesCount(likesMap);
+    setLikedSkills(likedSet);
+  }, [skills, currentUser]);
+
+  // Загрузка похожих пользователей через API
+  useEffect(() => {
+    if (!profile) return;
+
+    setLoadingSimilar(true);
+    fetchSimilarUsers({
+      userId: profile.id,
+      canTeachSkills: profile.canTeachSkills,
+      wantsToLearnSkills: profile.wantsToLearnSkills,
+      limit: 10,
+    })
+      .then((users) => {
+        setSimilarUsers(users);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch similar users:', error);
+        setSimilarUsers([]);
+      })
+      .finally(() => {
+        setLoadingSimilar(false);
+      });
+  }, [profile]);
+
+  // Закрываем модальное окно при смене пользователя
   useEffect(() => {
     setIsModalOpen(false);
-  }, [id, stateUserId, setIsModalOpen]);
+  }, [userId]);
 
   // Условные возвраты
-  if ((loading && !skill) || usersLoading) {
+  if (profileLoading) {
     return <PreloaderUI />;
   }
 
-  if (error) {
+  if (profileError) {
     return (
       <div style={{ padding: '24px' }}>
         <TextUI variant="body" color="error">
-          Ошибка: {error}
+          Ошибка: {profileError}
         </TextUI>
       </div>
     );
   }
 
-  if (!skill) {
+  if (!profile || !user) {
     return (
       <div style={{ padding: '24px' }}>
-        <TextUI variant="body">Навык не найден.</TextUI>
-      </div>
-    );
-  }
-
-  if (!author) {
-    return (
-      <div style={{ padding: '24px' }}>
-        <TextUI variant="body">Автор навыка не найден.</TextUI>
+        <TextUI variant="body">Пользователь не найден.</TextUI>
       </div>
     );
   }
 
   return (
-    <div className={styles.container} key={containerKey}>
+    <div className={styles.container}>
       <TwoColumnLayout
         className={styles.layout}
         leftContent={
           <SkillCard
             mode="skill-page"
-            user={author}
-            teachingSkills={teachingSkills}
-            learningSkills={learningSkills}
+            user={user}
+            teachingSkills={teachingSkillsForCard}
+            learningSkills={learningSkillsForCard}
             showDetailsButton={false}
-            ariaLabel={`Карточка пользователя ${author.name}`}
-            userBio={authorRaw?.about_me}
-            locationAndAge={
-              authorRaw?.location && authorRaw?.age
-                ? `${authorRaw.location}, ${authorRaw.age} ${formatAge(authorRaw.age)}`
-                : undefined
-            }
+            ariaLabel={`Карточка пользователя ${user.name}`}
+            userBio={profile.bio}
+            locationAndAge={user.bio}
           />
         }
         rightContent={
-          <SkillDetails
-            title={skill.title}
-            category={skill.category}
-            categoryLabel={categoryLabel}
-            text={skillDescription}
-            images={skillImages}
-            variant="want"
-            isLiked={liked}
-            isLikeActive={true}
-            isRequestSent={isAlreadyProposed}
-            likesCount={likesCount}
-            onLikeClick={onLikeClick}
-            onExchangeClick={onExchangeClick}
-            onShareClick={onShareClick}
-            onMoreClick={onMoreClick}
-          />
+          primarySkill ? (
+            <SkillDetails
+              title={primarySkill.title}
+              category={primarySkill.category}
+              categoryLabel={categoryLabel}
+              subcategory={subcategoryLabel}
+              text={primarySkill.description}
+              images={skillImages}
+              variant="want"
+              isLiked={likedSkills.has(primarySkill.id)}
+              isLikeActive={isAuthenticated}
+              isRequestSent={false}
+              likesCount={skillLikesCount.get(primarySkill.id) || 0}
+              onLikeClick={onLikeClick}
+              onExchangeClick={onExchangeClick}
+              onShareClick={onShareClick}
+              onMoreClick={onMoreClick}
+            />
+          ) : (
+            <div style={{ padding: '24px' }}>
+              <TextUI variant="body">У пользователя пока нет навыков для обучения.</TextUI>
+            </div>
+          )
         }
         gap={32}
         columnPadding={0}
@@ -195,11 +448,17 @@ export default function SkillPage() {
         rightColumnClassName={styles['details-column']}
       />
 
+      {/* Секция похожих предложений */}
       <div className={styles['similar-section']}>
-        <CardSlider title="Похожие предложения" skillsList={similarCards} loading={loading} />
+        <CardSlider
+          title="Похожие предложения"
+          skillsList={similarCards}
+          loading={loadingSimilar}
+        />
       </div>
 
-      {author && (
+      {/* Модальное окно подтверждения */}
+      {user && (
         <ModalUI
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -207,7 +466,7 @@ export default function SkillPage() {
         >
           <div style={{ textAlign: 'center', padding: '16px' }}>
             <TextUI variant="body">
-              Ваше предложение об обмене навыками успешно отправлено пользователю {author.name}.
+              Ваше предложение об обмене навыками успешно отправлено пользователю {user.name}.
             </TextUI>
             <div style={{ marginTop: '24px' }}>
               <Button variant="primary" onClick={() => setIsModalOpen(false)}>

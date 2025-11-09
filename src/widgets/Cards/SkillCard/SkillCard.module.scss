@@ -191,19 +191,22 @@
 }
 
 /* Режим для страницы навыка */
-.skill-page-avatar {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: var(--space-4, 16px);
+.card-skill-page {
+  padding: 32px;
 }
 
-.skill-page-header {
+.skill-page-user-info {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.skill-page-user-details {
   display: flex;
   flex-direction: column;
   gap: var(--space-1, 4px);
-  margin-bottom: var(--space-4, 16px);
-  text-align: left;
+  justify-content: center;
   align-items: flex-start;
 }
 

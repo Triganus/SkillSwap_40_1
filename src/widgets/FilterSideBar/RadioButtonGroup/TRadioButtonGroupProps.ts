@@ -1,5 +1,10 @@
+export type RadioButtonItem = {
+  label: string;
+  value: string;
+};
+
 export type TRadioButtonGroupProps = {
-  items: string[];
+  items: string[] | RadioButtonItem[] | readonly RadioButtonItem[];
 
   title?: string;
 
@@ -7,7 +12,7 @@ export type TRadioButtonGroupProps = {
 
   defaultValue?: string | null;
 
-  onChange?: (value: string) => void;
+  value?: string | null;
 
-  resetToken?: number;
+  onChange?: (value: string) => void;
 };

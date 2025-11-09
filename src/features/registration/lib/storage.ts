@@ -12,15 +12,15 @@ export type RegistrationStep2Data = {
   name: string;
   birthDate: string; // формат: дд.мм.гггг
   gender: string; // см. константы GENDER_OPTIONS
-  city: string; // см. константы CITIES
+  city: string; // ID города из справочника (см. useDirectories)
   categories: TagCategory[]; // идентификаторы категорий
-  subcategories: string[]; // названия навыков/подкатегорий
+  subcategories: string[]; // ID подкатегорий из справочника
 };
 
 export type RegistrationStep3Data = {
   title: string;
   category: TagCategory;
-  subcategory: string;
+  subcategory: string; // ID подкатегории из справочника
   description: string;
   images: string[];
 };

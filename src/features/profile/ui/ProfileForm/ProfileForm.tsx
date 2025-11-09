@@ -12,12 +12,13 @@ import {
 import React, { useRef, useState } from 'react';
 import styles from './ProfileForm.module.scss';
 import {
-  GENDER_DROPDOWN_OPTIONS,
-  CITY_DROPDOWN_OPTIONS,
+  getGenderDropdownOptions,
+  getCityDropdownOptions,
 } from '@features/registration/hooks/useRegisterStep2Form';
 import { parseDateFromString, formatDateToString } from '@/shared/lib/dateUtils';
 import { TitleUI } from '@/shared/ui/Title';
 import type { ProfileFormProps } from './types';
+import { useDirectories } from '@/entities/directory';
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({
   formValue,
@@ -28,6 +29,15 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
   fieldErrors,
 }) => {
   const avatarRef = useRef<UserAvatarUploadHandle>(null);
+  const { cities, genders } = useDirectories();
+
+  const CITY_DROPDOWN_OPTIONS = getCityDropdownOptions(
+    cities as Array<{ id: string; name: string }>
+  );
+
+  const GENDER_DROPDOWN_OPTIONS = getGenderDropdownOptions(
+    genders as Array<{ id: string; name: string }>
+  );
 
   const [editingFields, setEditingFields] = useState({
     email: false,

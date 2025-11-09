@@ -1,10 +1,8 @@
-import type { User } from '../entities/user/model/types/types';
-import type { SkillCardProps } from '@widgets/Cards/SkillCard';
+import type { User, DbUser } from '@/entities/user/model/types/types';
+import type { SkillCardProps } from '@/widgets/Cards/SkillCard';
 import type { Skill } from '@/entities/skill/model/types/types';
-import type { SkillCategoriesData } from '@/entities/Skill';
-import type { DbUser } from '@/entities/user/model/types/types';
-import { mapCategoryToTag } from '@/shared/lib/categoryMapper';
-// import { de } from 'date-fns/locale';
+import type { TagCategory } from '@/shared/ui/Tag';
+import { getSubcategoriesFromStore } from '@/entities/directory/lib/getFromStore';
 
 interface DbUsersResponse {
   users: DbUser[];
@@ -48,36 +46,33 @@ export const fetchUsers = async (): Promise<User[]> => {
 
 /**
  * Преобразует данные пользователей из JSON в формат SkillCardProps[]
- * Загружает каталог навыков для получения названий и категорий
  * @returns Promise с массивом SkillCardProps
  */
-export const fetchUsersAsSkillCards = async (): Promise<SkillCardProps[]> => {
+export const fetchUsersAsSkillCards = async (
+  subcategories?: Array<{ id: string; name: string; categoryId: string }>
+): Promise<SkillCardProps[]> => {
   try {
-    // Загружаем данные параллельно
-    const [usersResponse, skillsResponse] = await Promise.all([
-      fetch('/db/users.json'),
-      fetch('/db/skills.json'),
-    ]);
+    const subcategoriesData = subcategories || getSubcategoriesFromStore();
 
-    if (!usersResponse.ok) {
-      throw new Error(`HTTP error! status: ${usersResponse.status}`);
+    if (!subcategoriesData || subcategoriesData.length === 0) {
+      console.warn('[fetchUsersAsSkillCards] No subcategories available in store');
     }
 
-    if (!skillsResponse.ok) {
-      throw new Error(`HTTP error! status: ${skillsResponse.status}`);
+    const usersResponse = await fetch('/db/users.json');
+
+    if (!usersResponse.ok) {
+      throw new Error('HTTP error while fetching users');
     }
 
     const usersData: DbUsersResponse = await usersResponse.json();
-    const skillsCatalog: SkillCategoriesData = await skillsResponse.json();
 
     // Создаем мапу для быстрого поиска навыков по skill_id
-    const skillMap = new Map<string, { name: string; category: string }>();
-    skillsCatalog.skill_categories.forEach((category) => {
-      category.skills.forEach((skill) => {
-        skillMap.set(skill.skill_id, {
-          name: skill.skill_name,
-          category: category.category,
-        });
+    const skillMap = new Map<string, { name: string; categoryId: string }>();
+
+    subcategoriesData.forEach((sub) => {
+      skillMap.set(sub.id, {
+        name: sub.name,
+        categoryId: sub.categoryId,
       });
     });
 
@@ -92,7 +87,7 @@ export const fetchUsersAsSkillCards = async (): Promise<SkillCardProps[]> => {
             title: skillInfo?.name || skillData.skill_id,
             description: skillData.skill_description,
             type: 'teaching' as const,
-            category: skillInfo ? mapCategoryToTag(skillInfo.category) : 'other',
+            category: (skillInfo?.categoryId || 'other') as TagCategory,
             authorId: dbUser.id,
             createdAt: dbUser.date_of_registration || new Date().toISOString(),
           };
@@ -102,12 +97,13 @@ export const fetchUsersAsSkillCards = async (): Promise<SkillCardProps[]> => {
       const learningSkills: Skill[] =
         dbUser.my_skills?.learn?.map((skillData) => {
           const skillInfo = skillMap.get(skillData.skill_id);
+
           return {
             id: skillData.skill_id,
             title: skillInfo?.name || skillData.skill_id,
             description: skillData.skill_description,
             type: 'learning' as const,
-            category: skillInfo ? mapCategoryToTag(skillInfo.category) : 'other',
+            category: (skillInfo?.categoryId || 'other') as TagCategory,
             authorId: dbUser.id,
             createdAt: dbUser.date_of_registration || new Date().toISOString(),
           };

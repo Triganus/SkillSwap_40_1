@@ -1,8 +1,8 @@
-import { AccordionUI } from '../../../shared/ui/CheckBoxAccordeon/AccordionUI';
+import { AccordionUI } from '@shared/ui/CheckBoxAccordeon/AccordionUI.tsx';
 import styles from './SkillsSideBar.module.scss';
 import type { TSkillsSideBarProps } from './TSkillsSideBarProps';
 import { TextUI, Icon } from '@/shared/ui';
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { SkillCategoriesData, SkillListItem } from '@/entities/Skill';
 import { TitleUI } from '@/shared/ui/Title';
 
@@ -13,38 +13,61 @@ const VISIBLE_LIMIT = 6;
 export const SkillsSideBar: React.FC<TSkillsSideBarProps> = ({
   data,
   title,
+  value,
   onChange,
-  resetToken,
 }: TSkillsSideBarProps) => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
 
-  const [selected, setSelected] = useState<SelectedByCategory>({});
-  const handleSelectChange = useCallback((category: string, selectedIds: (string | number)[]) => {
-    setSelected((prev) => ({
-      ...prev,
-      [category]: selectedIds.map(String),
-    }));
-  }, []);
+  const selected: SelectedByCategory = useMemo(() => {
+    if (!value) return {};
 
-  const aggregatedJson: SkillCategoriesData = useMemo(() => {
-    const dict: Record<string, Record<string, SkillListItem>> = {};
-    for (const cat of data.skill_categories) {
-      dict[cat.category] = {};
-      for (const s of cat.skills) dict[cat.category][s.skill_id] = s;
-    }
-    return {
-      skill_categories: Object.entries(selected).map(([category, ids]) => ({
-        category,
-        skills: ids.map(
-          (id) => dict[category]?.[id] ?? { skill_id: id, skill_name: id, skill_image: '' }
-        ),
-      })),
-    };
-  }, [selected, data]);
+    const result: SelectedByCategory = {};
 
-  useEffect(() => {
-    if (onChange) onChange(aggregatedJson);
-  }, [aggregatedJson, onChange]);
+    value.skill_categories.forEach((cat) => {
+      const key = cat.categoryId || cat.category;
+
+      result[key] = cat.skills.map((s) => s.skill_id);
+    });
+
+    return result;
+  }, [value]);
+
+  const handleSelectChange = useCallback(
+    (categoryIdentifier: string, selectedIds: (string | number)[]) => {
+      if (!onChange) return;
+
+      const newSelected = {
+        ...selected,
+        [categoryIdentifier]: selectedIds.map(String),
+      };
+
+      const dict: Record<string, Record<string, SkillListItem>> = {};
+      const categoryMap: Record<string, { categoryId?: string; category: string }> = {};
+
+      for (const cat of data.skill_categories) {
+        const key = cat.categoryId || cat.category;
+        dict[key] = {};
+        categoryMap[key] = { categoryId: cat.categoryId, category: cat.category };
+
+        for (const s of cat.skills) dict[key][s.skill_id] = s;
+      }
+
+      const aggregatedJson: SkillCategoriesData = {
+        skill_categories: Object.entries(newSelected)
+          .filter(([, ids]) => ids.length > 0)
+          .map(([key, ids]) => ({
+            categoryId: categoryMap[key]?.categoryId,
+            category: categoryMap[key]?.category || key,
+            skills: ids.map(
+              (id) => dict[key]?.[id] ?? { skill_id: id, skill_name: id, skill_image: '' }
+            ),
+          })),
+      };
+
+      onChange(aggregatedJson);
+    },
+    [selected, data, onChange]
+  );
 
   const handleToggle = () => setSideBarOpened((v) => !v);
 
@@ -63,18 +86,19 @@ export const SkillsSideBar: React.FC<TSkillsSideBarProps> = ({
       <div className={styles['skills-list']} aria-labelledby="skills-sidebar-title">
         {data.skill_categories.map((item, idx) => {
           const hidden = isCollapsed && idx >= VISIBLE_LIMIT;
+          const key = item.categoryId || item.category;
+
           return (
-            //  обрнул в  div, чтобы можно было применить display:none, но не размонтировать
             <div
-              key={item.category}
+              key={key}
               className={hidden ? styles['hidden-item'] : undefined}
               aria-hidden={hidden}
             >
               <AccordionUI
                 data={item}
                 title={item.category}
+                selectedValues={selected[key] || []}
                 onSelectChange={handleSelectChange}
-                resetToken={resetToken}
                 aria-label={`Категория ${item.category}`}
               />
             </div>

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import styles from './RadioButtonGroup.module.scss';
-import type { TRadioButtonGroupProps } from './TRadioButtonGroupProps';
+import type { TRadioButtonGroupProps, RadioButtonItem } from './TRadioButtonGroupProps';
 import { TitleUI } from '@/shared/ui/Title';
 import { RadioButtonUI } from '@/shared/ui';
 
@@ -9,27 +9,40 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
   title,
   name = 'radio-group',
   defaultValue = null,
+  value: externalValue,
   onChange,
-  resetToken,
 }) => {
+  // Нормализуем items в массив объектов {label, value}
+  const normalizedItems = useMemo<RadioButtonItem[]>(() => {
+    if (items.length === 0) return [];
+
+    if (typeof items[0] === 'string') {
+      return (items as string[]).map((item) => ({ label: item, value: item }));
+    }
+
+    return items as RadioButtonItem[];
+  }, [items]);
+
   const [selected, setSelected] = useState<string | null>(defaultValue);
+
+  const currentValue = externalValue !== undefined ? externalValue : selected;
 
   const handleRadioChange = useCallback(
     (_e: React.ChangeEvent<HTMLInputElement>, value?: unknown) => {
       const val = String(value ?? '');
+
       setSelected(val);
+
+      onChange?.(val);
     },
-    []
+    [onChange]
   );
 
   useEffect(() => {
-    if (selected !== null) onChange?.(selected);
-  }, [selected, onChange]);
-
-  useEffect(() => {
-    setSelected(defaultValue ?? '');
-    onChange?.(defaultValue ?? '');
-  }, [resetToken, defaultValue, onChange]);
+    if (externalValue !== undefined) {
+      setSelected(externalValue);
+    }
+  }, [externalValue]);
 
   return (
     <div className={styles.wrapper}>
@@ -42,15 +55,15 @@ export const RadioButtonGroup: React.FC<TRadioButtonGroupProps> = ({
       )}
 
       <div className={styles.list} aria-labelledby={title ? `${name}-label` : undefined}>
-        {items.map((item) => (
+        {normalizedItems.map((item) => (
           <RadioButtonUI
-            key={item}
+            key={item.value}
             name={name}
-            value={item}
-            label={item}
-            checked={selected === item}
+            value={item.value}
+            label={item.label}
+            checked={currentValue === item.value}
             onChange={handleRadioChange}
-            aria-checked={selected === item}
+            aria-checked={currentValue === item.value}
             size="md"
           />
         ))}

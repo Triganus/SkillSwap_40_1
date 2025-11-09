@@ -2,10 +2,10 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
-  getAllUsersWithSkills,
-  getUsersLoading,
-  fetchUsersWithSkills,
-} from '@entities/user/model/usersSlice';
+  selectSkillCards,
+  selectUsersLoading,
+  fetchUsersWithSkillsThunk,
+} from '@/entities/user/model-v2';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 
 import { TitleUI } from '@shared/ui/Title';
@@ -14,12 +14,13 @@ import { Button } from '@shared/ui/Button';
 import { Icon } from '@shared/ui/Icon';
 import styles from './NewSkillsPage.module.scss';
 import { SkillCard } from '@/widgets/Cards/SkillCard';
+import type { SkillCardProps } from '@/widgets/Cards/SkillCard/type';
 
 export default function NewSkillsPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const usersData = useAppSelector(getAllUsersWithSkills);
-  const loading = useAppSelector(getUsersLoading);
+  const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
+  const loading = useAppSelector(selectUsersLoading);
 
   // Локальное состояние для бесконечного скролла
   const [displayedCount, setDisplayedCount] = useState(9);
@@ -28,7 +29,7 @@ export default function NewSkillsPage() {
   // Загружаем данные при монтировании, если их нет
   useEffect(() => {
     if (usersData.length === 0 && !loading) {
-      dispatch(fetchUsersWithSkills());
+      dispatch(fetchUsersWithSkillsThunk());
     }
   }, [dispatch, usersData.length, loading]);
 

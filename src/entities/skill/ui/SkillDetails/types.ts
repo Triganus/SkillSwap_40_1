@@ -6,7 +6,8 @@ export interface SkillDetailsProps {
   // Основной контент
   title: string; // Название навыка
   category: TagCategory; // Категория
-  categoryLabel?: string; // Полная категория с подкатегорией (например, "Творчество и искусство / Музыка и звук")
+  categoryLabel?: string; // Название категории (например, "Творчество и искусство")
+  subcategory?: string; // Подкатегория (например, "Музыка и звук")
   text: string; // Описание навыка
   images: string[]; // Массив URL изображений
   // Режим отображения

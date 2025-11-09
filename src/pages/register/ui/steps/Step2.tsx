@@ -13,15 +13,16 @@ import {
 import type { UserAvatarUploadHandle } from '@shared/ui';
 import { InfoBlock } from '@features/auth';
 import { useRegistrationProgress, saveRegistrationData } from '@features/registration';
+import { useDirectories } from '@/entities/directory';
+import { selectCategoryOptions } from '@/entities/directory/model/selectors';
+import type { Subcategory } from '@/entities/directory/model/types';
+import { useAppSelector } from '@/shared/hooks/redux';
 import {
   useRegisterStep2Form,
-  GENDER_DROPDOWN_OPTIONS,
-  CITY_DROPDOWN_OPTIONS,
-  CATEGORY_OPTIONS,
+  getGenderDropdownOptions,
+  getCityDropdownOptions,
 } from '@features/registration/hooks/useRegisterStep2Form';
 import type { RegisterStep2Values } from '@features/registration/hooks/useRegisterStep2Form';
-import { getSkillsByCategory } from '@shared/lib/constants/skillCategories';
-import { tagCategoryToLabel } from '@shared/lib/categoryMapper';
 import type { TagCategory } from '@shared/ui/Tag';
 import profileInfoImage from '@shared/assets/images/user-info.svg';
 import styles from './Step2.module.scss';
@@ -30,6 +31,17 @@ import { parseDateFromString, formatDateToString } from '@/shared/lib/dateUtils'
 export default function Step2() {
   const navigate = useNavigate();
   const { completeStep, data } = useRegistrationProgress();
+  const { cities, subcategories, genders } = useDirectories();
+
+  const CATEGORY_OPTIONS = useAppSelector(selectCategoryOptions);
+  const CITY_DROPDOWN_OPTIONS = getCityDropdownOptions(
+    cities as Array<{ id: string; name: string }>
+  );
+  const GENDER_DROPDOWN_OPTIONS = getGenderDropdownOptions(
+    genders as Array<{ id: string; name: string }>
+  );
+
+  const typedSubcategories = subcategories as Subcategory[];
 
   const initial = data.step2
     ? {
@@ -69,13 +81,18 @@ export default function Step2() {
     const sub = watch((rawValues, { name }) => {
       if (name === 'categories') {
         const values = rawValues as unknown as RegisterStep2Values;
-        const categories = (values.categories ?? []) as string[];
-        const allowed = new Set<string>();
+        const selectedCategories = (values.categories ?? []) as string[];
 
-        (categories ?? []).forEach((c) => getSkillsByCategory(c).forEach((s) => allowed.add(s)));
+        const allowedSubcategoryIds = new Set<string>();
+
+        typedSubcategories.forEach((subcategory) => {
+          if (selectedCategories.includes(subcategory.categoryId)) {
+            allowedSubcategoryIds.add(subcategory.id);
+          }
+        });
 
         const current = (values.subcategories ?? []) as string[];
-        const filtered = current.filter((s) => allowed.has(s));
+        const filtered = current.filter((id) => allowedSubcategoryIds.has(id));
 
         setSubcategoriesTouched(false);
         setValue('subcategories', filtered, { shouldValidate: false, shouldDirty: true });
@@ -83,7 +100,7 @@ export default function Step2() {
     });
 
     return () => sub.unsubscribe();
-  }, [setValue, watch]);
+  }, [setValue, watch, typedSubcategories]);
 
   const onSubmit = handleSubmit(
     async (values) => {
@@ -252,7 +269,7 @@ export default function Step2() {
           <Dropdown
             id="subcategory"
             placeholder="Выберите подкатегорию"
-            options={buildSubcategoryOptions(getValues('categories'))}
+            options={buildSubcategoryOptions(getValues('categories'), typedSubcategories)}
             multiple
             value={getValues('subcategories')}
             onChange={(v) => {
@@ -324,16 +341,14 @@ async function fileToDataURL(file: File): Promise<string> {
   });
 }
 
-function buildSubcategoryOptions(categories: string[]) {
-  const set = new Set<string>();
+function buildSubcategoryOptions(
+  categoryIds: string[],
+  subcategories: Subcategory[]
+): Array<{ label: string; value: string }> {
+  const filteredSubcategories = subcategories.filter((sub) => categoryIds.includes(sub.categoryId));
 
-  (categories ?? []).forEach((id) => {
-    const catName = (tagCategoryToLabel as Record<string, string>)[id] ?? '';
-
-    if (!catName) return;
-
-    getSkillsByCategory(catName).forEach((s) => set.add(s));
-  });
-
-  return Array.from(set).map((s) => ({ label: s, value: s }));
+  return filteredSubcategories.map((sub) => ({
+    label: sub.name,
+    value: sub.id,
+  }));
 }

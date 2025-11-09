@@ -49,43 +49,10 @@
   }
 }
 
-.new-section {
-  margin-top: 0;
-}
-
-.recommended-section {
+.search-filters {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.section-title {
-  margin: 0;
-  padding: 0;
-  text-align: left;
-}
-
-.search-results {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.search-title {
-  margin: 0;
-  padding: 0;
-}
-
-.search-grid {
-  width: 100%;
-}
-
-.preloader-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  width: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -96,14 +63,6 @@
   }
 
   .content {
-    gap: 24px;
-  }
-
-  .recommended-section {
-    gap: 16px;
-  }
-
-  .search-results {
     gap: 24px;
   }
 }

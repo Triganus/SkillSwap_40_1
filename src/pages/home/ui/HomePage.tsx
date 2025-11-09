@@ -1,107 +1,97 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
+import { getSearchQuery, setSearchQuery, filterSkills, fetchSkills } from '@entities/skill/model';
 import {
-  getSearchQuery,
-  getSkillsLoading,
-  setSearchQuery,
-  filterSkills,
-  fetchSkills,
-} from '@entities/skill/model';
-import {
-  fetchUsersWithSkills,
-  getAllUsersWithSkills,
-  getUsersLoading,
-} from '@entities/user/model/usersSlice';
+  selectSkillCards,
+  selectUsersLoading,
+  selectUsersTotal,
+  fetchRecommendedUsersThunk,
+  fetchUsersWithSkillsThunk,
+} from '@/entities/user/model-v2';
 import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
-import { getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
-import { CardSectionUI } from '@shared/ui/CardSection';
-import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
-import { SkillCard } from '@widgets/Cards/SkillCard';
-import { TitleUI } from '@shared/ui/Title';
-import { PreloaderUI } from '@shared/ui/Preloader';
+import { useContentFiltering } from '@/entities/filtered-content';
+import { HomeContent } from './HomeContent';
+import type { SkillCardProps } from '@widgets/Cards/SkillCard/type';
 import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
 import type { FilterPayload } from '@/entities/filterSideBar/model';
-import type { SkillCategoriesData } from '@entities/Skill';
-import { fetchSkillsCatalog } from '@/api';
+import { selectSkillsCatalog } from '@/entities/directory';
 import styles from './HomePage.module.scss';
-import { useSidebarFilter } from '@/shared/hooks/useSidebarFilter';
-
-// Мок-данные удалены - теперь используются данные из API (fetchSkillsCatalog и fetchUsersAsSkillCards)
 
 export default function HomePage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
-
-  // const [filters, setFilters] = useState<FilterPayload>(EMPTY_FILTERS);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
-  const loading = useAppSelector(getSkillsLoading);
-  const usersData = useAppSelector(getAllUsersWithSkills);
-  const loadingUsers = useAppSelector(getUsersLoading);
+  const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
+  const loadingUsers = useAppSelector(selectUsersLoading);
+  const totalUsers = useAppSelector(selectUsersTotal);
 
-  // Локальное состояние для каталога навыков (для фильтров)
-  const [skillsCatalog, setSkillsCatalog] = useState<SkillCategoriesData | null>(null);
-  const [loadingCatalog, setLoadingCatalog] = useState(true);
-  const currentFilters = useAppSelector(getSideBarFilters);
-  // Локальное состояние для бесконечного скролла
-  const [displayedRecommendedCount, setDisplayedRecommendedCount] = useState(9);
+  // Справочники из Redux (загружаются централизованно в Provider)
+  const skillsCatalog = useAppSelector(selectSkillsCatalog);
+
+  // Локальное состояние для бесконечного скролла рекомендованных
+  const [currentRecommendedPage, setCurrentRecommendedPage] = useState(1);
   const [hasMoreRecommended, setHasMoreRecommended] = useState(true);
+
+  // Состояние сортировки
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
-  const isSearching = searchFromUrl.trim().length > 0;
-  console.log('Search from URL:', searchFromUrl);
-  // Загрузка каталога навыков
-  useEffect(() => {
-    let cancelled = false;
 
-    fetchSkillsCatalog()
-      .then((data) => {
-        if (!cancelled) {
-          setSkillsCatalog(data);
-          setLoadingCatalog(false);
-        }
-      })
-      .catch((error) => {
-        console.error('Failed to load skills catalog:', error);
-        if (!cancelled) {
-          setLoadingCatalog(false);
-        }
-      });
+  // Функция очистки поискового параметра из URL
+  const clearSearch = useCallback(() => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('search');
+    setSearchParams(newParams);
+  }, [searchParams, setSearchParams]);
 
-    return () => {
-      cancelled = true;
-    };
+  // Функция переключения сортировки
+  const handleSortChange = useCallback((order: 'newest' | 'oldest') => {
+    setSortOrder(order);
   }, []);
 
-  // Загрузка навыков и пользователей через Redux
+  const { filteredContent, activeFilters, removeFilter, hasActiveFilters, loadMore, hasMore } =
+    useContentFiltering(searchFromUrl, {
+      clearSearch,
+      sortOrder,
+      onSortChange: handleSortChange,
+    });
+
+  const isFiltering = filteredContent.isSearchActive || filteredContent.isSidebarFilterActive;
+
+  // Отслеживаем предыдущее состояние фильтрации
+  const prevIsFilteringRef = useRef(isFiltering);
+
+  // Загрузка навыков для справочника
   useEffect(() => {
     dispatch(fetchSkills());
   }, [dispatch]);
 
+  // Загрузка данных по умолчанию при первом монтировании (популярные + новые + рекомендованные)
   useEffect(() => {
-    if (usersData.length === 0 && !loadingUsers) {
-      dispatch(fetchUsersWithSkills());
+    if (!isFiltering && usersData.length === 0 && !loadingUsers) {
+      dispatch(fetchUsersWithSkillsThunk());
     }
-  }, [dispatch, usersData.length, loadingUsers]);
+  }, [dispatch, isFiltering, usersData.length, loadingUsers]);
 
-  const isSidebarActive =
-    !!currentFilters &&
-    ((currentFilters.general && currentFilters.general !== 'Всё') ||
-      (currentFilters.gender &&
-        ['мужской', 'женский'].includes(currentFilters.gender.toLowerCase())) ||
-      !!currentFilters.skills?.skill_categories.some(
-        (cat) => cat.skills && cat.skills.length > 0
-      ) ||
-      (currentFilters.cities && currentFilters.cities.length > 0));
+  // Отслеживаем переход из режима фильтрации в обычный режим
+  useEffect(() => {
+    const wasFiltering = prevIsFilteringRef.current;
 
-  console.log(currentFilters);
-  // Режим фильтрации активен, если есть либо строка поиска, либо боковые фильтры
-  const isFiltering = isSearching || isSidebarActive;
-  console.log(currentFilters.gender);
+    // Если были в фильтрации и вышли из неё - загружаем данные по умолчанию
+    if (wasFiltering && !isFiltering && !loadingUsers) {
+      dispatch(fetchUsersWithSkillsThunk());
+      setCurrentRecommendedPage(1);
+      setHasMoreRecommended(true);
+    }
+
+    prevIsFilteringRef.current = isFiltering;
+  }, [dispatch, isFiltering, loadingUsers]);
+
   // Синхронизация URL параметра поиска с Redux
   useEffect(() => {
     if (searchFromUrl !== searchQuery) {
@@ -130,75 +120,40 @@ export default function HomePage() {
     navigate('/new-skills');
   }, [navigate]);
 
-  // Обработчик для бесконечного скролла
+  // Обработчик клика на "Подробнее" - переход на страницу навыка
+  const handleSkillDetailsClick = useCallback(
+    (userId: string) => {
+      navigate(`/skill/${userId}`);
+    },
+    [navigate]
+  );
+
+  // Обработчик для бесконечного скролла рекомендованных
   const handleLoadMoreRecommended = useCallback(() => {
-    if (displayedRecommendedCount >= usersData.length) {
-      setHasMoreRecommended(false);
+    if (!hasMoreRecommended || loadingUsers) {
       return;
     }
 
-    // Имитация загрузки
-    setTimeout(() => {
-      setDisplayedRecommendedCount((prev) => Math.min(prev + 9, usersData.length));
-    }, 500);
-  }, [displayedRecommendedCount, usersData.length]);
+    const nextPage = currentRecommendedPage + 1;
 
-  // Обновляем обработчики для карточек с правильной навигацией
-  const cardsWithNavigation = useMemo(() => {
-    return usersData.map((card) => ({
-      ...card,
-      onDetailsClick: () => {
-        // Переходим на страницу первого навыка из teachingSkills
-        const firstSkill = card.teachingSkills[0];
-        if (firstSkill) {
-          console.log('[HomePage] Navigating to skill:', firstSkill.id);
-          navigate(`/skill/${firstSkill.id}`);
-        } else {
-          console.warn('[HomePage] No teaching skills found for user:', card.user.name);
+    dispatch(
+      fetchRecommendedUsersThunk({
+        page: nextPage,
+        limit: 9,
+        replace: false,
+      })
+    ).then((result) => {
+      if (result.payload && typeof result.payload === 'object' && 'hasMore' in result.payload) {
+        const payload = result.payload as { hasMore: boolean };
+
+        setHasMoreRecommended(payload.hasMore);
+
+        if (payload.hasMore) {
+          setCurrentRecommendedPage(nextPage);
         }
-      },
-    }));
-  }, [usersData, navigate]);
-
-  // Данные для отображения
-  const popularCards = cardsWithNavigation.slice(0, 3); // Первые 3
-  const newCards = cardsWithNavigation.slice(3, 6); // Следующие 3
-  const recommendedCards = cardsWithNavigation.slice(0, displayedRecommendedCount);
-
-  // Для поиска - фильтруем по имени или навыкам
-
-  console.log(searchFromUrl);
-  const searchResultCards = isSearching
-    ? cardsWithNavigation.filter(
-        (card) =>
-          card.user.name.toLowerCase().includes(searchFromUrl.toLowerCase()) ||
-          card.teachingSkills.some((skill) =>
-            skill.title.toLowerCase().includes(searchFromUrl.toLowerCase())
-          ) ||
-          card.learningSkills.some((skill) =>
-            skill.title.toLowerCase().includes(searchFromUrl.toLowerCase())
-          )
-      )
-    : [];
-  const baseForFilter = searchFromUrl.trim() ? searchResultCards : cardsWithNavigation;
-
-  const { matchesSidebar } = useSidebarFilter(currentFilters);
-  const visibleSearchResultCards = useMemo(
-    () => baseForFilter.filter(matchesSidebar),
-    [baseForFilter, matchesSidebar]
-  );
-
-  // Показываем прелоадер пока загружаются данные
-  const isLoading = loadingCatalog || loadingUsers;
-  if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.preloaderContainer}>
-          <PreloaderUI size="large" ariaLabel="Загрузка данных" />
-        </div>
-      </div>
-    );
-  }
+      }
+    });
+  }, [dispatch, currentRecommendedPage, hasMoreRecommended, loadingUsers]);
 
   // Режим поиска - отображаем только результаты
   if (isFiltering) {
@@ -209,33 +164,22 @@ export default function HomePage() {
             <FilterSideBar skillsCatalog={skillsCatalog} onChange={handleFiltersChange} />
           )}
         </aside>
-        <main className={styles.content}>
-          <div className={styles.searchResults}>
-            <TitleUI size="large" className={styles.searchTitle}>
-              {/* Подходящие предложения: {searchResultCards.length} */}
-              Подходящие предложения: {visibleSearchResultCards.length}
-            </TitleUI>
-            <InfiniteGridUI
-              hasMore={false}
-              loading={false}
-              columns={{ mobile: 1, tablet: 2, desktop: 3 }}
-              gap="24px"
-              className={styles.searchGrid}
-            >
-              {visibleSearchResultCards.map((card) => (
-                <SkillCard
-                  key={card.user.id}
-                  user={card.user}
-                  teachingSkills={card.teachingSkills}
-                  learningSkills={card.learningSkills}
-                  onDetailsClick={card.onDetailsClick}
-                  onLikeClick={card.onLikeClick}
-                  isLiked={card.isLiked}
-                />
-              ))}
-            </InfiniteGridUI>
-          </div>
-        </main>
+        <section className={styles.content}>
+          <HomeContent
+            cards={filteredContent.items}
+            isLoading={loadingUsers}
+            hasMore={hasMore}
+            onLoadMore={loadMore}
+            isFiltering={true}
+            totalUsers={totalUsers}
+            sortOrder={sortOrder}
+            activeFilters={activeFilters}
+            hasActiveFilters={hasActiveFilters}
+            onSortChange={handleSortChange}
+            onRemoveFilter={removeFilter}
+            onSkillDetailsClick={handleSkillDetailsClick}
+          />
+        </section>
       </div>
     );
   }
@@ -248,52 +192,17 @@ export default function HomePage() {
           <FilterSideBar skillsCatalog={skillsCatalog} onChange={handleFiltersChange} />
         )}
       </aside>
-      <main className={styles.content}>
-        {/* Блок "Популярное" */}
-        <CardSectionUI
-          title="Популярное"
-          cards={popularCards}
-          onLookClick={handleViewAllPopular}
-          maxCards={3}
-          showButton={true}
+      <section className={styles.content}>
+        <HomeContent
+          cards={usersData}
+          isLoading={loadingUsers}
+          hasMore={hasMoreRecommended}
+          onLoadMore={handleLoadMoreRecommended}
+          onViewAllPopular={handleViewAllPopular}
+          onViewAllNew={handleViewAllNew}
+          onSkillDetailsClick={handleSkillDetailsClick}
         />
-
-        {/* Блок "Новое" */}
-        <CardSectionUI
-          title="Новое"
-          cards={newCards}
-          onLookClick={handleViewAllNew}
-          maxCards={3}
-          showButton={true}
-          className={styles.newSection}
-        />
-
-        {/* Блок "Рекомендуем" с бесконечным скроллом */}
-        <section className={styles.recommendedSection}>
-          <TitleUI size="large" className={styles.sectionTitle}>
-            Рекомендуем
-          </TitleUI>
-          <InfiniteGridUI
-            onLoadMore={handleLoadMoreRecommended}
-            hasMore={hasMoreRecommended}
-            loading={loading}
-            columns={{ mobile: 1, tablet: 2, desktop: 3 }}
-            gap="24px"
-          >
-            {recommendedCards.map((card) => (
-              <SkillCard
-                key={card.user.id}
-                user={card.user}
-                teachingSkills={card.teachingSkills}
-                learningSkills={card.learningSkills}
-                onDetailsClick={card.onDetailsClick}
-                onLikeClick={card.onLikeClick}
-                isLiked={card.isLiked}
-              />
-            ))}
-          </InfiniteGridUI>
-        </section>
-      </main>
+      </section>
     </div>
   );
 }
