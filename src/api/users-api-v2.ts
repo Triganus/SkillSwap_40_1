@@ -14,6 +14,7 @@ export async function fetchUserListItems(params?: {
   sortBy?: 'newest' | 'oldest';
   searchType?: 'all' | 'want_to_learn' | 'can_teach';
   replace?: boolean;
+  currentUserId?: string;
 }): Promise<{ users: UserListItem[]; hasMore: boolean; total: number }> {
   const searchParams = new URLSearchParams();
 
@@ -27,6 +28,7 @@ export async function fetchUserListItems(params?: {
   if (params?.gender) searchParams.set('gender', params.gender);
   if (params?.sortBy) searchParams.set('sort', params.sortBy);
   if (params?.searchType) searchParams.set('searchType', params.searchType);
+  if (params?.currentUserId) searchParams.set('currentUserId', params.currentUserId);
 
   const response = await fetch(`/api/users?${searchParams.toString()}`);
 
@@ -74,12 +76,12 @@ export async function updateUserProfile(
 }
 
 /**
- * Лайкнуть/разлайкнуть навык
+ * Лайкнуть/разлайкнуть навык по ID навыка
  */
 export async function toggleSkillLike(
   userId: string,
   skillId: string
-): Promise<{ liked: boolean }> {
+): Promise<{ liked: boolean; likesCount: number }> {
   const response = await fetch(`/api/users/${userId}/likes/${skillId}`, {
     method: 'POST',
   });
@@ -91,17 +93,34 @@ export async function toggleSkillLike(
   return response.json();
 }
 
+export async function toggleSkillLikeByUserId(
+  currentUserId: string,
+  skillOwnerUserId: string
+): Promise<{ liked: boolean; skillId: string; likesCount: number }> {
+  const response = await fetch(`/api/users/${currentUserId}/likes/by-user/${skillOwnerUserId}`, {
+    method: 'POST',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to toggle skill like by user: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 /**
  * Получить рекомендованных пользователей
  */
 export async function fetchRecommendedUsers(params?: {
   page?: number;
   limit?: number;
+  currentUserId?: string;
 }): Promise<{ users: UserListItem[]; hasMore: boolean }> {
   const searchParams = new URLSearchParams();
 
   if (params?.page) searchParams.set('page', String(params.page));
   if (params?.limit) searchParams.set('limit', String(params.limit));
+  if (params?.currentUserId) searchParams.set('currentUserId', params.currentUserId);
 
   const response = await fetch(`/api/users/recommended?${searchParams.toString()}`);
 
@@ -115,28 +134,42 @@ export async function fetchRecommendedUsers(params?: {
 /**
  * Получить популярных пользователей (топ 3)
  */
-export async function fetchPopularUsers(): Promise<UserListItem[]> {
-  const response = await fetch('/api/users/popular?limit=3');
+export async function fetchPopularUsers(currentUserId?: string): Promise<UserListItem[]> {
+  const searchParams = new URLSearchParams();
+
+  searchParams.set('limit', '3');
+
+  if (currentUserId) searchParams.set('currentUserId', currentUserId);
+
+  const response = await fetch(`/api/users/popular?${searchParams.toString()}`);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch popular users: ${response.statusText}`);
   }
 
   const data = await response.json();
+
   return data.users || data;
 }
 
 /**
  * Получить новых пользователей (топ 3)
  */
-export async function fetchNewUsers(): Promise<UserListItem[]> {
-  const response = await fetch('/api/users/new?limit=3');
+export async function fetchNewUsers(currentUserId?: string): Promise<UserListItem[]> {
+  const searchParams = new URLSearchParams();
+
+  searchParams.set('limit', '3');
+
+  if (currentUserId) searchParams.set('currentUserId', currentUserId);
+
+  const response = await fetch(`/api/users/new?${searchParams.toString()}`);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch new users: ${response.statusText}`);
   }
 
   const data = await response.json();
+
   return data.users || data;
 }
 

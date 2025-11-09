@@ -129,6 +129,7 @@ export const HomeContent: React.FC<HomeContentProps> = ({
                 }
                 onLikeClick={card.onLikeClick}
                 isLiked={card.isLiked}
+                likesCount={card.likesCount}
               />
             ))}
           </InfiniteGridUI>
@@ -187,6 +188,7 @@ export const HomeContent: React.FC<HomeContentProps> = ({
               }
               onLikeClick={card.onLikeClick}
               isLiked={card.isLiked}
+              likesCount={card.likesCount}
             />
           ))}
         </InfiniteGridUI>

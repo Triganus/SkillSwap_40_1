@@ -72,6 +72,7 @@ export function userListItemToSkillCard(
     learningSkills,
     onDetailsClick: onDetailsClick ? () => onDetailsClick(userItem.id) : undefined,
     onLikeClick: () => console.log(`Like clicked for ${userItem.name}`),
-    isLiked: false,
+    isLiked: userItem.isLikedByCurrentUser || false,
+    likesCount: userItem.primarySkillLikesCount || 0,
   };
 }

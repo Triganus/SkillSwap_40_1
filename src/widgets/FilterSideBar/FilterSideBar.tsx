@@ -64,7 +64,18 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
     if (currentCitiesKey !== reduxCitiesKey) {
       setCitiesSelected(reduxFilters.cities);
     }
-  }, [reduxFilters.general, reduxFilters.gender, reduxSkillsKey, reduxCitiesKey]);
+  }, [
+    reduxFilters.general,
+    reduxFilters.gender,
+    reduxFilters.skills,
+    reduxFilters.cities,
+    reduxSkillsKey,
+    reduxCitiesKey,
+    generalFilterValue,
+    genderValue,
+    skillsData,
+    citiesSelected,
+  ]);
 
   const handleGeneralChange = useCallback((value: string) => {
     setGeneralFilterValue(value);

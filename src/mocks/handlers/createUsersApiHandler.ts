@@ -10,6 +10,69 @@ let cache: {
   skillPool: Array<{ id: string; name: string; categoryId: string }>;
 } | null = null;
 
+// Хранилище лайков в памяти: Map<skillId, Set<userId>>
+let likesCache: Map<string, Set<string>> | null = null;
+
+/**
+ * Инициализация лайков со случайными значениями
+ */
+function initializeLikes(users: UserListItem[]): Map<string, Set<string>> {
+  const likes = new Map<string, Set<string>>();
+  const seed = mulberry32(42); // Детерминированная случайность
+
+  // Для каждого пользователя генерируем навык и случайные лайки
+  users.forEach((user) => {
+    if (user.canTeachSkills.length === 0) return;
+
+    const skillId = `skill_${user.id}_0`;
+    const likesCount = Math.floor(seed() * 16);
+    const likedByUsers = new Set<string>();
+    const shuffled = [...users].sort(() => seed() - 0.5);
+
+    for (let i = 0; i < Math.min(likesCount, shuffled.length); i++) {
+      likedByUsers.add(shuffled[i].id);
+    }
+
+    likes.set(skillId, likedByUsers);
+  });
+
+  return likes;
+}
+
+// Инициализация кеша лайков
+function ensureLikesCache(users: UserListItem[]): Map<string, Set<string>> {
+  if (!likesCache) {
+    likesCache = initializeLikes(users);
+  }
+  return likesCache;
+}
+
+function enrichUsersWithLikes(
+  users: UserListItem[],
+  allUsers: UserListItem[],
+  currentUserId?: string
+): UserListItem[] {
+  const likes = ensureLikesCache(allUsers);
+
+  return users.map((user) => {
+    if (!user.canTeachSkills.length) {
+      return user;
+    }
+
+    const primarySkillId = `skill_${user.id}_0`;
+    const likedBy = likes.get(primarySkillId) || new Set<string>();
+    const likesCount = likedBy.size;
+    const isLikedByCurrentUser = currentUserId ? likedBy.has(currentUserId) : false;
+
+    return {
+      ...user,
+      primarySkillId,
+      primarySkillLikesCount: likesCount,
+      isLikedByCurrentUser,
+    };
+  });
+}
+
 // Утилиты для генерации детерминированных случайных данных
 function mulberry32(a: number) {
   return function () {
@@ -381,6 +444,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
       await delay(250);
 
       const { users } = await ensureData();
+      const currentUserId = url.searchParams.get('currentUserId') || undefined;
 
       // /api/users/popular?limit=3
       if (base === '/api/users/popular') {
@@ -390,7 +454,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
           .sort(() => seed() - 0.5) // Стабильная "случайная" сортировка
           .slice(0, limit);
 
-        return Response.json({ users: popular });
+        return Response.json({ users: enrichUsersWithLikes(popular, users, currentUserId) });
       }
 
       // /api/users/new?limit=3
@@ -398,7 +462,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         const limit = Number(url.searchParams.get('limit') || '3');
         const newest = [...users].sort((a, b) => b.createdAt - a.createdAt).slice(0, limit);
 
-        return Response.json({ users: newest });
+        return Response.json({ users: enrichUsersWithLikes(newest, users, currentUserId) });
       }
 
       // /api/users/recommended
@@ -409,7 +473,10 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         const start = (page - 1) * limit;
         const slice = sorted.slice(start, start + limit);
 
-        return Response.json({ users: slice, hasMore: start + limit < sorted.length });
+        return Response.json({
+          users: enrichUsersWithLikes(slice, users, currentUserId),
+          hasMore: start + limit < sorted.length,
+        });
       }
 
       // /api/users/similar - похожие пользователи
@@ -451,7 +518,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
           .slice(0, limit) // Берем топ N
           .map((item) => item.user);
 
-        return Response.json({ users: similarUsers });
+        return Response.json({ users: enrichUsersWithLikes(similarUsers, users, currentUserId) });
       }
 
       // /api/users/:id
@@ -465,6 +532,72 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
 
         const { profile, skills } = toProfile(found);
         return Response.json({ profile, skills });
+      }
+
+      // /api/users/:userId/likes/:skillId - toggle like по skillId
+      const likeMatch = base.match(/^\/api\/users\/([^/]+)\/likes\/([^/]+)$/);
+
+      if (likeMatch && request.method === 'POST') {
+        const [, currentUserId, skillId] = likeMatch;
+        const likes = ensureLikesCache(users);
+
+        if (!likes.has(skillId)) {
+          likes.set(skillId, new Set());
+        }
+
+        const skillLikes = likes.get(skillId)!;
+        const wasLiked = skillLikes.has(currentUserId);
+
+        if (wasLiked) {
+          skillLikes.delete(currentUserId);
+        } else {
+          skillLikes.add(currentUserId);
+        }
+
+        const likesCount = skillLikes.size;
+
+        return Response.json({ liked: !wasLiked, likesCount });
+      }
+
+      // /api/users/:currentUserId/likes/by-user/:skillOwnerUserId - toggle like по userId владельца
+      const likeByUserMatch = base.match(/^\/api\/users\/([^/]+)\/likes\/by-user\/([^/]+)$/);
+
+      if (likeByUserMatch && request.method === 'POST') {
+        const [, currentUserId, skillOwnerUserId] = likeByUserMatch;
+
+        // Находим пользователя-владельца навыка
+        const owner = users.find((u) => u.id === skillOwnerUserId);
+
+        if (!owner) {
+          return Response.json({ message: 'Skill owner not found' }, { status: 404 });
+        }
+
+        // Получаем первый навык владельца (у нас один навык на пользователя)
+        const { skills } = toProfile(owner);
+
+        if (!skills.length) {
+          return Response.json({ message: 'User has no skills' }, { status: 404 });
+        }
+
+        const skillId = skills[0].id;
+        const likes = ensureLikesCache(users);
+
+        if (!likes.has(skillId)) {
+          likes.set(skillId, new Set());
+        }
+
+        const skillLikes = likes.get(skillId)!;
+        const wasLiked = skillLikes.has(currentUserId);
+
+        if (wasLiked) {
+          skillLikes.delete(currentUserId);
+        } else {
+          skillLikes.add(currentUserId);
+        }
+
+        const likesCount = skillLikes.size;
+
+        return Response.json({ liked: !wasLiked, skillId, likesCount });
       }
 
       // /api/users (список с фильтрацией)
@@ -486,7 +619,11 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         const start = (params.page! - 1) * params.limit!;
         const pageItems = filtered.slice(start, start + params.limit!);
 
-        return Response.json({ users: pageItems, hasMore: start + params.limit! < total, total });
+        return Response.json({
+          users: enrichUsersWithLikes(pageItems, users, currentUserId),
+          hasMore: start + params.limit! < total,
+          total,
+        });
       }
 
       return Response.json({ message: 'Not Found' }, { status: 404 });
@@ -541,9 +678,14 @@ function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSki
     }
 
     const descriptionIndex = Math.floor(seed() * skillDescriptions.length);
+    const skillId = `skill_${u.id}_${index}`;
+
+    // Получаем лайки для этого навыка из кеша
+    const likes = likesCache || new Map();
+    const likedByUserIds: string[] = Array.from(likes.get(skillId) || []);
 
     return {
-      id: `skill_${u.id}_${index}`,
+      id: skillId,
       userId: u.id,
       title: skillInfo?.name || 'Навык',
       description: skillDescriptions[descriptionIndex],
@@ -551,6 +693,8 @@ function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSki
       subcategoryId: subcategoryId,
       images,
       createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
+      likesCount: likedByUserIds.length,
+      likedByUserIds,
     };
   });
 

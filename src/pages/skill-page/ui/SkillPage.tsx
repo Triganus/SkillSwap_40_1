@@ -8,14 +8,16 @@ import { TwoColumnLayout } from '@shared/ui/TwoColumnLayout';
 import { SkillDetails } from '@entities/skill/ui/SkillDetails';
 import { ModalUI } from '@shared/ui/Modal';
 import { Button } from '@shared/ui/Button';
-import { useAuth } from '@app/Provider';
+import { useAuthV2 } from '@app/Provider';
 import { useUserProfile } from '../hooks';
+import { useAppDispatch } from '@shared/hooks/redux';
 import {
   getCitiesFromStore,
   getSubcategoriesFromStore,
   getCategoriesFromStore,
 } from '@/entities/directory/lib/getFromStore';
 import { fetchSimilarUsers } from '@/api/users-api-v2';
+import { toggleSkillLikeThunk, toggleSkillLikeByUserIdThunk } from '@/entities/user/model-v2';
 import type { User } from '@/entities/user/model/types/types';
 import type { Skill } from '@/entities/skill/model/types/types';
 import type { TagCategory } from '@/shared/ui/Tag';
@@ -25,7 +27,8 @@ import styles from './SkillPage.module.scss';
 
 export default function SkillPage() {
   const { id: userId } = useParams<{ id: string }>();
-  const { auth } = useAuth();
+  const { isAuthenticated, user: currentUser } = useAuthV2();
+  const dispatch = useAppDispatch();
 
   // Состояние модального окна
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +36,11 @@ export default function SkillPage() {
   // Состояние похожих пользователей
   const [similarUsers, setSimilarUsers] = useState<UserListItem[]>([]);
   const [loadingSimilar, setLoadingSimilar] = useState(false);
+
+  // Состояние лайков
+  const [likedSkills, setLikedSkills] = useState<Set<string>>(new Set());
+  const [skillLikesCount, setSkillLikesCount] = useState<Map<string, number>>(new Map());
+  const [likingInProgress, setLikingInProgress] = useState(false);
 
   // Загрузка профиля пользователя
   const { profile, skills, loading: profileLoading, error: profileError } = useUserProfile(userId);
@@ -132,6 +140,124 @@ export default function SkillPage() {
     return primarySkill?.images || [];
   }, [primarySkill]);
 
+  // Обработчики событий
+  const onShareClick = useCallback(() => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: profile?.name || 'Навык',
+          text: profile?.bio || '',
+          url: window.location.href,
+        })
+        .catch(() => {
+          navigator.clipboard.writeText(window.location.href).catch(() => {});
+        });
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href).catch(() => {});
+    }
+  }, [profile]);
+
+  // Обработчик лайка на странице навыка (есть skillId)
+  const onLikeClick = useCallback(async () => {
+    if (!isAuthenticated || !currentUser || !primarySkill || likingInProgress) {
+      console.log('Cannot like: not authenticated or already in progress');
+      return;
+    }
+
+    setLikingInProgress(true);
+
+    try {
+      const result = await dispatch(
+        toggleSkillLikeThunk({
+          userId: currentUser.id,
+          skillId: primarySkill.id,
+        })
+      ).unwrap();
+
+      // Обновляем локальное состояние лайков
+      setLikedSkills((prev) => {
+        const newSet = new Set(prev);
+
+        if (result.liked) {
+          newSet.add(primarySkill.id);
+        } else {
+          newSet.delete(primarySkill.id);
+        }
+        return newSet;
+      });
+
+      // Обновляем количество лайков
+      setSkillLikesCount((prev) => {
+        const newMap = new Map(prev);
+
+        newMap.set(primarySkill.id, result.likesCount);
+
+        return newMap;
+      });
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+    } finally {
+      setLikingInProgress(false);
+    }
+  }, [isAuthenticated, currentUser, primarySkill, dispatch, likingInProgress]);
+
+  // Обработчик лайка в карточке (только userId владельца навыка)
+  const onCardLikeClick = useCallback(
+    async (skillOwnerUserId: string) => {
+      if (!isAuthenticated || !currentUser || likingInProgress) {
+        console.log('Cannot like: not authenticated or already in progress');
+
+        return;
+      }
+
+      setLikingInProgress(true);
+
+      try {
+        const result = await dispatch(
+          toggleSkillLikeByUserIdThunk({
+            currentUserId: currentUser.id,
+            skillOwnerUserId,
+          })
+        ).unwrap();
+
+        // Обновляем локальное состояние лайков
+        setLikedSkills((prev) => {
+          const newSet = new Set(prev);
+
+          if (result.liked) {
+            newSet.add(result.skillId);
+          } else {
+            newSet.delete(result.skillId);
+          }
+          return newSet;
+        });
+
+        // Обновляем количество лайков для этого навыка
+        setSkillLikesCount((prev) => {
+          const newMap = new Map(prev);
+
+          newMap.set(result.skillId, result.likesCount);
+
+          return newMap;
+        });
+
+        // Обновляем похожих пользователей с новым количеством лайков
+        setSimilarUsers((prev) =>
+          prev.map((u) =>
+            u.primarySkillId === result.skillId
+              ? { ...u, primarySkillLikesCount: result.likesCount }
+              : u
+          )
+        );
+      } catch (error) {
+        console.error('Failed to toggle like:', error);
+      } finally {
+        setLikingInProgress(false);
+      }
+    },
+    [isAuthenticated, currentUser, dispatch, likingInProgress]
+  );
+
   // Преобразование похожих пользователей в карточки
   const similarCards: SkillCardProps[] = useMemo(() => {
     return similarUsers.map((u) => {
@@ -155,6 +281,11 @@ export default function SkillPage() {
         };
       });
 
+      const isLiked = u.primarySkillId ? likedSkills.has(u.primarySkillId) : false;
+      const likesCount = u.primarySkillId
+        ? (skillLikesCount.get(u.primarySkillId) ?? u.primarySkillLikesCount ?? 0)
+        : 0;
+
       return {
         user: {
           id: u.id,
@@ -168,41 +299,21 @@ export default function SkillPage() {
         },
         teachingSkills: teachingSkillsRefs,
         learningSkills: learningSkillsRefs,
-        isLiked: false,
-        likesCount: 0,
+        isLiked,
+        likesCount,
+        onLikeClick: () => onCardLikeClick(u.id),
       };
     });
-  }, [similarUsers, cities, subcategories]);
-
-  // Обработчики событий
-  const onShareClick = useCallback(() => {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: profile?.name || 'Навык',
-          text: profile?.bio || '',
-          url: window.location.href,
-        })
-        .catch(() => {
-          navigator.clipboard.writeText(window.location.href).catch(() => {});
-        });
-    } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href).catch(() => {});
-    }
-  }, [profile]);
-
-  const onLikeClick = useCallback(() => {
-    console.log('Like clicked');
-  }, []);
+  }, [similarUsers, cities, subcategories, likedSkills, skillLikesCount, onCardLikeClick]);
 
   const onExchangeClick = useCallback(() => {
-    if (auth.isAuthenticated) {
+    if (isAuthenticated) {
       setIsModalOpen(true);
       console.log('Exchange clicked - modal opened');
     } else {
       console.log('User not authenticated');
     }
-  }, [auth.isAuthenticated]);
+  }, [isAuthenticated]);
 
   const onMoreClick = useCallback(() => {
     console.log('More actions clicked');
@@ -212,6 +323,25 @@ export default function SkillPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [userId]);
+
+  // Инициализация количества лайков и состояния лайков из навыков
+  useEffect(() => {
+    if (!skills || skills.length === 0 || !currentUser) return;
+
+    const likesMap = new Map<string, number>();
+    const likedSet = new Set<string>();
+
+    skills.forEach((skill) => {
+      likesMap.set(skill.id, skill.likesCount || 0);
+
+      if (skill.likedByUserIds?.includes(currentUser.id)) {
+        likedSet.add(skill.id);
+      }
+    });
+
+    setSkillLikesCount(likesMap);
+    setLikedSkills(likedSet);
+  }, [skills, currentUser]);
 
   // Загрузка похожих пользователей через API
   useEffect(() => {
@@ -290,10 +420,10 @@ export default function SkillPage() {
               text={primarySkill.description}
               images={skillImages}
               variant="want"
-              isLiked={false}
-              isLikeActive={auth.isAuthenticated}
+              isLiked={likedSkills.has(primarySkill.id)}
+              isLikeActive={isAuthenticated}
               isRequestSent={false}
-              likesCount={0}
+              likesCount={skillLikesCount.get(primarySkill.id) || 0}
               onLikeClick={onLikeClick}
               onExchangeClick={onExchangeClick}
               onShareClick={onShareClick}

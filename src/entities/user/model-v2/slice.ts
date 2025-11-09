@@ -6,6 +6,7 @@ import {
   fetchUserProfileThunk,
   updateUserProfileThunk,
   toggleSkillLikeThunk,
+  toggleSkillLikeByUserIdThunk,
   fetchRecommendedUsersThunk,
   fetchPopularUsersThunk,
   fetchNewUsersThunk,
@@ -159,7 +160,7 @@ export const usersSliceV2 = createSlice({
     });
     builder.addCase(fetchUserProfileThunk.fulfilled, (state, action) => {
       state.loading = false;
-      profilesAdapter.setOne(state.profiles, action.payload);
+      profilesAdapter.setOne(state.profiles, action.payload.profile);
     });
     builder.addCase(fetchUserProfileThunk.rejected, (state, action) => {
       state.loading = false;
@@ -175,6 +176,24 @@ export const usersSliceV2 = createSlice({
     builder.addCase(toggleSkillLikeThunk.fulfilled, (state, action) => {
       const { userId, skillId, liked } = action.payload;
       const user = state.profiles.entities[userId];
+      if (user) {
+        if (liked) {
+          if (!user.likedSkillIds.includes(skillId)) {
+            user.likedSkillIds.push(skillId);
+          }
+        } else {
+          const index = user.likedSkillIds.indexOf(skillId);
+          if (index > -1) {
+            user.likedSkillIds.splice(index, 1);
+          }
+        }
+      }
+    });
+
+    // ========== toggleSkillLikeByUserIdThunk ==========
+    builder.addCase(toggleSkillLikeByUserIdThunk.fulfilled, (state, action) => {
+      const { currentUserId, skillId, liked } = action.payload;
+      const user = state.profiles.entities[currentUserId];
       if (user) {
         if (liked) {
           if (!user.likedSkillIds.includes(skillId)) {

@@ -33,6 +33,7 @@ export {
   fetchUserProfileThunk,
   updateUserProfileThunk,
   toggleSkillLikeThunk,
+  toggleSkillLikeByUserIdThunk,
   fetchRecommendedUsersThunk,
   fetchPopularUsersThunk,
   fetchNewUsersThunk,

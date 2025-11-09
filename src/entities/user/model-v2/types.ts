@@ -50,6 +50,10 @@ export interface UserListItem {
   canTeachSkills: string[]; // Массив названий навыков, которым может научить
   wantsToLearnSkills: string[]; // Массив названий навыков, которым хочет научиться
   createdAt: number; // timestamp для сортировки
+  // Информация о первом навыке для лайков
+  primarySkillId?: string; // ID первого навыка для обучения
+  primarySkillLikesCount?: number; // Количество лайков первого навыка
+  isLikedByCurrentUser?: boolean; // Лайкнул ли текущий пользователь этот навык
 }
 
 /**
@@ -74,6 +78,8 @@ export interface TeachingSkill {
   subcategoryId: string; // ID подкатегории из справочника
   images: string[]; // Массив URL изображений навыка
   createdAt: string; // Дата создания
+  likesCount: number; // Количество лайков
+  likedByUserIds: string[]; // Массив ID пользователей, которые лайкнули
 }
 
 /**
