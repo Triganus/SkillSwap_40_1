@@ -61,20 +61,36 @@ export interface UserListItemWithMatches extends UserListItem {
 }
 
 /**
- * 1.3. UserProfile
- * Полная модель пользователя для страницы профиля/навыка
+ * TeachingSkill - ОТДЕЛЬНАЯ сущность навыка (не входит в UserProfile!)
+ * Содержит ВСЕ данные о навыке, которые вводятся на 3-м шаге регистрации
+ * Связь с пользователем через userId
+ */
+export interface TeachingSkill {
+  id: string; // Уникальный ID навыка
+  userId: string; // ID пользователя-владельца
+  title: string; // Название навыка (вводится пользователем)
+  description: string; // Описание навыка (НЕ bio профиля!)
+  categoryId: string; // ID категории из справочника
+  subcategoryId: string; // ID подкатегории из справочника
+  images: string[]; // Массив URL изображений навыка
+  createdAt: string; // Дата создания
+}
+
+/**
+ * UserProfile - данные пользователя
+ * canTeachSkills и wantsToLearnSkills - только ID подкатегорий из справочника!
  */
 export interface UserProfile {
   id: string;
   name: string;
-  cityId: string; // ID города из справочника
+  cityId: string;
   age: number;
   gender: Gender;
   avatar: string | null;
-  bio: string;
-  canTeachSkillIds: string[]; // ID навыков, которым может научить
-  wantsToLearnSkills: string[]; // Названия навыков для изучения
-  likedSkillIds: string[]; // ID понравившихся навыков
+  bio: string; // Описание ПРОФИЛЯ пользователя
+  canTeachSkills: string[]; // Массив ID подкатегорий, которым может научить
+  wantsToLearnSkills: string[]; // Массив ID подкатегорий для изучения
+  likedSkillIds: string[];
 }
 
 /**

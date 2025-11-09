@@ -1,4 +1,4 @@
-import type { UserListItem, UserProfile } from '@/entities/user/model-v2';
+import type { UserListItem, UserProfile, TeachingSkill } from '@/entities/user/model-v2';
 
 /**
  * Получить список пользователей для каталога
@@ -40,7 +40,10 @@ export async function fetchUserListItems(params?: {
 /**
  * Получить профиль пользователя по ID
  */
-export async function fetchUserProfile(userId: string): Promise<UserProfile> {
+export async function fetchUserProfile(userId: string): Promise<{
+  profile: UserProfile;
+  skills: TeachingSkill[];
+}> {
   const response = await fetch(`/api/users/${userId}`);
 
   if (!response.ok) {

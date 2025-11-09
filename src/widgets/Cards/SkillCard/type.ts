@@ -1,14 +1,19 @@
 // Используем существующие типы из entities
 import type { User } from '@entities/user/model';
-import type { Skill } from '@entities/skill/model/types/types';
 import type { TagCategory } from '@/shared/ui/Tag';
 
 export type SkillCardMode = 'compact' | 'full' | 'skill-page';
 
+export interface SkillReference {
+  id: string; // ID подкатегории
+  title: string; // Название подкатегории
+  categoryId: string; // ID категории
+}
+
 export interface SkillCardProps {
   user: User;
-  teachingSkills: Skill[];
-  learningSkills: Skill[];
+  teachingSkills: SkillReference[];
+  learningSkills: SkillReference[];
   onDetailsClick?: () => void;
   onLikeClick?: () => void;
   onExchangeClick?: () => void;

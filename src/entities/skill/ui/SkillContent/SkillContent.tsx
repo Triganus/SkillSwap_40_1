@@ -68,7 +68,7 @@ export const SkillContent: React.FC<SkillContentProps> = ({
 
       <div className={styles.rightContent}>
         {images.length > 0 ? (
-          <MediaSlider items={mediaItems} mainSize={323} />
+          <MediaSlider items={mediaItems} />
         ) : (
           <div className={styles.noImages}>
             <TextUI variant="caption">Изображения не загружены</TextUI>

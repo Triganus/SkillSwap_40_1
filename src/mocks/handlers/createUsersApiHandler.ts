@@ -1,11 +1,14 @@
 import type { IRequestHandler } from '../types';
 import { delay } from 'msw';
-import type { UserListItem, UserProfile } from '@/entities/user/model-v2';
+import type { UserListItem, UserProfile, TeachingSkill } from '@/entities/user/model-v2';
 
 const GENERATED_USER_COUNT = 30; // Дополнительно генерируем 30 пользователей
 const STORAGE_KEY = 'mock_generated_users_v1'; // Ключ для localStorage
 
-let cache: { users: UserListItem[]; skillPool: Array<{ id: string; name: string }> } | null = null;
+let cache: {
+  users: UserListItem[];
+  skillPool: Array<{ id: string; name: string; categoryId: string }>;
+} | null = null;
 
 // Утилиты для генерации детерминированных случайных данных
 function mulberry32(a: number) {
@@ -44,7 +47,7 @@ function pickMany<T>(arr: T[], n: number, rnd: () => number): T[] {
 /**
  * Загружает пул навыков из локального JSON файла
  */
-async function loadSkillPool(): Promise<Array<{ id: string; name: string }>> {
+async function loadSkillPool(): Promise<Array<{ id: string; name: string; categoryId: string }>> {
   try {
     const res = await fetch('/db/subcategories.json');
 
@@ -57,8 +60,11 @@ async function loadSkillPool(): Promise<Array<{ id: string; name: string }>> {
     const data = await res.json();
 
     return (
-      data.subcategories?.map((s: { id: string; name: string }) => ({ id: s.id, name: s.name })) ||
-      []
+      data.subcategories?.map((s: { id: string; name: string; categoryId: string }) => ({
+        id: s.id,
+        name: s.name,
+        categoryId: s.categoryId,
+      })) || []
     );
   } catch (error) {
     console.error('[Mock] Error loading skill pool:', error);
@@ -415,7 +421,8 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
 
         if (!found) return Response.json({ message: 'Not found' }, { status: 404 });
 
-        return Response.json(toProfile(found));
+        const { profile, skills } = toProfile(found);
+        return Response.json({ profile, skills });
       }
 
       // /api/users (список с фильтрацией)
@@ -445,11 +452,67 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
   };
 }
 
-function toProfile(u: UserListItem): UserProfile {
+function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSkill[] } {
   const { skillPool } = cache || { skillPool: [] };
-  const skillMap = new Map(skillPool.map((s) => [s.id, s.name]));
+  const seed = mulberry32(parseInt(u.id.replace(/\D/g, ''), 10) || 42);
 
-  return {
+  const unsplashImages = [
+    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1543269664-7eef42226a21?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1511376777868-611b54f68947?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&q=80&fit=crop',
+  ];
+
+  const skillDescriptions = [
+    'Научу основам и поделюсь практическими навыками. Индивидуальный подход к каждому ученику.',
+    'Делюсь своим многолетним опытом и знаниями. Гарантирую качественное обучение.',
+    'Помогу освоить с нуля или усовершенствовать существующие навыки. Профессиональный подход.',
+    'Обучу всем тонкостям и нюансам. Практика и теория в идеальном балансе.',
+    'Передам свои знания и опыт. Доступно объясню любые сложные моменты.',
+  ];
+
+  // Создаем ОТДЕЛЬНЫЕ объекты навыков
+  const skills: TeachingSkill[] = u.canTeachSkills.map((subcategoryId, index) => {
+    const skillInfo = skillPool.find((s) => s.id === subcategoryId);
+    const images: string[] = [];
+
+    for (let i = 0; i < 5; i++) {
+      const randomIndex = Math.floor(seed() * unsplashImages.length);
+
+      images.push(unsplashImages[randomIndex]);
+    }
+
+    const descriptionIndex = Math.floor(seed() * skillDescriptions.length);
+
+    return {
+      id: `skill_${u.id}_${index}`,
+      userId: u.id,
+      title: skillInfo?.name || 'Навык',
+      description: skillDescriptions[descriptionIndex],
+      categoryId: skillInfo?.categoryId || 'other',
+      subcategoryId: subcategoryId,
+      images,
+      createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
+    };
+  });
+
+  const profile: UserProfile = {
     id: u.id,
     name: u.name,
     cityId: u.cityId,
@@ -457,8 +520,10 @@ function toProfile(u: UserListItem): UserProfile {
     gender: u.gender,
     avatar: u.avatar,
     bio: `Привет! Меня зовут ${u.name}. Я готов делиться своими знаниями и навыками.`,
-    canTeachSkillIds: u.canTeachSkills,
-    wantsToLearnSkills: u.wantsToLearnSkills.map((id) => skillMap.get(id) || id),
+    canTeachSkills: u.canTeachSkills,
+    wantsToLearnSkills: u.wantsToLearnSkills,
     likedSkillIds: [],
   };
+
+  return { profile, skills };
 }

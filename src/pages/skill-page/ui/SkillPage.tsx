@@ -10,13 +10,17 @@ import { ModalUI } from '@shared/ui/Modal';
 import { Button } from '@shared/ui/Button';
 import { useAuth } from '@app/Provider';
 import { useUserProfile } from '../hooks';
-import { getCitiesFromStore, getSubcategoriesFromStore, getCategoriesFromStore } from '@/entities/directory/lib/getFromStore';
+import {
+  getCitiesFromStore,
+  getSubcategoriesFromStore,
+  getCategoriesFromStore,
+} from '@/entities/directory/lib/getFromStore';
 import { selectSkillCards, fetchUsersWithSkillsThunk } from '@/entities/user/model-v2';
 import { useAppSelector, useAppDispatch } from '@shared/hooks/redux';
 import type { User } from '@/entities/user/model/types/types';
 import type { Skill } from '@/entities/skill/model/types/types';
 import type { TagCategory } from '@/shared/ui/Tag';
-import type { SkillCardProps } from '@widgets/Cards/SkillCard/type';
+import type { SkillCardProps, SkillReference } from '@widgets/Cards/SkillCard/type';
 import styles from './SkillPage.module.scss';
 
 export default function SkillPage() {
@@ -28,7 +32,7 @@ export default function SkillPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Загрузка профиля пользователя
-  const { profile, loading: profileLoading, error: profileError } = useUserProfile(userId);
+  const { profile, skills, loading: profileLoading, error: profileError } = useUserProfile(userId);
 
   // Загрузка пользователей для похожих предложений
   const allUsers = useAppSelector(selectSkillCards) as SkillCardProps[];
@@ -62,43 +66,52 @@ export default function SkillPage() {
   }, [profile, cities]);
 
   const teachingSkills: Skill[] = useMemo(() => {
+    if (!skills || !skills.length) return [];
+
+    return skills.map((skill) => ({
+      id: skill.id,
+      title: skill.title,
+      description: skill.description,
+      type: 'teaching' as const,
+      category: skill.categoryId as TagCategory,
+      subcategory: skill.subcategoryId,
+      images: skill.images,
+      authorId: skill.userId,
+      createdAt: skill.createdAt,
+    }));
+  }, [skills]);
+
+  const teachingSkillsForCard: SkillReference[] = useMemo(() => {
     if (!profile) return [];
 
-    return profile.canTeachSkillIds.map((skillId) => {
-      const skillInfo = subcategories.find((s) => s.id === skillId);
+    return profile.canTeachSkills.map((subcategoryId) => {
+      const subcategory = subcategories.find((s) => s.id === subcategoryId);
 
       return {
-        id: skillId,
-        title: skillInfo?.name || skillId,
-        description: profile.bio || '',
-        type: 'teaching' as const,
-        category: (skillInfo?.categoryId || 'other') as TagCategory,
-        authorId: profile.id,
-        createdAt: new Date().toISOString(),
+        id: subcategoryId,
+        title: subcategory?.name || subcategoryId,
+        categoryId: subcategory?.categoryId || 'other',
       };
     });
   }, [profile, subcategories]);
 
-  const learningSkills: Skill[] = useMemo(() => {
+  const learningSkillsForCard: SkillReference[] = useMemo(() => {
     if (!profile) return [];
 
-    return profile.wantsToLearnSkills.map((skillName, index) => {
+    return profile.wantsToLearnSkills.map((subcategoryId) => {
+      const subcategory = subcategories.find((s) => s.id === subcategoryId);
+
       return {
-        id: `learning_${index}`,
-        title: skillName,
-        description: '',
-        type: 'learning' as const,
-        category: 'other' as TagCategory,
-        authorId: profile.id,
-        createdAt: new Date().toISOString(),
+        id: subcategoryId,
+        title: subcategory?.name || subcategoryId,
+        categoryId: subcategory?.categoryId || 'other',
       };
     });
-  }, [profile]);
+  }, [profile, subcategories]);
 
   // Первый навык для отображения в деталях
   const primarySkill = teachingSkills[0] || null;
 
-  // Получаем label категории и subcategory
   const categoryLabel = useMemo(() => {
     if (!primarySkill) return '';
 
@@ -108,19 +121,23 @@ export default function SkillPage() {
   }, [primarySkill, categories]);
 
   const subcategoryLabel = useMemo(() => {
-    if (!primarySkill) return '';
+    if (!primarySkill?.subcategory) return '';
 
-    const subcategory = subcategories.find((s) => s.id === primarySkill.id);
+    const subcategory = subcategories.find((s) => s.id === primarySkill.subcategory);
 
     return subcategory?.name || '';
   }, [primarySkill, subcategories]);
+
+  const skillImages = useMemo(() => {
+    return primarySkill?.images || [];
+  }, [primarySkill]);
 
   // Похожие карточки - пользователи с похожими навыками
   const similarCards = useMemo(() => {
     if (!profile || !allUsers.length) return [];
 
-    const currentUserSkillIds = new Set(profile.canTeachSkillIds);
-    const currentUserWantsIds = new Set(profile.wantsToLearnSkills);
+    const currentUserSkillIds = new Set(profile.canTeachSkills); // ID подкатегорий
+    const currentUserWantsIds = new Set(profile.wantsToLearnSkills); // ID подкатегорий
 
     // Фильтруем пользователей, исключая текущего
     return allUsers
@@ -228,13 +245,12 @@ export default function SkillPage() {
           <SkillCard
             mode="skill-page"
             user={user}
-            teachingSkills={teachingSkills}
-            learningSkills={learningSkills}
+            teachingSkills={teachingSkillsForCard}
+            learningSkills={learningSkillsForCard}
             showDetailsButton={false}
             ariaLabel={`Карточка пользователя ${user.name}`}
             userBio={profile.bio}
             locationAndAge={user.bio}
-            subcategory={subcategoryLabel}
           />
         }
         rightContent={
@@ -243,8 +259,9 @@ export default function SkillPage() {
               title={primarySkill.title}
               category={primarySkill.category}
               categoryLabel={categoryLabel}
-              text={primarySkill.description || profile.bio}
-              images={[]}
+              subcategory={subcategoryLabel}
+              text={primarySkill.description}
+              images={skillImages}
               variant="want"
               isLiked={false}
               isLikeActive={auth.isAuthenticated}

@@ -6,6 +6,7 @@ export type {
   UserListItem,
   UserListItemWithMatches,
   UserProfile,
+  TeachingSkill,
   AuthUser,
   AuthState,
   UsersState,

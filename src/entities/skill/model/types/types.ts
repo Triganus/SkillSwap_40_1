@@ -6,7 +6,8 @@ export interface Skill {
   description: string;
   type: 'teaching' | 'learning';
   category: TagCategory;
-  // tags: string[];
+  subcategory?: string;
+  images?: string[];
   authorId: string;
   createdAt: string;
 }

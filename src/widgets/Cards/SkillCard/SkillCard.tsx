@@ -9,6 +9,7 @@ import { TitleUI } from '@/shared/ui/Title';
 import { TextUI } from '@/shared/ui/Text';
 import { LikeButtonUI } from '@/shared/ui/LikeButton';
 import { TagUI } from '@/shared/ui/Tag';
+import type { TagCategory } from '@/shared/ui/Tag';
 import { MediaSlider } from '@/shared/ui/MediaSlider';
 import { Icon } from '@/shared/ui/Icon';
 import { selectCategoryIdToName } from '@/entities/directory/model/selectors';
@@ -137,7 +138,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                     <TitleUI size="xsmall">Может научить:</TitleUI>
                     <div className={styles.skillTags} aria-label="Может научить">
                       {teachingSkills.map((skill) => (
-                        <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                        <TagUI
+                          key={skill.id}
+                          label={skill.title}
+                          category={skill.categoryId as TagCategory}
+                        />
                       ))}
                     </div>
                   </div>
@@ -148,7 +153,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                     <TitleUI size="xsmall">Хочет научиться:</TitleUI>
                     <div className={styles.skillTags} aria-label="Хочет научиться">
                       {learningSkills.map((skill) => (
-                        <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                        <TagUI
+                          key={skill.id}
+                          label={skill.title}
+                          category={skill.categoryId as TagCategory}
+                        />
                       ))}
                     </div>
                   </div>
@@ -233,7 +242,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Может научить:</TitleUI>
             <div className={styles.skillTags} aria-label="Может научить">
               {teachingSkills.map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.categoryId as TagCategory}
+                />
               ))}
             </div>
           </div>
@@ -242,7 +255,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Хочет научиться:</TitleUI>
             <div className={styles.skillTags} aria-label="Хочет научиться">
               {learningSkills.map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.categoryId as TagCategory}
+                />
               ))}
             </div>
           </div>
@@ -282,7 +299,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Может научить:</TitleUI>
             <div className={styles.skillTags} aria-label="Может научить">
               {teachingSkills.map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.categoryId as TagCategory}
+                />
               ))}
             </div>
           </div>
@@ -291,10 +312,14 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Хочет научиться:</TitleUI>
             <div className={styles.skillTags} aria-label="Хочет научиться">
               {learningSkills.slice(0, 2).map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.categoryId as TagCategory}
+                />
               ))}
               {learningSkills.length > 2 && (
-                <TagUI label={`+${learningSkills.length - 2}`} category="other" />
+                <span className={styles.moreTag}>+{learningSkills.length - 2}</span>
               )}
             </div>
           </div>
