@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Button } from '@/shared/ui/Button';
 import { Icon } from '@/shared/ui/Icon';
 import type { TDatePickerUIProps } from './TDatePickerUIProps';
@@ -49,6 +49,9 @@ export const DatePickerUI = ({
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
 
+  // состояние для клавиатурной навигации
+  const [focusedDate, setFocusedDate] = useState<Date | undefined>(undefined);
+
   // обновляем временную дату при изменении selectedDate извне
   useEffect(() => {
     setTempSelectedDate(selectedDate);
@@ -77,38 +80,113 @@ export const DatePickerUI = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // генерация 42 ячеек календаря (6 недель)
-  const generateDays = (): DayItem[] => {
+  // инициализация фокусированной даты при открытии
+  useEffect(() => {
+    if (isOpen) {
+      const initialFocus = tempSelectedDate || new Date();
+      setFocusedDate(initialFocus);
+    } else {
+      setFocusedDate(undefined);
+    }
+  }, [isOpen, tempSelectedDate]);
+
+  // клавиатурная навигация
+  useEffect(() => {
+    if (!isOpen || !focusedDate) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Если открыты дропдауны, не обрабатываем навигацию по дням
+      if (isMonthDropdownOpen || isYearDropdownOpen) return;
+
+      const newDate = new Date(focusedDate);
+
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          newDate.setDate(newDate.getDate() - 1);
+          setFocusedDate(newDate);
+          // Переключаем месяц если нужно
+          if (newDate.getMonth() !== currentMonth || newDate.getFullYear() !== currentYear) {
+            setCurrentMonth(newDate.getMonth());
+            setCurrentYear(newDate.getFullYear());
+          }
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          newDate.setDate(newDate.getDate() + 1);
+          setFocusedDate(newDate);
+          if (newDate.getMonth() !== currentMonth || newDate.getFullYear() !== currentYear) {
+            setCurrentMonth(newDate.getMonth());
+            setCurrentYear(newDate.getFullYear());
+          }
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          newDate.setDate(newDate.getDate() - 7);
+          setFocusedDate(newDate);
+          if (newDate.getMonth() !== currentMonth || newDate.getFullYear() !== currentYear) {
+            setCurrentMonth(newDate.getMonth());
+            setCurrentYear(newDate.getFullYear());
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          newDate.setDate(newDate.getDate() + 7);
+          setFocusedDate(newDate);
+          if (newDate.getMonth() !== currentMonth || newDate.getFullYear() !== currentYear) {
+            setCurrentMonth(newDate.getMonth());
+            setCurrentYear(newDate.getFullYear());
+          }
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (focusedDate <= maxDate) {
+            setTempSelectedDate(focusedDate);
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          handleCancel();
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, focusedDate, currentMonth, currentYear, isMonthDropdownOpen, isYearDropdownOpen, maxDate]);
+
+  // генерация 42 ячеек календаря (6 недель) с мемоизацией
+  const days = useMemo((): DayItem[] => {
     const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
     const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
 
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
 
-    const days: DayItem[] = [];
+    const result: DayItem[] = [];
 
     // дни предыдущего месяца
     for (let i = 0; i < adjustedFirstDay; i++) {
       const day = daysInPrevMonth - adjustedFirstDay + 1 + i;
       const date = new Date(currentYear, currentMonth - 1, day);
-      days.push({ date, isCurrent: false, disabled: date > maxDate });
+      result.push({ date, isCurrent: false, disabled: date > maxDate });
     }
 
     // дни текущего месяца
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(currentYear, currentMonth, i);
-      days.push({ date, isCurrent: true, disabled: date > maxDate });
+      result.push({ date, isCurrent: true, disabled: date > maxDate });
     }
 
     // дни следующего месяца (до 42)
-    while (days.length < 42) {
-      const day = days.length - daysInMonth - adjustedFirstDay + 1;
+    while (result.length < 42) {
+      const day = result.length - daysInMonth - adjustedFirstDay + 1;
       const date = new Date(currentYear, currentMonth + 1, day);
-      days.push({ date, isCurrent: false, disabled: date > maxDate });
+      result.push({ date, isCurrent: false, disabled: date > maxDate });
     }
 
-    return days;
-  };
+    return result;
+  }, [currentYear, currentMonth, maxDate]);
 
   const handleDateClick = (date: Date, disabled: boolean) => {
     if (disabled) return;
@@ -278,23 +356,27 @@ export const DatePickerUI = ({
 
           <div className={styles.calendarField}>
             <div className={styles.days}>
-              {generateDays().map((item, idx) => {
+              {days.map((item) => {
                 const isSelectedDay =
                   tempSelectedDate && item.date.toDateString() === tempSelectedDate.toDateString();
                 const isTodayDay = isToday(item.date);
+                const isFocusedDay = focusedDate && item.date.toDateString() === focusedDate.toDateString();
 
                 return (
                   <div
-                    key={idx}
+                    key={item.date.getTime()}
                     className={`${styles.day} ${!item.isCurrent ? styles.dayOutside : ''} ${
                       isSelectedDay ? styles.selectedDay : ''
-                    } ${isTodayDay ? styles.today : ''} ${item.disabled ? styles.disabledDay : ''}`}
+                    } ${isTodayDay ? styles.today : ''} ${item.disabled ? styles.disabledDay : ''} ${
+                      isFocusedDay ? styles.focusedDay : ''
+                    }`}
                   >
                     <button
                       type="button"
                       className={styles.dayButton}
                       disabled={item.disabled}
                       onClick={() => handleDateClick(item.date, item.disabled)}
+                      onMouseEnter={() => setFocusedDate(item.date)}
                       aria-label={`${item.date.getDate()} ${MONTHS[item.date.getMonth()]} ${item.date.getFullYear()}`}
                     >
                       {item.date.getDate()}

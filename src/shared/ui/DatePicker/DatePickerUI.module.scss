@@ -117,6 +117,7 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          pointer-events: none;
         }
 
         .chevron-button {
@@ -243,6 +244,13 @@
       &::after {
         background-color: white;
       }
+    }
+  }
+
+  .focused-day {
+    .day-button {
+      outline: 2px solid var(--color-accent, #9cd36a);
+      outline-offset: 2px;
     }
   }
 
