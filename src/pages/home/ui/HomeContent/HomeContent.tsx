@@ -56,14 +56,18 @@ export const HomeContent: React.FC<HomeContentProps> = ({
   const popularCards = useMemo(() => {
     return cards.slice(0, 3).map((card) => ({
       ...card,
-      onDetailsClick: onSkillDetailsClick ? () => onSkillDetailsClick(card.user.id) : card.onDetailsClick,
+      onDetailsClick: onSkillDetailsClick
+        ? () => onSkillDetailsClick(card.user.id)
+        : card.onDetailsClick,
     }));
   }, [cards, onSkillDetailsClick]);
 
   const newCards = useMemo(() => {
     return cards.slice(3, 6).map((card) => ({
       ...card,
-      onDetailsClick: onSkillDetailsClick ? () => onSkillDetailsClick(card.user.id) : card.onDetailsClick,
+      onDetailsClick: onSkillDetailsClick
+        ? () => onSkillDetailsClick(card.user.id)
+        : card.onDetailsClick,
     }));
   }, [cards, onSkillDetailsClick]);
 
@@ -179,9 +183,7 @@ export const HomeContent: React.FC<HomeContentProps> = ({
               teachingSkills={card.teachingSkills}
               learningSkills={card.learningSkills}
               onDetailsClick={
-                onSkillDetailsClick
-                  ? () => onSkillDetailsClick(card.user.id)
-                  : card.onDetailsClick
+                onSkillDetailsClick ? () => onSkillDetailsClick(card.user.id) : card.onDetailsClick
               }
               onLikeClick={card.onLikeClick}
               isLiked={card.isLiked}

@@ -205,26 +205,24 @@ export const SkillCard: React.FC<SkillCardProps> = ({
   if (mode === 'skill-page') {
     return (
       <article
-        className={styles.card}
+        className={`${styles.card} ${styles.cardSkillPage}`}
         aria-label={ariaLabel || `Карточка пользователя ${user.name}`}
       >
-        {/* Большое фото профиля сверху */}
-        <div className={styles.skillPageAvatar}>
+        {/* Аватар и имя в одной строке */}
+        <div className={styles.skillPageUserInfo}>
           <AvatarUI
             src={user.avatar || '/default-avatar.png'}
             alt={`Аватар пользователя ${user.name}`}
-            size={120}
+            size={100}
           />
-        </div>
-
-        {/* Имя, город и возраст */}
-        <div className={styles.skillPageHeader}>
-          <TitleUI size="medium">{user.name}</TitleUI>
-          {locationAndAge && (
-            <TextUI variant="body" color="primary">
-              {locationAndAge}
-            </TextUI>
-          )}
+          <div className={styles.skillPageUserDetails}>
+            <TitleUI size="medium">{user.name}</TitleUI>
+            {locationAndAge && (
+              <TextUI variant="caption" color="primary">
+                {locationAndAge}
+              </TextUI>
+            )}
+          </div>
         </div>
 
         {/* Биография пользователя */}
