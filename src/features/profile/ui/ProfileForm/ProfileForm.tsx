@@ -39,7 +39,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
     genders as Array<{ id: string; name: string }>
   );
 
-
   const [editingFields, setEditingFields] = useState({
     email: false,
     name: false,

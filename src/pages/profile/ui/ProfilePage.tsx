@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import type { ProfileFormValues } from '@/features/profile/ui/ProfileForm/types';
 import styles from './ProfilePage.module.scss';
 
-
 // import { Link } from 'react-router-dom';
 // import { useAuthV2 } from '@app/Provider';
 //
@@ -27,7 +26,6 @@ import styles from './ProfilePage.module.scss';
 //     </div>
 //   );
 // }
-
 
 export default function ProfilePage() {
   const initialUserData = useMemo(
