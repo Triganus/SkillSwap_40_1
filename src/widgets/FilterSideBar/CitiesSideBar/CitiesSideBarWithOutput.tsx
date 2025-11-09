@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { CitiesSideBar } from './CitiesSideBar';
 import type { TCitiesSideBarProps } from './TCitiesSideBarProps';
 
-export const CitiesSideBarWithOutput = (args: TCitiesSideBarProps & { defaultSelected?: string[] }) => {
+export const CitiesSideBarWithOutput = (
+  args: TCitiesSideBarProps & { defaultSelected?: string[] }
+) => {
   const [selected, setSelected] = useState<string[]>(args.defaultSelected ?? args.value ?? []);
 
   return (

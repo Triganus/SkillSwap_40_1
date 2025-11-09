@@ -31,5 +31,7 @@ export const WithOutputBelow: Story = {
     cities: SAMPLE,
     value: [],
   },
-  render: (args) => <CitiesSideBarWithOutput {...args} defaultSelected={['city_kzn', 'city_spb']} />,
+  render: (args) => (
+    <CitiesSideBarWithOutput {...args} defaultSelected={['city_kzn', 'city_spb']} />
+  ),
 };
