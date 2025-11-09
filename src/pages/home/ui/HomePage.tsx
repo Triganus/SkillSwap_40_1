@@ -120,6 +120,14 @@ export default function HomePage() {
     navigate('/new-skills');
   }, [navigate]);
 
+  // Обработчик клика на "Подробнее" - переход на страницу навыка
+  const handleSkillDetailsClick = useCallback(
+    (skillId: string) => {
+      navigate(`/skill/${skillId}`);
+    },
+    [navigate]
+  );
+
   // Обработчик для бесконечного скролла рекомендованных
   const handleLoadMoreRecommended = useCallback(() => {
     if (!hasMoreRecommended || loadingUsers) {
@@ -169,6 +177,7 @@ export default function HomePage() {
             hasActiveFilters={hasActiveFilters}
             onSortChange={handleSortChange}
             onRemoveFilter={removeFilter}
+            onSkillDetailsClick={handleSkillDetailsClick}
           />
         </section>
       </div>
@@ -191,6 +200,7 @@ export default function HomePage() {
           onLoadMore={handleLoadMoreRecommended}
           onViewAllPopular={handleViewAllPopular}
           onViewAllNew={handleViewAllNew}
+          onSkillDetailsClick={handleSkillDetailsClick}
         />
       </section>
     </div>

@@ -11,7 +11,10 @@ import {
 /**
  * Утилита для преобразования UserListItem в SkillCardProps
  */
-export function userListItemToSkillCard(userItem: UserListItem): SkillCardProps {
+export function userListItemToSkillCard(
+  userItem: UserListItem,
+  onDetailsClick?: (skillId: string) => void
+): SkillCardProps {
   const subcategories = getSubcategoriesFromStore();
   const cities = getCitiesFromStore();
 
@@ -67,7 +70,10 @@ export function userListItemToSkillCard(userItem: UserListItem): SkillCardProps 
     user,
     teachingSkills,
     learningSkills,
-    onDetailsClick: () => console.log(`Details clicked for ${userItem.name}`),
+    onDetailsClick:
+      onDetailsClick && teachingSkills.length > 0
+        ? () => onDetailsClick(teachingSkills[0].id)
+        : undefined,
     onLikeClick: () => console.log(`Like clicked for ${userItem.name}`),
     isLiked: false,
   };

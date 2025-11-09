@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { SkillCardProps } from '@/widgets/Cards/SkillCard';
 import { SkillCard } from '@/widgets/Cards/SkillCard';
 import { CardSectionUI } from '@shared/ui/CardSection';
@@ -26,6 +26,8 @@ interface HomeContentProps {
   // Обычный режим
   onViewAllPopular?: () => void;
   onViewAllNew?: () => void;
+  // Навигация на страницу навыка
+  onSkillDetailsClick?: (skillId: string) => void;
 }
 
 export const HomeContent: React.FC<HomeContentProps> = ({
@@ -42,12 +44,34 @@ export const HomeContent: React.FC<HomeContentProps> = ({
   onRemoveFilter,
   onViewAllPopular,
   onViewAllNew,
+  onSkillDetailsClick,
 }) => {
   const handleSortClick = useCallback(() => {
     if (onSortChange) {
       onSortChange(sortOrder === 'newest' ? 'oldest' : 'newest');
     }
   }, [sortOrder, onSortChange]);
+
+  // Подготавливаем карточки для обычного режима (всегда вызываем хуки)
+  const popularCards = useMemo(() => {
+    return cards.slice(0, 3).map((card) => ({
+      ...card,
+      onDetailsClick:
+        onSkillDetailsClick && card.teachingSkills.length > 0
+          ? () => onSkillDetailsClick(card.teachingSkills[0].id)
+          : card.onDetailsClick,
+    }));
+  }, [cards, onSkillDetailsClick]);
+
+  const newCards = useMemo(() => {
+    return cards.slice(3, 6).map((card) => ({
+      ...card,
+      onDetailsClick:
+        onSkillDetailsClick && card.teachingSkills.length > 0
+          ? () => onSkillDetailsClick(card.teachingSkills[0].id)
+          : card.onDetailsClick,
+    }));
+  }, [cards, onSkillDetailsClick]);
 
   // Показываем большой прелоадер только при первой загрузке (когда нет карточек)
   if (isLoading && cards.length === 0) {
@@ -100,7 +124,11 @@ export const HomeContent: React.FC<HomeContentProps> = ({
                 user={card.user}
                 teachingSkills={card.teachingSkills}
                 learningSkills={card.learningSkills}
-                onDetailsClick={card.onDetailsClick}
+                onDetailsClick={
+                  onSkillDetailsClick && card.teachingSkills.length > 0
+                    ? () => onSkillDetailsClick(card.teachingSkills[0].id)
+                    : card.onDetailsClick
+                }
                 onLikeClick={card.onLikeClick}
                 isLiked={card.isLiked}
               />
@@ -112,9 +140,6 @@ export const HomeContent: React.FC<HomeContentProps> = ({
   }
 
   // Обычный режим
-  const popularCards = cards.slice(0, 3);
-  const newCards = cards.slice(3, 6);
-
   return (
     <>
       {/* Блок "Популярное" */}
@@ -159,7 +184,11 @@ export const HomeContent: React.FC<HomeContentProps> = ({
               user={card.user}
               teachingSkills={card.teachingSkills}
               learningSkills={card.learningSkills}
-              onDetailsClick={card.onDetailsClick}
+              onDetailsClick={
+                onSkillDetailsClick && card.teachingSkills.length > 0
+                  ? () => onSkillDetailsClick(card.teachingSkills[0].id)
+                  : card.onDetailsClick
+              }
               onLikeClick={card.onLikeClick}
               isLiked={card.isLiked}
             />
