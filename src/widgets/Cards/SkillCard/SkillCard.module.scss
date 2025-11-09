@@ -189,3 +189,25 @@
   padding: 16px 24px;
   font-size: var(--fs-body, 16px);
 }
+
+/* Режим для страницы навыка */
+.skill-page-avatar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: var(--space-4, 16px);
+}
+
+.skill-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+  margin-bottom: var(--space-4, 16px);
+  text-align: left;
+  align-items: flex-start;
+}
+
+.skill-page-bio {
+  margin-bottom: var(--space-5, 20px);
+  text-align: left;
+}

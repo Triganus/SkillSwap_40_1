@@ -21,6 +21,7 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
   isLiked = false,
   isLikeActive = false,
   isRequestSent = false,
+  likesCount = 0,
   onLikeClick,
   onExchangeClick,
   onShareClick,
@@ -59,6 +60,8 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
               isActive={isLiked}
               onClick={onLikeClick}
               ariaLabel={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+              likesCount={likesCount}
+              showCount={true}
             />
           )}
           {onShareClick && (

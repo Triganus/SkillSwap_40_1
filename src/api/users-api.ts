@@ -27,7 +27,7 @@ export const fetchUsers = async (): Promise<User[]> => {
       id: dbUser.id,
       name: dbUser.name,
       email: dbUser.contacts?.email || '',
-      avatar: dbUser.avatar_image,
+      avatar: normalizeAvatarPath(dbUser.avatar_image),
       gender: dbUser.gender,
       bio:
         dbUser.location && dbUser.age
@@ -120,7 +120,7 @@ export const fetchUsersAsSkillCards = async (
         id: dbUser.id,
         name: dbUser.name,
         email: dbUser.contacts?.email || '',
-        avatar: dbUser.avatar_image,
+        avatar: normalizeAvatarPath(dbUser.avatar_image),
         gender: dbUser.gender,
         bio,
         skills: [],
@@ -163,4 +163,10 @@ function getAgeWord(age: number): string {
   }
 
   return 'лет';
+}
+
+// Вспомогательная функция для нормализации пути к аватару
+function normalizeAvatarPath(avatarPath: string | undefined): string | undefined {
+  if (!avatarPath) return undefined;
+  return avatarPath.startsWith('/') ? avatarPath : `/${avatarPath}`;
 }

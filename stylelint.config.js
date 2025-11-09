@@ -2,6 +2,12 @@ export default {
   extends: ['stylelint-config-standard'],
   plugins: ['stylelint-order'],
   rules: {
+    'at-rule-no-unknown': [
+      true,
+      {
+        ignoreAtRules: ['extend'],
+      },
+    ],
     'no-descending-specificity': null,
     'order/order': ['custom-properties', 'declarations'],
     'declaration-block-single-line-max-declarations': 1,

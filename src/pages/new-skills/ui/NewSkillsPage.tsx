@@ -33,14 +33,30 @@ export default function NewSkillsPage() {
     }
   }, [dispatch, usersData.length, loading]);
 
+  // Обновляем обработчики для карточек с правильной навигацией
+  const cardsWithNavigation = useMemo(() => {
+    return usersData.map((card) => ({
+      ...card,
+      onDetailsClick: () => {
+        const firstSkill = card.teachingSkills[0];
+        if (firstSkill) {
+          console.log('[NewSkillsPage] Navigating to skill:', firstSkill.id);
+          navigate(`/skill/${firstSkill.id}`);
+        } else {
+          console.warn('[NewSkillsPage] No teaching skills found for user:', card.user.name);
+        }
+      },
+    }));
+  }, [usersData, navigate]);
+
   // Фильтруем новые карточки (сортируем по дате создания пользователя)
   const sortedNewCards = useMemo(() => {
-    return [...usersData].sort((a, b) => {
+    return [...cardsWithNavigation].sort((a, b) => {
       const dateA = new Date(a.user.createdAt || 0).getTime();
       const dateB = new Date(b.user.createdAt || 0).getTime();
       return dateB - dateA; // Новые первыми
     });
-  }, [usersData]);
+  }, [cardsWithNavigation]);
 
   // Обновляем hasMore при изменении данных
   useEffect(() => {

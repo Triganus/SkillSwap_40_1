@@ -69,6 +69,8 @@ export function Slider<T>({
         slidesPerView={slidesPerView as never}
         spaceBetween={spaceBetween}
         className={styles.swiper}
+        allowTouchMove={true}
+        touchEventsTarget="container"
       >
         {data.map((item, index) => (
           <SwiperSlide key={index} className={styles.slide}>

@@ -4,4 +4,6 @@ export interface TLikeButtonUIProps {
   ariaLabel?: string;
   disabled?: boolean;
   className?: string;
+  likesCount?: number; // Счетчик лайков
+  showCount?: boolean; // Показывать ли счетчик
 }

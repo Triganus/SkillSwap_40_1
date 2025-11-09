@@ -1,6 +1,6 @@
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: var(--columns-template, 1fr 1fr);
   gap: var(--gap, 24px);
   width: 100%;
   height: var(--min-height, auto);
@@ -11,7 +11,7 @@
 .column {
   background-color: var(--column-bg);
   padding: var(--column-padding, 24px);
-  border-radius: var(--radius-m);
+  border-radius: var(--column-radius, var(--radius-m));
   display: flex;
   flex-direction: column;
   justify-content: var(--column-justify, flex-start);
@@ -19,11 +19,17 @@
 }
 
 .column-left {
-  composes: column;
+  @extend .column;
+
+  background-color: var(--left-column-bg, var(--column-bg));
+  padding: var(--left-column-padding, var(--column-padding, 24px));
 }
 
 .column-right {
-  composes: column;
+  @extend .column;
+
+  background-color: var(--right-column-bg, var(--column-bg));
+  padding: var(--right-column-padding, var(--column-padding, 24px));
 }
 
 @media (width <= 768px) {
