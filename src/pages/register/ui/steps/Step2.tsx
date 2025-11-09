@@ -8,6 +8,7 @@ import {
   Dropdown,
   UserAvatarUpload,
   DatePickerUI,
+  Icon,
 } from '@shared/ui';
 import type { UserAvatarUploadHandle } from '@shared/ui';
 import { InfoBlock } from '@features/auth';
@@ -25,7 +26,7 @@ import type { RegisterStep2Values } from '@features/registration/hooks/useRegist
 import type { TagCategory } from '@shared/ui/Tag';
 import profileInfoImage from '@shared/assets/images/user-info.svg';
 import styles from './Step2.module.scss';
-import { parseDateFromString, formatDateToString } from '../../lib/dateUtils';
+import { parseDateFromString, formatDateToString } from '@/shared/lib/dateUtils';
 
 export default function Step2() {
   const navigate = useNavigate();
@@ -136,7 +137,15 @@ export default function Step2() {
           diameter={64}
           ariaLabel="Выбрать аватар"
           initialSrc={data.step2?.avatarDataUrl ?? undefined}
-        />
+        >
+          <Icon
+            name="add"
+            size={16}
+            title="Добавить"
+            className={styles.badgeIcon}
+            stroke="currentColor"
+          />
+        </UserAvatarUpload>
       </div>
 
       <div className={styles.field}>
