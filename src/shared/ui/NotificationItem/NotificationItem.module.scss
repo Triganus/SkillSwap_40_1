@@ -6,17 +6,17 @@
   color: #253017;
 }
 
-.newItem {
+.new-item {
   .title {
     color: #253017;
   }
 
   .description {
-    color: rgba(37, 48, 23, 0.68);
+    color: rgb(37 48 23 / 68%);
   }
 
-  .metaText {
-    color: rgba(37, 48, 23, 0.6);
+  .meta-text {
+    color: rgb(37 48 23 / 60%);
   }
 
   .icon {
@@ -26,23 +26,23 @@
 
 .viewed {
   .title {
-    color: rgba(37, 48, 23, 0.65);
+    color: rgb(37 48 23 / 65%);
   }
 
   .description {
-    color: rgba(105, 115, 93, 0.75);
+    color: rgb(105 115 93 / 75%);
   }
 
-  .metaText {
-    color: rgba(37, 48, 23, 0.45);
+  .meta-text {
+    color: rgb(37 48 23 / 45%);
   }
 
   .icon {
-    color: rgba(37, 48, 23, 0.65);
+    color: rgb(37 48 23 / 65%);
   }
 }
 
-.topRow {
+.top-row {
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -90,20 +90,20 @@
   white-space: nowrap;
 }
 
-.metaText {
+.meta-text {
   font-size: 14px;
   font-weight: 500;
   color: #253017;
 }
 
-.ctaRow {
+.cta-row {
   display: flex;
   align-items: center;
   gap: 16px;
   padding-left: 52px;
 }
 
-.ctaButton {
+.cta-button {
   min-width: 140px;
   min-height: 44px;
   padding: 0 28px;

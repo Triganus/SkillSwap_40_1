@@ -201,10 +201,7 @@ export const viewNotification = createAsyncThunk(
 
 export const viewAllNotifications = createAsyncThunk(
   'notifications/viewAllNotifications',
-  async (
-    { newNotifications }: { newNotifications: INotification[] },
-    { rejectWithValue }
-  ) => {
+  async ({ newNotifications }: { newNotifications: INotification[] }, { rejectWithValue }) => {
     try {
       if (!Array.isArray(newNotifications)) {
         throw new Error('Некорректный формат уведомлений');
@@ -233,8 +230,7 @@ export const removeViewedNotifications = createAsyncThunk(
       // Возвращаем список ID, которые нужно удалить
       return viewedNotifications.map((notification) => notification.id);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Не удалось удалить уведомления';
+      const message = error instanceof Error ? error.message : 'Не удалось удалить уведомления';
       return rejectWithValue(message);
     }
   }
@@ -329,7 +325,9 @@ const notificationsSlice = createSlice({
       .addCase(removeViewedNotifications.fulfilled, (state, action) => {
         state.loading = false;
         const idsToRemove = new Set(action.payload);
-        state.data.viewed = state.data.viewed.filter((notification) => !idsToRemove.has(notification.id));
+        state.data.viewed = state.data.viewed.filter(
+          (notification) => !idsToRemove.has(notification.id)
+        );
       })
       .addCase(removeViewedNotifications.rejected, (state, action) => {
         state.loading = false;

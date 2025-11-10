@@ -71,7 +71,6 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ anchorRef, o
   return (
     <div ref={menuRef} className={styles.menu} role="dialog" aria-label="Уведомления">
       <section className={`${styles.section} ${styles.sectionNew}`}>
-        
         <div className={styles.sectionHeader}>
           <div className={styles.sectionTitleGroup}>
             <span className={styles.title}>Новые уведомления</span>
@@ -129,4 +128,3 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ anchorRef, o
     </div>
   );
 };
-

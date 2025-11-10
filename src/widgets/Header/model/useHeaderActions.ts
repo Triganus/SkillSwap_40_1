@@ -24,7 +24,11 @@ export function useHeaderActions({
   const { isAuthenticated } = useAuthV2();
   const navigate = useNavigate();
   const hasUnread = (unreadCount ?? 0) > 0;
-  const badgeContent = hasUnread ? (unreadCount && unreadCount > 9 ? '9+' : String(unreadCount)) : undefined;
+  const badgeContent = hasUnread
+    ? unreadCount && unreadCount > 9
+      ? '9+'
+      : String(unreadCount)
+    : undefined;
 
   return useMemo<ActionItem[]>(() => {
     const common: ActionItem[] = [
@@ -73,5 +77,12 @@ export function useHeaderActions({
     return [...common, ...authedExtra];
     // navigate из useNavigate стабильный, но ESLint требует его в deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, hasUnread, unreadCount, onNotificationsClick, notificationButtonRef, badgeContent]);
+  }, [
+    isAuthenticated,
+    hasUnread,
+    unreadCount,
+    onNotificationsClick,
+    notificationButtonRef,
+    badgeContent,
+  ]);
 }

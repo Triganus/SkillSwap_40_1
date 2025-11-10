@@ -164,52 +164,52 @@ export const HeaderWidget: React.FC = () => {
   return (
     <>
       <header className={classes}>
-      <nav className={cls.nav} aria-label="Верхняя панель навигации">
-        <div className={cls.left}>
-          <div className={cls.logo}>
-            <LogoUI />
+        <nav className={cls.nav} aria-label="Верхняя панель навигации">
+          <div className={cls.left}>
+            <div className={cls.logo}>
+              <LogoUI />
+            </div>
+            <div className={cls.menu}>
+              <NavMenu orientation="row" items={navItems} />
+            </div>
           </div>
-          <div className={cls.menu}>
-            <NavMenu orientation="row" items={navItems} />
+          <div className={cls.center}>
+            <SearchUI
+              placeholder="Искать навык"
+              prefix={<Icon name="search" size={24} title="Поиск" />}
+              containerProps={{ style: { width: '100%' } }}
+              value={searchValue}
+              onChange={handleChange}
+            />
           </div>
-        </div>
-        <div className={cls.center}>
-          <SearchUI
-            placeholder="Искать навык"
-            prefix={<Icon name="search" size={24} title="Поиск" />}
-            containerProps={{ style: { width: '100%' } }}
-            value={searchValue}
-            onChange={handleChange}
-          />
-        </div>
-        <div className={cls.right}>
-          <div className={cls.actions}>
-            <Actions items={items} />
-            {isNotificationsOpen && isAuthenticated && (
-              <NotificationMenu
-                anchorRef={notificationButtonRef}
-                onClose={() => setNotificationsOpen(false)}
-              />
-            )}
+          <div className={cls.right}>
+            <div className={cls.actions}>
+              <Actions items={items} />
+              {isNotificationsOpen && isAuthenticated && (
+                <NotificationMenu
+                  anchorRef={notificationButtonRef}
+                  onClose={() => setNotificationsOpen(false)}
+                />
+              )}
+            </div>
+            <div className={cls.user}>
+              <HeaderUserBlock />
+            </div>
           </div>
-          <div className={cls.user}>
-            <HeaderUserBlock />
-          </div>
-        </div>
-      </nav>
-      <SkillsPopup
-        isOpen={isSkillsPopupOpen}
-        onClose={() => setIsSkillsPopupOpen(false)}
-        buttonRef={skillsButtonRef}
-      />
-    </header>
-    {isAuthenticated && (
-      <NotificationToastList
-        notifications={newNotifications}
-        onNotificationClick={handleToastClick}
-        onNotificationDismiss={handleToastDismiss}
-      />
-    )}
-  </>
+        </nav>
+        <SkillsPopup
+          isOpen={isSkillsPopupOpen}
+          onClose={() => setIsSkillsPopupOpen(false)}
+          buttonRef={skillsButtonRef}
+        />
+      </header>
+      {isAuthenticated && (
+        <NotificationToastList
+          notifications={newNotifications}
+          onNotificationClick={handleToastClick}
+          onNotificationDismiss={handleToastDismiss}
+        />
+      )}
+    </>
   );
 };

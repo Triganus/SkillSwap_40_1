@@ -46,4 +46,3 @@ export const useNotificationsPolling = ({
 };
 
 export default useNotificationsPolling;
-

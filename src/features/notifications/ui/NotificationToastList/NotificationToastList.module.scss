@@ -18,8 +18,8 @@
   padding: 14px 16px 14px 20px;
   border-radius: 18px;
   background: linear-gradient(180deg, #ecf6e4 0%, #e2f0d7 100%);
-  border: 1px solid rgba(90, 131, 42, 0.25);
-  box-shadow: 0 18px 36px rgba(28, 45, 64, 0.16);
+  border: 1px solid rgb(90 131 42 / 25%);
+  box-shadow: 0 18px 36px rgb(28 45 64 / 16%);
 }
 
 .close {
@@ -33,13 +33,13 @@
   cursor: pointer;
   padding: 0;
 
-  &:hover .closeIcon::before,
-  &:hover .closeIcon::after {
-    background: rgba(37, 48, 23, 0.8);
+  &:hover .close-icon::before,
+  &:hover .close-icon::after {
+    background: rgb(37 48 23 / 80%);
   }
 }
 
-.closeIcon {
+.close-icon {
   position: relative;
   width: 16px;
   height: 16px;
@@ -104,13 +104,16 @@
   color: #253017;
   background: #ffffff;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(90, 131, 42, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 10px 20px rgb(90 131 42 / 18%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
   opacity: 0;
   pointer-events: none;
 
   &:hover {
-    box-shadow: 0 12px 24px rgba(90, 131, 42, 0.22);
+    box-shadow: 0 12px 24px rgb(90 131 42 / 22%);
   }
 
   &:active {
@@ -122,4 +125,3 @@
   opacity: 1;
   pointer-events: auto;
 }
-

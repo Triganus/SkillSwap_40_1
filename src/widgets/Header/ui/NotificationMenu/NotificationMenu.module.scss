@@ -12,9 +12,9 @@
   border-radius: 32px;
   background: #ffffff;
   box-shadow:
-    0 32px 72px rgba(28, 45, 64, 0.16),
-    0 14px 36px rgba(28, 45, 64, 0.12);
-  border: 1px solid rgba(28, 45, 64, 0.08);
+    0 32px 72px rgb(28 45 64 / 16%),
+    0 14px 36px rgb(28 45 64 / 12%);
+  border: 1px solid rgb(28 45 64 / 8%);
   z-index: 200;
   overflow: auto;
 
@@ -26,10 +26,10 @@
     width: 20px;
     height: 20px;
     background: #ffffff;
-    border-left: 1px solid rgba(28, 45, 64, 0.08);
-    border-top: 1px solid rgba(28, 45, 64, 0.08);
+    border-left: 1px solid rgb(28 45 64 / 8%);
+    border-top: 1px solid rgb(28 45 64 / 8%);
     transform: rotate(45deg);
-    box-shadow: -6px -6px 20px rgba(28, 45, 64, 0.08);
+    box-shadow: -6px -6px 20px rgb(28 45 64 / 8%);
   }
 }
 
@@ -39,11 +39,11 @@
   gap: 20px;
 }
 
-.sectionNew {
+.section-new {
   gap: 24px;
 }
 
-.closeButton {
+.close-button {
   position: absolute;
   top: 16px;
   right: 16px;
@@ -53,7 +53,9 @@
   border-radius: 16px;
   background: transparent;
   cursor: pointer;
-  transition: background-color 0.2s ease, opacity 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
 
   &::before,
   &::after {
@@ -78,7 +80,7 @@
 
   &:hover,
   &:focus-visible {
-    background-color: rgba(27, 31, 39, 0.08);
+    background-color: rgb(27 31 39 / 8%);
     outline: none;
   }
 
@@ -87,14 +89,14 @@
   }
 }
 
-.sectionHeader {
+.section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.sectionTitleGroup {
+.section-title-group {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -127,12 +129,12 @@
   }
 
   &:disabled {
-    color: rgba(27, 31, 39, 0.3);
+    color: rgb(27 31 39 / 30%);
     cursor: default;
   }
 }
 
-.sectionBody {
+.section-body {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -142,14 +144,14 @@
   padding: 32px 0;
   text-align: center;
   font-size: 14px;
-  color: rgba(27, 31, 39, 0.6);
+  color: rgb(27 31 39 / 60%);
 }
 
 .error {
   margin-top: 4px;
   padding: 12px 14px;
   border-radius: 16px;
-  background: rgba(229, 57, 53, 0.12);
+  background: rgb(229 57 53 / 12%);
   color: #b71c1c;
   font-size: 13px;
   line-height: 1.4;
@@ -157,7 +159,6 @@
 
 .divider {
   height: 1px;
-  background: rgba(28, 45, 64, 0.08);
+  background: rgb(28 45 64 / 8%);
   margin: 0;
 }
-

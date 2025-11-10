@@ -56,4 +56,3 @@ export const NotificationToastList = memo(
 );
 
 NotificationToastList.displayName = 'NotificationToastList';
-
