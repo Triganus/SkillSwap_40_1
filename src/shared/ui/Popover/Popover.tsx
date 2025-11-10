@@ -10,7 +10,12 @@ interface PopoverProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export const Popover: React.FC<PopoverProps> = ({ trigger, content, isOpen: controlledIsOpen, onOpenChange }) => {
+export const Popover: React.FC<PopoverProps> = ({
+  trigger,
+  content,
+  isOpen: controlledIsOpen,
+  onOpenChange,
+}) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isControlled = controlledIsOpen !== undefined;
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
@@ -56,7 +61,7 @@ export const Popover: React.FC<PopoverProps> = ({ trigger, content, isOpen: cont
   }>({
     top: 0,
     left: null,
-    right: null
+    right: null,
   });
 
   useEffect(() => {
