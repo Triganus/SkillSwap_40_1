@@ -15,8 +15,9 @@ async function enableMocking() {
   if (isStorybook) return;
 
   // Включаем MSW если явно не выключен через import.meta.env
-  const shouldEnableMSW = import.meta.env.VITE_ENABLE_MSW !== 'false' && import.meta.env.MODE === 'development';
-  
+  const shouldEnableMSW =
+    import.meta.env.VITE_ENABLE_MSW !== 'false' && import.meta.env.MODE === 'development';
+
   if (shouldEnableMSW) {
     try {
       console.time('msw:import');
