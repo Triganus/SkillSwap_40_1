@@ -5,10 +5,11 @@ import type { JSX } from 'react';
 export const TitleUI: React.FC<TTitleUIProps> = ({
   children,
   size = 'medium',
+  color,
   id,
   className: customClassName,
 }) => {
-  const className = `${styles.title} ${styles[size]} ${customClassName || ''}`.trim();
+  let className = `${styles.title} ${styles[size]} ${customClassName || ''}`.trim();
 
   const getTeg = () => {
     switch (size) {
@@ -26,6 +27,10 @@ export const TitleUI: React.FC<TTitleUIProps> = ({
   };
 
   const Tag = getTeg() as keyof JSX.IntrinsicElements;
+
+  if (color && size === 'xsmall') {
+    className += ` ${styles[color]}`;
+  }
 
   return (
     <Tag className={className} id={id}>
