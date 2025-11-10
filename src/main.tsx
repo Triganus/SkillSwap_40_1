@@ -14,7 +14,11 @@ async function enableMocking() {
     (location.pathname === '/iframe.html' || location.pathname.startsWith('/storybook'));
   if (isStorybook) return;
 
-  if (__ENABLE_MSW__) {
+  // Включаем MSW если явно не выключен через import.meta.env
+  const shouldEnableMSW =
+    import.meta.env.VITE_ENABLE_MSW !== 'false' && import.meta.env.MODE === 'development';
+
+  if (shouldEnableMSW) {
     try {
       console.time('msw:import');
 
