@@ -300,8 +300,10 @@ function generateAdditionalUsers(
     const age = 18 + Math.floor(seed() * 35);
     const createdAt = baseDate + Math.floor(seed() * 1000 * 60 * 60 * 24 * 180); // последние 180 дней от baseDate
     const avatarSeed = Math.floor(seed() * 10000);
-    const genderParam = gender === 'male' ? 'men' : 'women';
-    const avatar = `https://randomuser.me/api/portraits/${genderParam}/${avatarSeed % 100}.jpg`;
+    const genderPrefix = gender === 'male' ? 'male' : 'female';
+    // Используем модуль 50 для циклического переиспользования аватаров
+    const avatarIndex = String(avatarSeed % 50).padStart(2, '0');
+    const avatar = `/src/mocks/avatars/${genderPrefix}-${avatarIndex}.jpg`;
 
     const canTeachSkills = pickMany(skillPool, 1 + Math.floor(seed() * 3), seed).map((s) => s.id); // ✅ ID
     const wantsToLearnSkills = pickMany(
@@ -665,27 +667,27 @@ function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSki
   const { skillPool } = cache || { skillPool: [] };
   const seed = mulberry32(parseInt(u.id.replace(/\D/g, ''), 10) || 42);
 
-  const unsplashImages = [
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1543269664-7eef42226a21?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1511376777868-611b54f68947?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&q=80&fit=crop',
-    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&q=80&fit=crop',
+  const localImages = [
+    '/src/mocks/images/image-01.jpg',
+    '/src/mocks/images/image-02.jpg',
+    '/src/mocks/images/image-03.jpg',
+    '/src/mocks/images/image-04.jpg',
+    '/src/mocks/images/image-05.jpg',
+    '/src/mocks/images/image-06.jpg',
+    '/src/mocks/images/image-07.jpg',
+    '/src/mocks/images/image-08.jpg',
+    '/src/mocks/images/image-09.jpg',
+    '/src/mocks/images/image-10.jpg',
+    '/src/mocks/images/image-11.jpg',
+    '/src/mocks/images/image-12.jpg',
+    '/src/mocks/images/image-13.jpg',
+    '/src/mocks/images/image-14.jpg',
+    '/src/mocks/images/image-15.jpg',
+    '/src/mocks/images/image-16.jpg',
+    '/src/mocks/images/image-17.jpg',
+    '/src/mocks/images/image-18.jpg',
+    '/src/mocks/images/image-19.jpg',
+    '/src/mocks/images/image-20.jpg',
   ];
 
   const skillDescriptions = [
@@ -702,9 +704,9 @@ function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSki
     const images: string[] = [];
 
     for (let i = 0; i < 5; i++) {
-      const randomIndex = Math.floor(seed() * unsplashImages.length);
+      const randomIndex = Math.floor(seed() * localImages.length);
 
-      images.push(unsplashImages[randomIndex]);
+      images.push(localImages[randomIndex]);
     }
 
     const descriptionIndex = Math.floor(seed() * skillDescriptions.length);
