@@ -42,6 +42,17 @@
   flex: 1 1 auto;
 }
 
+.modal-icon {
+  fill: #fff;
+  stroke: #253017;
+}
+
+.modal-text {
+  text-align: center;
+  color: var(--color-text, #253017);
+  margin: 0;
+}
+
 .main-content {
   display: flex;
   gap: var(--space-6);

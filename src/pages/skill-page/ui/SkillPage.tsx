@@ -7,8 +7,8 @@ import { TextUI } from '@shared/ui/Text';
 import { TwoColumnLayout } from '@shared/ui/TwoColumnLayout';
 import { SkillDetails } from '@entities/skill/ui/SkillDetails';
 import { ModalUI } from '@shared/ui/Modal';
-import { Button } from '@shared/ui/Button';
 import { useAuthV2 } from '@app/Provider';
+import { Icon } from '@shared/ui/Icon';
 import { useUserProfile } from '../hooks';
 import { useAppDispatch } from '@shared/hooks/redux';
 import {
@@ -33,6 +33,7 @@ export default function SkillPage() {
 
   // Состояние модального окна
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExchangeRequested, setIsExchangeRequested] = useState(false);
 
   // Состояние похожих пользователей
   const [similarUsers, setSimilarUsers] = useState<UserListItem[]>([]);
@@ -318,6 +319,7 @@ export default function SkillPage() {
 
   const onExchangeClick = useCallback(() => {
     if (isAuthenticated) {
+      setIsExchangeRequested(true);
       setIsModalOpen(true);
       console.log('Exchange clicked - modal opened');
     } else {
@@ -379,6 +381,7 @@ export default function SkillPage() {
   // Закрываем модальное окно при смене пользователя
   useEffect(() => {
     setIsModalOpen(false);
+    setIsExchangeRequested(false);
   }, [userId]);
 
   // Условные возвраты
@@ -432,7 +435,7 @@ export default function SkillPage() {
               variant="want"
               isLiked={likedSkills.has(primarySkill.id)}
               isLikeActive={isAuthenticated}
-              isRequestSent={false}
+              isRequestSent={isExchangeRequested}
               likesCount={skillLikesCount.get(primarySkill.id) || 0}
               onLikeClick={onLikeClick}
               onExchangeClick={onExchangeClick}
@@ -472,18 +475,26 @@ export default function SkillPage() {
         <ModalUI
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Предложение отправлено!"
+          title="Вы предложили обмен"
+          icon={
+            <Icon
+              name="notification"
+              size={72}
+              className={styles['modal-icon']}
+              stroke="#253017"
+              fill="#fff"
+            />
+          }
+          actions={[
+            {
+              label: 'Готово',
+              onClick: () => setIsModalOpen(false),
+            },
+          ]}
         >
-          <div style={{ textAlign: 'center', padding: '16px' }}>
-            <TextUI variant="body">
-              Ваше предложение об обмене навыками успешно отправлено пользователю {user.name}.
-            </TextUI>
-            <div style={{ marginTop: '24px' }}>
-              <Button variant="primary" onClick={() => setIsModalOpen(false)}>
-                Закрыть
-              </Button>
-            </div>
-          </div>
+          <TextUI variant="body" className={styles['modal-text']}>
+            Теперь дождитесь подтверждения. Вам придёт уведомление.
+          </TextUI>
         </ModalUI>
       )}
     </div>
