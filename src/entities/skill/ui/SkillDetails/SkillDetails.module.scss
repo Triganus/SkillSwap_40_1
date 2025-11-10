@@ -1,4 +1,6 @@
 .skill-details {
+  --skill-content-text-width: 400px;
+
   display: flex;
   flex-direction: column;
   gap: var(--space-5, 20px);
@@ -9,7 +11,6 @@
   width: 100%;
   position: relative;
   box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-  --skill-content-text-width: 400px;
 }
 
 .actionbar {

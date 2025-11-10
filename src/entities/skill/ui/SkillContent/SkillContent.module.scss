@@ -1,10 +1,11 @@
 .skill-content {
+  --skill-content-text-width: 400px;
+
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 32px;
   width: 100%;
   align-items: stretch;
-  --skill-content-text-width: 400px;
 }
 
 .left-content {
