@@ -14,10 +14,12 @@ import { SkillsPopup } from '@widgets/SkillsPopup';
 import cls from './Header.module.scss';
 import { useAuthV2 } from '@app/Provider.tsx';
 import type { AppDispatch } from '@/app/store';
-import { fetchNotifications } from '@/features/notifications/model/notificationsSlice';
+import { fetchNotifications, viewNotification } from '@/features/notifications/model/notificationsSlice';
 import { selectNewNotifications } from '@/features/notifications/model/selectors';
 import { NotificationMenu } from './ui/NotificationMenu';
 import { useNotificationsPolling } from '@/features/notifications/lib/useNotificationsPolling';
+import { NotificationToastList } from '@/features/notifications/ui/NotificationToastList';
+import type { INotification } from '@/entities/notification/model/types/types';
 
 export const HeaderWidget: React.FC = () => {
   const { isAuthenticated } = useAuthV2();
@@ -134,8 +136,31 @@ export const HeaderWidget: React.FC = () => {
     [setSearchParams, navigate, location.pathname]
   );
 
+  const handleToastClick = useCallback(
+    (notification: INotification) => {
+      if (!notification.isViewed) {
+        dispatch(viewNotification(notification.id));
+      }
+
+      if (notification.link) {
+        navigate(notification.link);
+      }
+    },
+    [dispatch, navigate]
+  );
+
+  const handleToastDismiss = useCallback(
+    (notification: INotification) => {
+      if (!notification.isViewed) {
+        dispatch(viewNotification(notification.id));
+      }
+    },
+    [dispatch]
+  );
+
   return (
-    <header className={classes}>
+    <>
+      <header className={classes}>
       <nav className={cls.nav} aria-label="Верхняя панель навигации">
         <div className={cls.left}>
           <div className={cls.logo}>
@@ -175,5 +200,13 @@ export const HeaderWidget: React.FC = () => {
         buttonRef={skillsButtonRef}
       />
     </header>
+    {isAuthenticated && (
+      <NotificationToastList
+        notifications={newNotifications}
+        onNotificationClick={handleToastClick}
+        onNotificationDismiss={handleToastDismiss}
+      />
+    )}
+  </>
   );
 };

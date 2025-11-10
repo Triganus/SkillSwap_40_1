@@ -11,7 +11,7 @@ export const formatNotification = (notification: INotification): FormattedNotifi
   const { from, type, date } = notification;
 
   let title = '';
-  const description = 'Перейдите в профиль, чтобы обсудить детали';
+  const description = 'предлагает вам обмен';
 
   switch (type) {
     case 'exchange_request':
