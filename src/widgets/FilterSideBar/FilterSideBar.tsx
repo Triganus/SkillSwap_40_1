@@ -18,6 +18,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const { cities, genders } = useDirectories();
   const reduxFilters = useAppSelector(getSideBarFilters);
   const onChangeRef = useRef(onChange);
+  const prevFiltersRef = useRef<string>('');
 
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -48,34 +49,17 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
     const newGeneral = reduxFilters.general || '';
     const newGender = reduxFilters.gender || '';
 
-    if (generalFilterValue !== newGeneral) {
-      setGeneralFilterValue(newGeneral);
-    }
-    if (genderValue !== newGender) {
-      setGenderValue(newGender);
-    }
+    setGeneralFilterValue(newGeneral);
+    setGenderValue(newGender);
 
-    const currentSkillsKey = JSON.stringify(skillsData);
-    const currentCitiesKey = JSON.stringify(citiesSelected);
-
-    if (currentSkillsKey !== reduxSkillsKey) {
+    if (reduxSkillsKey !== JSON.stringify(skillsData)) {
       setSkillsData(reduxFilters.skills);
     }
-    if (currentCitiesKey !== reduxCitiesKey) {
+    if (reduxCitiesKey !== JSON.stringify(citiesSelected)) {
       setCitiesSelected(reduxFilters.cities);
     }
-  }, [
-    reduxFilters.general,
-    reduxFilters.gender,
-    reduxFilters.skills,
-    reduxFilters.cities,
-    reduxSkillsKey,
-    reduxCitiesKey,
-    generalFilterValue,
-    genderValue,
-    skillsData,
-    citiesSelected,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduxFilters.general, reduxFilters.gender, reduxSkillsKey, reduxCitiesKey]);
 
   const handleGeneralChange = useCallback((value: string) => {
     setGeneralFilterValue(value);
@@ -124,13 +108,21 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
         (skillsData?.skill_categories?.some((cat) => cat.skills.length > 0) ? 1 : 0) +
         (citiesSelected.length > 0 ? 1 : 0)
     );
-    onChangeRef.current?.({
+
+    const newPayload = {
       general: generalFilterValue || null,
       gender: genderValue || null,
       skills: skillsData,
       cities: citiesSelected,
       filtersApplied: nextApplied,
-    });
+    };
+
+    const newFiltersKey = JSON.stringify(newPayload);
+
+    if (newFiltersKey !== prevFiltersRef.current) {
+      prevFiltersRef.current = newFiltersKey;
+      onChangeRef.current?.(newPayload);
+    }
   }, [generalFilterValue, genderValue, skillsData, citiesSelected]);
   return (
     <div className={styles.wrapper} role="region" aria-label="Боковая панель фильтров">

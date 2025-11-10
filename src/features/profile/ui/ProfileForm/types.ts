@@ -12,11 +12,12 @@ export type ProfileFormValues = {
 export type ProfileFormProps = {
   formValue: ProfileFormValues;
   isFormChanged: boolean;
+  isSaving?: boolean;
   handleSubmit: (e: React.FormEvent) => void;
   handleInputChange: (
     field: keyof Omit<ProfileFormValues, 'avatarFile' | 'avatarUrl'>,
     value: string
   ) => void;
-  handleAvatarChange: (file: File | null) => void; // ← новый колбэк
+  handleAvatarChange: (file: File | null) => void;
   fieldErrors?: Partial<Record<keyof ProfileFormValues, string>>;
 };

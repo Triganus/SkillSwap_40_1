@@ -36,9 +36,8 @@
 }
 
 .field {
-  display: flex;
-  flex-direction: column;
   width: 100%;
+  text-align: left;
 }
 
 .input-with-edit {
@@ -58,6 +57,10 @@
   }
 }
 
+.textarea {
+  padding-inline-end: var(--space-8);
+}
+
 .edit-button {
   background: none;
   border: none;
@@ -75,7 +78,19 @@
 }
 
 .change-password-link {
-  padding-top: 12px;
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+  color: var(--color-link);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 12px;
+  display: inline-block;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .row {
