@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SkillCard } from '@widgets/Cards/SkillCard';
 import { CardSlider } from '@widgets/Cards/CardSlider';
 import { PreloaderUI } from '@shared/ui/Preloader';
@@ -29,6 +29,7 @@ export default function SkillPage() {
   const { id: userId } = useParams<{ id: string }>();
   const { isAuthenticated, user: currentUser } = useAuthV2();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   // Состояние модального окна
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -302,9 +303,18 @@ export default function SkillPage() {
         isLiked,
         likesCount,
         onLikeClick: () => onCardLikeClick(u.id),
+        onDetailsClick: () => navigate(`/skill/${u.id}`),
       };
     });
-  }, [similarUsers, cities, subcategories, likedSkills, skillLikesCount, onCardLikeClick]);
+  }, [
+    similarUsers,
+    cities,
+    subcategories,
+    likedSkills,
+    skillLikesCount,
+    onCardLikeClick,
+    navigate,
+  ]);
 
   const onExchangeClick = useCallback(() => {
     if (isAuthenticated) {
