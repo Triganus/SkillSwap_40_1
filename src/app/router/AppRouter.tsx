@@ -4,6 +4,7 @@ import { useAuthV2 } from '../Provider';
 import { Layout } from '@app/layouts/Layout.tsx';
 import { GuestLayout } from '@app/layouts/GuestLayout.tsx';
 import { clearRegistrationData, setEntryPath } from '@features/registration';
+import { PagePreloader } from '@shared/ui';
 
 const HomePage = lazy(() => import('@pages/home/ui/HomePage'));
 const LoginPage = lazy(() => import('@pages/login/ui/LoginPage'));
@@ -67,7 +68,7 @@ export default function AppRouter() {
   }, [location.pathname]);
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<PagePreloader />}>
       <Routes>
         <Route element={<GuestLayout />}>
           <Route element={<GuestOnly />}>
