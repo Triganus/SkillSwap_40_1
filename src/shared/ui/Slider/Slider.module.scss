@@ -8,7 +8,15 @@
 }
 
 .slide {
+  display: flex;
+  height: auto;
+  align-items: stretch;
+}
+
+.slide > * {
+  flex: 1 1 auto;
   height: 100%;
+  display: flex;
 }
 
 .track {
