@@ -4,6 +4,7 @@
   gap: 32px;
   width: 100%;
   align-items: stretch;
+  --skill-content-text-width: 400px;
 }
 
 .left-content {
@@ -12,6 +13,8 @@
   justify-content: flex-start;
   align-items: flex-start;
   gap: var(--space-5, 20px);
+  max-width: var(--skill-content-text-width);
+  width: 100%;
 }
 
 .info-block {
@@ -21,12 +24,16 @@
   gap: var(--space-5, 20px);
   align-items: flex-start;
   flex: 1 1 auto;
+  max-width: var(--skill-content-text-width);
+  width: 100%;
 }
 
 .actions {
   width: 100%;
   margin-top: auto;
   flex-shrink: 0;
+  max-width: var(--skill-content-text-width);
+  align-self: stretch;
 }
 
 .header {

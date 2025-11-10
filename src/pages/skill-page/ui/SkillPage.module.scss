@@ -25,6 +25,7 @@
 .profile-column,
 .details-column {
   gap: 0;
+  height: 100%;
 }
 
 .profile-column {
@@ -33,6 +34,12 @@
 
 .details-column {
   align-items: stretch;
+}
+
+.profile-column > *,
+.details-column > * {
+  height: 100%;
+  flex: 1 1 auto;
 }
 
 .main-content {

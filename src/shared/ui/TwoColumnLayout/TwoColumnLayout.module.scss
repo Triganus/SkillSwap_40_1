@@ -6,6 +6,7 @@
   height: var(--min-height, auto);
   background-color: var(--container-bg, transparent);
   padding: var(--container-padding, 0);
+  align-items: stretch;
 }
 
 .column {
@@ -16,6 +17,8 @@
   flex-direction: column;
   justify-content: var(--column-justify, flex-start);
   align-items: var(--column-align, stretch);
+  height: 100%;
+  align-self: stretch;
 }
 
 .column-left {

@@ -454,8 +454,8 @@ export default function SkillPage() {
         rightColumnBackground="transparent"
         containerPadding={0}
         columnsTemplate="minmax(320px, 324px) minmax(0, 1fr)"
-        leftColumnClassName={styles['profile-column']}
-        rightColumnClassName={styles['details-column']}
+        leftColumnClassName={styles.profileColumn}
+        rightColumnClassName={styles.detailsColumn}
       />
 
       {/* Секция похожих предложений */}

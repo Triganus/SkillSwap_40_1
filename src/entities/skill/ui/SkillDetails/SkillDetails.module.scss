@@ -9,6 +9,7 @@
   width: 100%;
   position: relative;
   box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  --skill-content-text-width: 400px;
 }
 
 .actionbar {
@@ -59,7 +60,7 @@
 
 .exchange-button {
   width: 100%;
-  max-width: 320px;
+  max-width: var(--skill-content-text-width);
   display: flex;
   align-items: center;
   justify-content: center;
