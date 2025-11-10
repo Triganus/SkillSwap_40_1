@@ -62,3 +62,4 @@ export { DatePickerUI } from './DatePicker';
 export type { TDatePickerUIProps } from './DatePicker';
 
 export { PagePreloader } from './PagePreloader';
+export { Popover } from './Popover';

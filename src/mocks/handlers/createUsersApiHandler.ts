@@ -250,7 +250,7 @@ if (typeof window !== 'undefined') {
  */
 function generateAdditionalUsers(
   count: number,
-  skillPool: Array<{ id: string; name: string }>,
+  skillPool: Array<{ id: string; name: string; categoryId: string }>,
   startId: number
 ): UserListItem[] {
   const seed = mulberry32(42);
@@ -330,7 +330,7 @@ function generateAdditionalUsers(
 
 async function ensureData(): Promise<{
   users: UserListItem[];
-  skillPool: Array<{ id: string; name: string }>;
+  skillPool: Array<{ id: string; name: string; categoryId: string }>;
 }> {
   if (cache) return cache;
 
@@ -368,7 +368,11 @@ interface QueryParams {
   searchType?: 'want_to_learn' | 'can_teach';
 }
 
-function applyQuery(users: UserListItem[], params: QueryParams): UserListItem[] {
+function applyQuery(
+  users: UserListItem[],
+  params: QueryParams,
+  skillPool: Array<{ id: string; name: string; categoryId: string }>
+): UserListItem[] {
   let list = [...users];
 
   const { q, cities, gender, sort, subcategories, searchType } = params;
@@ -376,13 +380,28 @@ function applyQuery(users: UserListItem[], params: QueryParams): UserListItem[] 
   if (q) {
     const needle = q.toLowerCase();
 
-    list = list.filter(
-      (u) =>
-        u.name.toLowerCase().includes(needle) ||
-        u.cityId.toLowerCase().includes(needle) || // Поиск по cityId
+    list = list.filter((u) => {
+      if (u.name.toLowerCase().includes(needle)) return true;
+      if (u.cityId.toLowerCase().includes(needle)) return true;
+      if (
         u.canTeachSkills.some((s) => s.toLowerCase().includes(needle)) ||
         u.wantsToLearnSkills.some((s) => s.toLowerCase().includes(needle))
-    );
+      ) {
+        return true;
+      }
+
+      const canTeachSkillNames = u.canTeachSkills
+        .map((skillId) => skillPool.find((s) => s.id === skillId)?.name)
+        .filter(Boolean);
+
+      const wantsToLearnSkillNames = u.wantsToLearnSkills
+        .map((skillId) => skillPool.find((s) => s.id === skillId)?.name)
+        .filter(Boolean);
+
+      const allSkillNames = [...canTeachSkillNames, ...wantsToLearnSkillNames];
+
+      return allSkillNames.some((skillName) => skillName?.toLowerCase().includes(needle));
+    });
   }
 
   if (cities) {
@@ -445,7 +464,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
 
       await delay(250);
 
-      const { users } = await ensureData();
+      const { users, skillPool } = await ensureData();
       const currentUserId = url.searchParams.get('currentUserId') || undefined;
 
       // /api/users/popular?limit=3
@@ -646,7 +665,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
           searchType:
             (url.searchParams.get('searchType') as QueryParams['searchType']) || undefined,
         };
-        const filtered = applyQuery(users, params);
+        const filtered = applyQuery(users, params, skillPool);
         const total = filtered.length;
         const start = (params.page! - 1) * params.limit!;
         const pageItems = filtered.slice(start, start + params.limit!);
