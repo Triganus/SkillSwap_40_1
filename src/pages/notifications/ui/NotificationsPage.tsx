@@ -35,7 +35,7 @@ const NotificationsPage: React.FC = () => {
   };
 
   const handleClearViewed = () => {
-    dispatch(removeViewedNotifications());
+    dispatch(removeViewedNotifications({ viewedNotifications }));
   };
 
   const handleNotificationClick = (notification: INotification) => {

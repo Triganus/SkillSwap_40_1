@@ -60,8 +60,8 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ anchorRef, o
 
   const handleClearViewed = useCallback(() => {
     if (!hasViewed) return;
-    dispatch(removeViewedNotifications());
-  }, [dispatch, hasViewed]);
+    dispatch(removeViewedNotifications({ viewedNotifications }));
+  }, [dispatch, hasViewed, viewedNotifications]);
 
   const errorMessage = useMemo(() => {
     if (!error) return null;
