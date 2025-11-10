@@ -53,8 +53,7 @@ export const createProfileFormSchema = (
           const age = today.getFullYear() - birthDate.getFullYear();
           const monthDiff = today.getMonth() - birthDate.getMonth();
           const dayDiff = today.getDate() - birthDate.getDate();
-          const actualAge =
-            monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+          const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
           return actualAge >= 14;
         })
         .required('Укажите дату рождения'),
@@ -66,11 +65,7 @@ export const createProfileFormSchema = (
         .string()
         .test('city', 'Выберите город из списка', (v) => !!v && isValidCity(v, cities))
         .required('Укажите город'),
-      about: yup
-        .string()
-        .trim()
-        .max(500, 'Максимум 500 символов')
-        .notRequired(),
+      about: yup.string().trim().max(500, 'Максимум 500 символов').notRequired(),
       avatarFile: yup
         .mixed<File>()
         .nullable()

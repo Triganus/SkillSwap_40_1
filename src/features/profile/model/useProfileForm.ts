@@ -225,9 +225,7 @@ export const useProfileForm = () => {
 
     try {
       const birthDateObj = parseDateFromString(formValue.birthDate);
-      const age = birthDateObj
-        ? new Date().getFullYear() - birthDateObj.getFullYear()
-        : 0;
+      const age = birthDateObj ? new Date().getFullYear() - birthDateObj.getFullYear() : 0;
 
       let avatarUrl = formValue.avatarUrl;
 
@@ -283,4 +281,3 @@ export const useProfileForm = () => {
     isAuthenticated: !!authUser,
   };
 };
-

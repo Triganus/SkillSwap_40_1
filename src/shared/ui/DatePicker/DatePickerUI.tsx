@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Button } from '@/shared/ui/Button';
 import { Icon } from '@/shared/ui/Icon';
-import type { TDatePickerUIProps } from './TDatePickerUIProps';
+import type { TDatePickerUIProps } from '@shared/ui';
 import styles from './DatePickerUI.module.scss';
 
 const WEEK_DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -51,6 +51,12 @@ export const DatePickerUI = ({
 
   // состояние для клавиатурной навигации
   const [focusedDate, setFocusedDate] = useState<Date | undefined>(undefined);
+
+  // Функция отмены
+  const handleCancel = useCallback(() => {
+    setTempSelectedDate(selectedDate);
+    setIsOpen(false);
+  }, [selectedDate]);
 
   // обновляем временную дату при изменении selectedDate извне
   useEffect(() => {
@@ -161,6 +167,7 @@ export const DatePickerUI = ({
     isMonthDropdownOpen,
     isYearDropdownOpen,
     maxDate,
+    handleCancel,
   ]);
 
   // генерация 42 ячеек календаря (6 недель) с мемоизацией
@@ -219,11 +226,6 @@ export const DatePickerUI = ({
   const toggleYearDropdown = () => {
     setIsYearDropdownOpen((prev) => !prev);
     setIsMonthDropdownOpen(false); // закрываем месяц, если открыт
-  };
-
-  const handleCancel = () => {
-    setTempSelectedDate(selectedDate);
-    setIsOpen(false);
   };
 
   const handleConfirm = () => {

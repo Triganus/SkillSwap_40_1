@@ -59,12 +59,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
       setCitiesSelected(reduxFilters.cities);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    reduxFilters.general,
-    reduxFilters.gender,
-    reduxSkillsKey,
-    reduxCitiesKey,
-  ]);
+  }, [reduxFilters.general, reduxFilters.gender, reduxSkillsKey, reduxCitiesKey]);
 
   const handleGeneralChange = useCallback((value: string) => {
     setGeneralFilterValue(value);

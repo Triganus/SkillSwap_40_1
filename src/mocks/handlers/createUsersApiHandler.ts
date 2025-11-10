@@ -542,7 +542,8 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
             if (updates.gender !== undefined) found.gender = updates.gender;
             if (updates.avatar !== undefined) found.avatar = updates.avatar;
             if (updates.canTeachSkills !== undefined) found.canTeachSkills = updates.canTeachSkills;
-            if (updates.wantsToLearnSkills !== undefined) found.wantsToLearnSkills = updates.wantsToLearnSkills;
+            if (updates.wantsToLearnSkills !== undefined)
+              found.wantsToLearnSkills = updates.wantsToLearnSkills;
 
             const { profile } = toProfile(found);
 
@@ -552,7 +553,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
             }
 
             return Response.json(profile);
-          } catch (error) {
+          } catch {
             return Response.json({ message: 'Invalid request body' }, { status: 400 });
           }
         }
