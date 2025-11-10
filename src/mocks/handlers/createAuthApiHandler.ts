@@ -1,5 +1,5 @@
 import type { IRequestHandler } from '../types';
-import type { AuthUser, DbUser } from '@entities/user/model/types/types';
+import type { AuthUser } from '@entities/user/model-v2/types';
 import { delay } from 'msw';
 import {
   getAuthLoginScenarioResponse,
@@ -10,6 +10,21 @@ import {
 interface LoginRequestBody {
   email: string;
   password: string;
+}
+
+interface DbUserV2 {
+  id: string;
+  name: string;
+  email: string;
+  birthDate: string;
+  gender: 'male' | 'female' | 'not_specified';
+  cityId: string;
+  avatar: string | null;
+  bio: string;
+  canTeachSkillIds: string[];
+  wantsToLearnSkillIds: string[];
+  likedSkillIds: string[];
+  createdAt: number;
 }
 
 export function createAuthApiHandler(priority = 100): IRequestHandler {
@@ -48,24 +63,32 @@ export function createAuthApiHandler(priority = 100): IRequestHandler {
       }
 
       // 200 — успех
-      const res = await fetch('/db/users.json');
+      const res = await fetch('/db/users-v2.json');
 
-      if (!res.ok) throw new Error(`Failed to load users.json: ${res.status}`);
+      if (!res.ok) throw new Error(`Failed to load users-v2.json: ${res.status}`);
 
-      const data: { users: DbUser[] } = await res.json();
+      const data: { users: DbUserV2[] } = await res.json();
       const list = data?.users ?? [];
-      // Ищем по точному совпадению имени; если не найден, берём первого пользователя как дефолт
+
+      // Ищем по точному совпадению email; если не найден, берём первого пользователя как дефолт
       const found = list.find((u) => u.email?.toLowerCase() === email.toLowerCase()) ?? list[0];
 
       if (!found) {
         throw new Error('List of users not found');
       }
 
-      const mockUser: AuthUser = found as AuthUser;
+      // Формируем AuthUser в формате v2 с обязательными полями
+      const mockUser: AuthUser = {
+        id: found.id,
+        email: found.email,
+        name: found.name,
+        avatar: found.avatar,
+        token: 'mock-access-token-' + found.id,
+      };
 
       return Response.json({
-        accessToken: 'mock-access-token',
-        refreshToken: 'mock-refresh-token',
+        accessToken: 'mock-access-token-' + found.id,
+        refreshToken: 'mock-refresh-token-' + found.id,
         user: mockUser,
       });
     },

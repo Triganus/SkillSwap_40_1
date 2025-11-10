@@ -52,7 +52,7 @@ export default function LoginPage() {
         id: result.user.id,
         email: result.user.email,
         name: result.user.name,
-        avatar: result.user.avatar_image || null,
+        avatar: result.user.avatar,
         token: result.accessToken,
       });
 
