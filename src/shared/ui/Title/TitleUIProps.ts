@@ -3,4 +3,5 @@ export interface TTitleUIProps {
   size: 'xsmall' | 'small' | 'medium' | 'large';
   id?: string;
   className?: string;
+  color?: 'primary' | 'secondary'
 }
