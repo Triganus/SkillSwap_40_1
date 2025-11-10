@@ -55,6 +55,15 @@ export const fetchNotifications = createAsyncThunk(
             isViewed: false,
             link: '/profile/u2',
           },
+          {
+            id: 'n3',
+            type: 'exchange_request',
+            date: 'сегодня',
+            from: createMockUser('u4', 'Татьяна', 'tatyana@example.com'),
+            to: createMockUser('u1', 'Анна', 'anna@example.com'),
+            isViewed: false,
+            link: '/profile/u4',
+          },
         ],
         viewed: [
           {
@@ -65,6 +74,15 @@ export const fetchNotifications = createAsyncThunk(
             to: createMockUser('u1', 'Анна', 'anna@example.com'),
             isViewed: true,
             link: '/profile/u3',
+          },
+          {
+            id: 'n4',
+            type: 'exchange_request',
+            date: '23 мая',
+            from: createMockUser('u5', 'Олег', 'oleg@example.com'),
+            to: createMockUser('u1', 'Анна', 'anna@example.com'),
+            isViewed: true,
+            link: '/profile/u5',
           },
         ],
       };
@@ -120,6 +138,29 @@ const notificationsSlice = createSlice({
     setNotifications(state, action: PayloadAction<INotificationList>) {
       state.data = action.payload;
     },
+    markNotificationViewed(state, action: PayloadAction<string>) {
+      const notificationId = action.payload;
+      const index = state.data.new.findIndex((n) => n.id === notificationId);
+      if (index === -1) {
+        return;
+      }
+
+      const [notification] = state.data.new.splice(index, 1);
+      state.data.viewed.push({ ...notification, isViewed: true });
+    },
+    markAllNotificationsViewed(state) {
+      if (state.data.new.length === 0) {
+        return;
+      }
+
+      const viewedBatch = state.data.new.map((notification) => ({
+        ...notification,
+        isViewed: true,
+      }));
+
+      state.data.viewed.push(...viewedBatch);
+      state.data.new = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -138,11 +179,21 @@ const notificationsSlice = createSlice({
       .addCase(viewNotification.fulfilled, (state, action) => {
         const viewed = action.payload;
         state.data.new = state.data.new.filter((n) => n.id !== viewed.id);
-        state.data.viewed.push(viewed);
+        const alreadyViewed = state.data.viewed.some((n) => n.id === viewed.id);
+        if (!alreadyViewed) {
+          state.data.viewed.push(viewed);
+        }
       })
       .addCase(viewAllNotifications.fulfilled, (state, action) => {
-        state.data.viewed.push(...action.payload);
-        state.data.new = [];
+        const incomingIds = new Set(action.payload.map((n) => n.id));
+        state.data.new = state.data.new.filter((n) => !incomingIds.has(n.id));
+
+        const existingIds = new Set(state.data.viewed.map((n) => n.id));
+        action.payload.forEach((notification) => {
+          if (!existingIds.has(notification.id)) {
+            state.data.viewed.push(notification);
+          }
+        });
       })
       .addCase(removeViewedNotifications.fulfilled, (state) => {
         state.data.viewed = [];
@@ -150,5 +201,6 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const { setNotifications } = notificationsSlice.actions;
+export const { setNotifications, markNotificationViewed, markAllNotificationsViewed } =
+  notificationsSlice.actions;
 export default notificationsSlice.reducer;

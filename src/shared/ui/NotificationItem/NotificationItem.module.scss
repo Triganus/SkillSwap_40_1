@@ -1,47 +1,113 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4); /* 16px */
-  padding: 0; /* по макету */
-
-  /* ширина/высота из фигмы можно сделать адаптивными */
-  max-width: 436px;
+  gap: 20px;
+  width: 100%;
+  color: #253017;
 }
 
-.top-row {
+.newItem {
+  .title {
+    color: #253017;
+  }
+
+  .description {
+    color: rgba(37, 48, 23, 0.68);
+  }
+
+  .metaText {
+    color: rgba(37, 48, 23, 0.6);
+  }
+
+  .icon {
+    color: #253017;
+  }
+}
+
+.viewed {
+  .title {
+    color: rgba(37, 48, 23, 0.65);
+  }
+
+  .description {
+    color: rgba(105, 115, 93, 0.75);
+  }
+
+  .metaText {
+    color: rgba(37, 48, 23, 0.45);
+  }
+
+  .icon {
+    color: rgba(37, 48, 23, 0.65);
+  }
+}
+
+.topRow {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3); /* 12px */
+  gap: 20px;
   width: 100%;
 }
 
 .icon {
   flex: none;
-  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: transparent;
+  color: #253017;
+  box-shadow: none;
 }
 
 .texts {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   flex: 1 1 auto;
+}
+
+.title {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #253017;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #69735d;
 }
 
 .meta {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   white-space: nowrap;
 }
 
-.cta-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+.metaText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #253017;
 }
 
-.icon-base {
-  color: var(--color-text);
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+.ctaRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-left: 52px;
+}
+
+.ctaButton {
+  min-width: 140px;
+  min-height: 44px;
+  padding: 0 28px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
 }

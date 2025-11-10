@@ -6,9 +6,9 @@ import type { INotification } from '@entities/notification/model/types/types';
 
 import {
   fetchNotifications,
-  viewAllNotifications,
+  markAllNotificationsViewed,
+  markNotificationViewed,
   removeViewedNotifications,
-  viewNotification,
 } from '@/features/notifications/model/notificationsSlice';
 import {
   selectNewNotifications,
@@ -31,7 +31,7 @@ const NotificationsPage: React.FC = () => {
   }, [dispatch]);
 
   const handleMarkAllAsRead = () => {
-    dispatch(viewAllNotifications());
+    dispatch(markAllNotificationsViewed());
   };
 
   const handleClearViewed = () => {
@@ -40,7 +40,7 @@ const NotificationsPage: React.FC = () => {
 
   const handleNotificationClick = (notification: INotification) => {
     if (!notification.isViewed) {
-      dispatch(viewNotification(notification.id));
+      dispatch(markNotificationViewed(notification.id));
     }
     if (notification.link) {
       navigate(notification.link);

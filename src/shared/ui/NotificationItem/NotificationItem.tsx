@@ -17,6 +17,9 @@ export function NotificationItem({
   style,
 }: TNotificationItemProps) {
   const [ctaHidden, setCtaHidden] = useState(false);
+  const wrapperClassNames = [styles.wrapper, viewed ? styles.viewed : styles.newItem, className]
+    .filter(Boolean)
+    .join(' ');
 
   const handleClick = () => {
     onCta?.();
@@ -26,18 +29,20 @@ export function NotificationItem({
   const showCta = !viewed && !ctaHidden;
 
   return (
-    <div className={[styles.wrapper, className].filter(Boolean).join(' ')} style={style}>
+    <div className={wrapperClassNames} style={style}>
       <div className={styles.topRow}>
         {icon && <div className={styles.icon}>{icon}</div>}
         <div className={styles.texts}>
-          <TextUI variant="body">{title}</TextUI>
-          <TextUI variant="caption" color="secondary">
+          <TextUI variant="body" className={styles.title}>
+            {title}
+          </TextUI>
+          <TextUI variant="caption" color="secondary" className={styles.description}>
             {description}
           </TextUI>
         </div>
         {meta && (
           <div className={styles.meta}>
-            <TextUI variant="caption" color="muted">
+            <TextUI variant="caption" color="muted" className={styles.metaText}>
               {meta}
             </TextUI>
           </div>
@@ -46,7 +51,7 @@ export function NotificationItem({
 
       {showCta && (
         <div className={styles.ctaRow}>
-          <Button onClick={handleClick} variant="white">
+          <Button onClick={handleClick} variant="primary" className={styles.ctaButton}>
             {ctaLabel}
           </Button>
         </div>

@@ -14,7 +14,10 @@ import { SkillsPopup } from '@widgets/SkillsPopup';
 import cls from './Header.module.scss';
 import { useAuthV2 } from '@app/Provider.tsx';
 import type { AppDispatch } from '@/app/store';
-import { fetchNotifications, viewNotification } from '@/features/notifications/model/notificationsSlice';
+import {
+  fetchNotifications,
+  markNotificationViewed,
+} from '@/features/notifications/model/notificationsSlice';
 import { selectNewNotifications } from '@/features/notifications/model/selectors';
 import { NotificationMenu } from './ui/NotificationMenu';
 import { useNotificationsPolling } from '@/features/notifications/lib/useNotificationsPolling';
@@ -139,7 +142,7 @@ export const HeaderWidget: React.FC = () => {
   const handleToastClick = useCallback(
     (notification: INotification) => {
       if (!notification.isViewed) {
-        dispatch(viewNotification(notification.id));
+        dispatch(markNotificationViewed(notification.id));
       }
 
       if (notification.link) {
@@ -152,7 +155,7 @@ export const HeaderWidget: React.FC = () => {
   const handleToastDismiss = useCallback(
     (notification: INotification) => {
       if (!notification.isViewed) {
-        dispatch(viewNotification(notification.id));
+        dispatch(markNotificationViewed(notification.id));
       }
     },
     [dispatch]

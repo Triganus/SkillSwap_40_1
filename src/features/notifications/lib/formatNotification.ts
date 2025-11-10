@@ -11,14 +11,16 @@ export const formatNotification = (notification: INotification): FormattedNotifi
   const { from, type, date } = notification;
 
   let title = '';
-  const description = 'предлагает вам обмен';
+  let description = 'предлагает вам обмен';
 
   switch (type) {
     case 'exchange_request':
-      title = `${from.name} хочет обменяться навыками`;
+      title = `${from.name} предлагает вам обмен`;
+      description = 'Примите обмен, чтобы обсудить детали';
       break;
     case 'exchange_accepted':
       title = `${from.name} принял ваш запрос на обмен`;
+      description = 'Перейдите в профиль, чтобы обсудить детали';
       break;
     case 'exchange_declined':
       title = `${from.name} отклонил ваш запрос`;

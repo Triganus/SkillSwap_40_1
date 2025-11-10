@@ -5,8 +5,8 @@ import type { AppDispatch } from '@/app/store';
 import type { INotification } from '@/entities/notification/model/types/types';
 import {
   removeViewedNotifications,
-  viewAllNotifications,
-  viewNotification,
+  markAllNotificationsViewed,
+  markNotificationViewed,
 } from '@/features/notifications/model/notificationsSlice';
 import {
   selectNewNotifications,
@@ -41,7 +41,7 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ anchorRef, o
   const handleNotificationClick = useCallback(
     (notification: INotification) => {
       if (!notification.isViewed) {
-        dispatch(viewNotification(notification.id));
+        dispatch(markNotificationViewed(notification.id));
       }
 
       if (notification.link) {
@@ -55,7 +55,7 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ anchorRef, o
 
   const handleViewAll = useCallback(() => {
     if (!hasUnread) return;
-    dispatch(viewAllNotifications());
+    dispatch(markAllNotificationsViewed());
   }, [dispatch, hasUnread]);
 
   const handleClearViewed = useCallback(() => {

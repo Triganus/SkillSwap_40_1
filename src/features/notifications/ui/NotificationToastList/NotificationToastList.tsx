@@ -2,7 +2,6 @@ import { memo } from 'react';
 import type { INotification } from '@/entities/notification/model/types/types';
 import { formatNotification } from '@/features/notifications/lib/formatNotification';
 import IdeaIcon from '@/shared/assets/icons/idea.svg?react';
-import { Icon } from '@/shared/ui/Icon';
 import styles from './NotificationToastList.module.scss';
 
 interface NotificationToastListProps {
@@ -30,7 +29,7 @@ export const NotificationToastList = memo(
                 onClick={() => onNotificationDismiss(notification)}
                 aria-label="Закрыть уведомление"
               >
-                <Icon name="close" size={16} />
+                <span className={styles.closeIcon} />
               </button>
 
               <div className={styles.content}>

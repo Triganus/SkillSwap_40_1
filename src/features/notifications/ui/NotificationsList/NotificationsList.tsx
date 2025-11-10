@@ -30,10 +30,10 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
               title={formatted.title}
               description={formatted.description}
               meta={formatted.meta}
-            icon={<IdeaIcon width={24} height={24} />}
+              icon={<IdeaIcon width={24} height={24} />}
               ctaLabel="Перейти"
               onCta={() => onNotificationClick(notification)}
-              viewed={notification.isViewed} // ← если компонент поддерживает viewed
+              viewed={notification.isViewed}
             />
           </li>
         );

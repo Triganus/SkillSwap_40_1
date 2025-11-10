@@ -1,7 +1,7 @@
 .container {
   position: fixed;
-  top: 128px;
-  left: 32px;
+  top: 120px;
+  left: 30px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -24,16 +24,46 @@
 
 .close {
   position: absolute;
-  top: 8px;
-  right: 10px;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
   border: none;
   background: none;
   cursor: pointer;
-  color: rgba(27, 31, 39, 0.4);
-  transition: color 0.2s ease;
+  padding: 0;
 
-  &:hover {
-    color: rgba(27, 31, 39, 0.7);
+  &:hover .closeIcon::before,
+  &:hover .closeIcon::after {
+    background: rgba(37, 48, 23, 0.8);
+  }
+}
+
+.closeIcon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    background: #253017;
+    border-radius: 2px;
+    transform-origin: center;
+    transition: background 0.2s ease;
+  }
+
+  &::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  &::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
   }
 }
 
@@ -67,21 +97,29 @@
 
 .cta {
   border: none;
-  border-radius: 14px;
-  padding: 8px 14px;
-  font-size: 13px;
+  border-radius: 18px;
+  padding: 10px 22px;
+  font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
-  background: #5a832a;
+  color: #253017;
+  background: #ffffff;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 10px 20px rgba(90, 131, 42, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
 
   &:hover {
-    background: #3b6422;
+    box-shadow: 0 12px 24px rgba(90, 131, 42, 0.22);
   }
 
   &:active {
     transform: translateY(1px);
   }
+}
+
+.toast:hover .cta {
+  opacity: 1;
+  pointer-events: auto;
 }
 
