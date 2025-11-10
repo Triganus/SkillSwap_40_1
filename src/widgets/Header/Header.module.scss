@@ -147,8 +147,9 @@
 
 .skills-icon {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
   order: 2;
-  transform: translateY(1px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(2px);
 }

@@ -1,4 +1,6 @@
 .skill-details {
+  --skill-content-text-width: 400px;
+
   display: flex;
   flex-direction: column;
   gap: var(--space-5, 20px);
@@ -59,11 +61,26 @@
 
 .exchange-button {
   width: 100%;
-  max-width: 320px;
+  max-width: var(--skill-content-text-width);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2, 8px);
+  border-radius: 12px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+
+  &.exchange-button-proposed {
+    background-color: transparent;
+    color: #253017;
+    border: 2px solid #97c458;
+
+    &:hover {
+      background-color: rgb(151 196 88 / 8%);
+    }
+  }
 }
 
 .edit-actions {
