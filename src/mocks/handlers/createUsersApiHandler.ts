@@ -521,7 +521,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         return Response.json({ users: enrichUsersWithLikes(similarUsers, users, currentUserId) });
       }
 
-      // /api/users/:id
+      // /api/users/:id - PATCH - обновление профиля
       const profileMatch = base.match(/^\/api\/users\/(.+)$/);
 
       if (profileMatch && !profileMatch[1].includes('/')) {
@@ -530,7 +530,36 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
 
         if (!found) return Response.json({ message: 'Not found' }, { status: 404 });
 
+        // PATCH - обновление профиля
+        if (request.method === 'PATCH') {
+          try {
+            const updates = await request.json();
+
+            // Обновляем поля пользователя
+            if (updates.name !== undefined) found.name = updates.name;
+            if (updates.cityId !== undefined) found.cityId = updates.cityId;
+            if (updates.age !== undefined) found.age = updates.age;
+            if (updates.gender !== undefined) found.gender = updates.gender;
+            if (updates.avatar !== undefined) found.avatar = updates.avatar;
+            if (updates.canTeachSkills !== undefined) found.canTeachSkills = updates.canTeachSkills;
+            if (updates.wantsToLearnSkills !== undefined) found.wantsToLearnSkills = updates.wantsToLearnSkills;
+
+            const { profile } = toProfile(found);
+
+            // Если передан bio, обновляем его в профиле
+            if (updates.bio !== undefined) {
+              profile.bio = updates.bio;
+            }
+
+            return Response.json(profile);
+          } catch (error) {
+            return Response.json({ message: 'Invalid request body' }, { status: 400 });
+          }
+        }
+
+        // GET - получение профиля
         const { profile, skills } = toProfile(found);
+
         return Response.json({ profile, skills });
       }
 

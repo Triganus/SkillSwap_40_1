@@ -9,20 +9,20 @@ import {
   UserAvatarUpload,
   type UserAvatarUploadHandle,
 } from '@/shared/ui';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import styles from './ProfileForm.module.scss';
 import {
   getGenderDropdownOptions,
   getCityDropdownOptions,
 } from '@features/registration/hooks/useRegisterStep2Form';
 import { parseDateFromString, formatDateToString } from '@/shared/lib/dateUtils';
-import { TitleUI } from '@/shared/ui/Title';
 import type { ProfileFormProps } from './types';
 import { useDirectories } from '@/entities/directory';
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({
   formValue,
   isFormChanged,
+  isSaving = false,
   handleSubmit,
   handleInputChange,
   handleAvatarChange,
@@ -39,18 +39,8 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
     genders as Array<{ id: string; name: string }>
   );
 
-  const [editingFields, setEditingFields] = useState({
-    email: false,
-    name: false,
-    about: false,
-  });
-
-  const toggleEdit = (field: keyof typeof editingFields) => {
-    setEditingFields((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
+  // Проверяем наличие ошибок валидации
+  const hasErrors = Object.keys(fieldErrors || {}).length > 0;
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -83,31 +73,21 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                   placeholder="Введите почту"
                   value={formValue.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  disabled={!editingFields.email}
                   size="large"
                   className={styles.input}
                 />
-                <button
-                  type="button"
-                  className={styles.editButton}
-                  onClick={() => toggleEdit('email')}
-                  aria-label={
-                    editingFields.email ? 'Завершить редактирование почты' : 'Редактировать почту'
-                  }
-                >
-                  <Icon
-                    name="edit"
-                    size={24}
-                    stroke="#69735D"
-                    className={styles.edit}
-                    aria-hidden="true"
-                  />
-                </button>
+                <Icon
+                  name="edit"
+                  size={24}
+                  stroke="#69735D"
+                  className={styles.edit}
+                  aria-hidden="true"
+                />
               </div>
             </FormField>
 
             <button type="button" className={styles.changePasswordLink}>
-              <TitleUI size="xsmall">Изменить пароль</TitleUI>
+              Изменить пароль
             </button>
           </div>
 
@@ -119,26 +99,16 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                   placeholder="Введите ваше имя"
                   value={formValue.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  disabled={!editingFields.name}
                   size="large"
                   className={styles.input}
                 />
-                <button
-                  type="button"
-                  className={styles.editButton}
-                  onClick={() => toggleEdit('name')}
-                  aria-label={
-                    editingFields.name ? 'Завершить редактирование имени' : 'Редактировать имя'
-                  }
-                >
-                  <Icon
-                    name="edit"
-                    size={24}
-                    stroke="#69735D"
-                    className={styles.edit}
-                    aria-hidden="true"
-                  />
-                </button>
+                <Icon
+                  name="edit"
+                  size={24}
+                  stroke="#69735D"
+                  className={styles.edit}
+                  aria-hidden="true"
+                />
               </div>
             </FormField>
           </div>
@@ -201,27 +171,16 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
                   id="aboutMyself"
                   placeholder="Расскажи о себе"
                   value={formValue.about}
+                  className={styles.textarea}
                   onChange={(e) => handleInputChange('about', e.target.value)}
-                  disabled={!editingFields.about}
                 />
-                <button
-                  type="button"
-                  className={styles.editButton}
-                  onClick={() => toggleEdit('about')}
-                  aria-label={
-                    editingFields.about
-                      ? 'Завершить редактирование текста о себе'
-                      : 'Редактировать текст о себе'
-                  }
-                >
-                  <Icon
-                    name="edit"
-                    size={24}
-                    stroke="#69735D"
-                    className={styles.edit}
-                    aria-hidden="true"
-                  />
-                </button>
+                <Icon
+                  name="edit"
+                  size={24}
+                  stroke="#69735D"
+                  className={styles.edit}
+                  aria-hidden="true"
+                />
               </div>
             </FormField>
           </div>
@@ -231,9 +190,9 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
             variant="primary"
             type="submit"
             className={styles.button}
-            disabled={!isFormChanged}
+            disabled={!isFormChanged || hasErrors || isSaving}
           >
-            Сохранить
+            {isSaving ? 'Сохранение...' : 'Сохранить'}
           </Button>
         </div>
       </div>
