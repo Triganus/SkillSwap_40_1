@@ -86,7 +86,11 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
         {variant === 'want' && (
           <div className={styles.cta}>
             {isRequestSent ? (
-              <Button variant="primary" type="button" className={styles.exchangeButton}>
+              <Button
+                variant="secondary"
+                type="button"
+                className={`${styles.exchangeButton} ${styles.exchangeButtonProposed}`}
+              >
                 <Icon name="clock" size={20} title="Ожидание" />
                 Обмен предложен
               </Button>

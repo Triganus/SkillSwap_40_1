@@ -24,7 +24,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
-  scrollbar-gutter: stable both-edges;
+  scrollbar-gutter: stable;
+  overflow-x: hidden;
 }
 
 img,

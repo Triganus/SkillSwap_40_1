@@ -84,7 +84,7 @@ export const HeaderWidget: React.FC = () => {
         <button
           ref={skillsButtonRef}
           type="button"
-          className={cls['skills-button']}
+          className={cls.skillsButton}
           onClick={() => setIsSkillsPopupOpen(!isSkillsPopupOpen)}
           aria-label="Все навыки"
           aria-expanded={isSkillsPopupOpen}
@@ -92,7 +92,7 @@ export const HeaderWidget: React.FC = () => {
           <span>Все навыки</span>
           <Icon
             name={isSkillsPopupOpen ? 'chevron-up' : 'chevron-down'}
-            size={16}
+            size={20}
             className={cls['skills-icon']}
           />
         </button>

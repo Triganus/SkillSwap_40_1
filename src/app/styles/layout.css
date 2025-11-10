@@ -2,17 +2,25 @@
   min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto; /* header | main | footer */
-  grid-template-columns: 100%;
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
   gap: 32px;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+#root > * {
+  max-width: 1440px;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 32px);
 }
 
 #root > main {
   min-height: 0;
   min-width: 0;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip;
+  padding-inline: 0;
 }
 
 #root > footer {
