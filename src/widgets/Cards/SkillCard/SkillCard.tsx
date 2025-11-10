@@ -240,7 +240,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             <TitleUI size="xsmall">Может научить:</TitleUI>
             <div className={styles.skillTags} aria-label="Может научить">
               {teachingSkills.slice(0, 1).map((skill) => (
-                <TagUI key={skill.id} label={skill.title} category={skill.category as TagCategory} />
+                <TagUI
+                  key={skill.id}
+                  label={skill.title}
+                  category={skill.category as TagCategory}
+                />
               ))}
               {teachingSkills.length > 1 && (
                 <TagUI label={`+${teachingSkills.length - 1}`} category="other" />
