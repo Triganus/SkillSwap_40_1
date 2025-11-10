@@ -1,0 +1,28 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--space-8);
+  gap: var(--space-6);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  background: none;
+  border: none;
+  text-align: center;
+  font-size: var(--fs-h4);
+  line-height: var(--lh-h4);
+  font-weight: var(--fw-medium);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--color-link);
+  }
+}
