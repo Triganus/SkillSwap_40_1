@@ -179,7 +179,7 @@ async function maybeExtendNotifications(state: NotificationState): Promise<void>
     );
 
     state.notifications = generated;
-    state.seenPairs = Array.from(seenPairs);
+    state.seenPairs = seenPairs;
   }
 
   if (state.requestIndex < Number.MAX_SAFE_INTEGER) {
@@ -200,7 +200,7 @@ async function generateNotifications(
   requestIndex: number,
   existing: INotification[] = [],
   existingPairs?: Set<string>
-): Promise<{ notifications: INotification[]; seenPairs: Set<string> }> {
+): Promise<{ notifications: INotification[]; seenPairs: string[] }> {
   const target = existing.slice();
   const seen = existingPairs ?? new Set(existing.map((n) => buildPairKey(n.from.id, n.type)));
 
@@ -246,12 +246,12 @@ async function generateNotifications(
       target.push(notification);
 
       if (target.length >= getDesiredCount(requestIndex)) {
-        return { notifications: target, seenPairs: seen };
+        return { notifications: target, seenPairs: Array.from(seen) };
       }
     }
   }
 
-  return { notifications: target, seenPairs: seen };
+  return { notifications: target, seenPairs: Array.from(seen) };
 }
 
 function buildNotification({
