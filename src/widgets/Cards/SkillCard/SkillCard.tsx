@@ -39,6 +39,19 @@ export const SkillCard: React.FC<SkillCardProps> = ({
 }) => {
   const categoryIdToName = useAppSelector(selectCategoryIdToName);
 
+  const publishedDateLabel = React.useMemo(() => {
+    if (!user?.createdAt) return null;
+
+    const date = new Date(user.createdAt);
+    if (Number.isNaN(date.getTime())) return null;
+
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  }, [user.createdAt]);
+
   // Преобразуем images в формат MediaItem
   const mediaItems: MediaItem[] = React.useMemo(
     () =>
@@ -106,6 +119,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TextUI variant="caption" color="primary">
                   {user.bio || 'Город не указан'}
                 </TextUI>
+              {publishedDateLabel && (
+                <TextUI variant="caption" className={styles.publishedAt}>
+                  Дата публикации: {publishedDateLabel}
+                </TextUI>
+              )}
               </div>
             </div>
 
@@ -113,6 +131,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
             {title && (
               <div className={styles.skillHeader}>
                 <TitleUI size="large">{title}</TitleUI>
+                {publishedDateLabel && (
+                  <TextUI variant="caption" className={styles.publishedAt}>
+                    Опубликовано: {publishedDateLabel}
+                  </TextUI>
+                )}
                 {category && (
                   <TagUI
                     label={categoryIdToName[category] || category}
@@ -228,6 +251,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 {locationAndAge}
               </TextUI>
             )}
+            {publishedDateLabel && (
+              <TextUI variant="caption" className={styles.publishedAt}>
+                Дата публикации: {publishedDateLabel}
+              </TextUI>
+            )}
           </div>
         </div>
 
@@ -288,6 +316,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
           <TextUI variant="caption" color="primary">
             {user.bio || 'Город не указан'}
           </TextUI>
+          {publishedDateLabel && (
+            <TextUI variant="caption" className={styles.publishedAt}>
+              Дата публикации: {publishedDateLabel}
+            </TextUI>
+          )}
         </div>
         <LikeButtonUI
           isActive={isLiked}

@@ -76,8 +76,29 @@ export default function PopularSkillsPage() {
     }));
   }, [usersData, navigate]);
 
+  const sortedPopularCards = useMemo(() => {
+    return [...cardsWithNavigation].sort((a, b) => {
+      const likesA = a.likesCount ?? 0;
+      const likesB = b.likesCount ?? 0;
+
+      if (likesA === likesB) {
+        if (likesA === 0) {
+          const dateA = new Date(a.user.createdAt || 0).getTime();
+          const dateB = new Date(b.user.createdAt || 0).getTime();
+          return dateA - dateB;
+        }
+        return 0;
+      }
+
+      if (likesA === 0) return 1;
+      if (likesB === 0) return -1;
+
+      return likesB - likesA;
+    });
+  }, [cardsWithNavigation]);
+
   // Фильтруем популярные карточки (все доступные, можно добавить логику популярности)
-  const popularCards = cardsWithNavigation.slice(0, displayedCount);
+  const popularCards = sortedPopularCards.slice(0, displayedCount);
 
   // Обработчик возврата на главную
   const handleGoBack = useCallback(() => {

@@ -54,7 +54,7 @@ export default function NewSkillsPage() {
     return [...cardsWithNavigation].sort((a, b) => {
       const dateA = new Date(a.user.createdAt || 0).getTime();
       const dateB = new Date(b.user.createdAt || 0).getTime();
-      return dateB - dateA; // Новые первыми
+      return dateA - dateB; // По возрастанию даты (ранние сначала)
     });
   }, [cardsWithNavigation]);
 
