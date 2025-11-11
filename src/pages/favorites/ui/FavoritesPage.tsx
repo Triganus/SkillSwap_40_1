@@ -5,9 +5,7 @@ export default function FavoritesPage() {
   return (
     <div className={styles.content}>
       <ProfileSidebar />
-      <div className={styles.main}>
-        {/* Здесь будет контент избранного */}
-      </div>
+      <div className={styles.main}>{/* Здесь будет контент избранного */}</div>
     </div>
   );
 }
