@@ -18,7 +18,6 @@ import {
 } from '@/entities/directory/model';
 import { filtersReducer } from '@/features/user-search/model/filtersSlice';
 import { paginationReducer } from '@/features/user-search/model/paginationSlice';
-import favoritesSlice from '@features/favorites/model/favoritesSlice';
 
 const PERSIST_VERSION = 1;
 
@@ -100,7 +99,6 @@ export const store = configureStore({
     filterSideBar: filterSideBarReducer,
     notifications: notificationsReducer,
     popup: popupReducer,
-    favorites: favoritesSlice,
 
     // Справочники
     genders: gendersReducer,
