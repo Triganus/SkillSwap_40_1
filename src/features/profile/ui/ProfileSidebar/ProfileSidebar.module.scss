@@ -1,16 +1,18 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 40px;
+  gap: 12px;
+  padding: 40px 32px;
   width: 100%;
+  height: 100%;
+  min-height: 100%;
+  align-self: stretch;
+  flex: 1 1 auto;
   background: var(--color-surface);
   border-radius: 24px;
 
   @media (width <= 480px) {
     padding: 24px 16px;
-    align-items: stretch;
   }
 }
 
@@ -19,10 +21,11 @@
   flex-direction: row;
   gap: 12px;
   border-radius: 12px;
-  padding: 12px 20px;
+  padding: 12px 16px;
   width: 100%;
   height: 48px;
   text-decoration: none;
+  align-items: center;
 
   &:hover {
     background-color: var(--color-disabled);
@@ -34,7 +37,5 @@
 
   @media (width <= 480px) {
     width: 100%;
-    max-width: 244px;
-    justify-content: flex-start;
   }
 }

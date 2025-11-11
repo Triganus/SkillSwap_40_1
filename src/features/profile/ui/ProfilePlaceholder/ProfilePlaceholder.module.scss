@@ -1,0 +1,26 @@
+.wrapper {
+  width: 100%;
+  padding: 48px;
+  border-radius: 32px;
+  background: var(--color-surface, #ffffff);
+  box-shadow:
+    0 24px 60px rgb(28 45 64 / 10%),
+    0 12px 32px rgb(28 45 64 / 8%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #253017;
+}
+
+.description {
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+.actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+

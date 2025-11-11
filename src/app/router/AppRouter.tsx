@@ -14,6 +14,10 @@ const FavoritesPage = lazy(() => import('@pages/favorites/ui/FavoritesPage'));
 const SkillPage = lazy(() => import('@pages/skill-page'));
 const PopularSkillsPage = lazy(() => import('@pages/popular-skills'));
 const NewSkillsPage = lazy(() => import('@pages/new-skills'));
+const ProfilePersonalPage = lazy(() => import('@features/profile/ui/ProfilePersonal/ProfilePersonal'));
+const ProfileRequestsPage = lazy(() => import('@features/profile/ui/ProfileRequests/ProfileRequests'));
+const ProfileExchangesPage = lazy(() => import('@features/profile/ui/ProfileExchanges/ProfileExchanges'));
+const ProfileSkillsPage = lazy(() => import('@features/profile/ui/ProfileSkills/ProfileSkills'));
 const NotFoundPage = lazy(() =>
   import('@pages/not-found404').then((m) => ({ default: m.NotFoundPage }))
 );
@@ -85,7 +89,12 @@ export default function AppRouter() {
           <Route path="/new-skills" element={<NewSkillsPage />} />
 
           <Route element={<RequireAuth />}>
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProfilePage />}>
+              <Route index element={<ProfilePersonalPage />} />
+              <Route path="requests" element={<ProfileRequestsPage />} />
+              <Route path="exchanges" element={<ProfileExchangesPage />} />
+              <Route path="skills" element={<ProfileSkillsPage />} />
+            </Route>
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
           </Route>
