@@ -137,13 +137,16 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                   <div className={styles.skillGroup}>
                     <TitleUI size="xsmall">Может научить:</TitleUI>
                     <div className={styles.skillTags} aria-label="Может научить">
-                      {teachingSkills.map((skill) => (
+                      {teachingSkills.slice(0, 1).map((skill) => (
                         <TagUI
                           key={skill.id}
                           label={skill.title}
                           category={skill.category as TagCategory}
                         />
                       ))}
+                      {teachingSkills.length > 1 && (
+                        <TagUI label={`+${teachingSkills.length - 1}`} />
+                      )}
                     </div>
                   </div>
                 )}
@@ -152,13 +155,16 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                   <div className={styles.skillGroup}>
                     <TitleUI size="xsmall">Хочет научиться:</TitleUI>
                     <div className={styles.skillTags} aria-label="Хочет научиться">
-                      {learningSkills.map((skill) => (
+                      {learningSkills.slice(0, 1).map((skill) => (
                         <TagUI
                           key={skill.id}
                           label={skill.title}
                           category={skill.category as TagCategory}
                         />
                       ))}
+                      {learningSkills.length > 1 && (
+                        <TagUI label={`+${learningSkills.length - 1}`} />
+                      )}
                     </div>
                   </div>
                 )}

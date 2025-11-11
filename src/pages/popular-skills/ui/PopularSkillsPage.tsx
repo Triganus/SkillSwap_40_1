@@ -98,25 +98,29 @@ export default function PopularSkillsPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <TitleUI size="large" className={styles.title}>
-          Популярное
-        </TitleUI>
-        <Button
-          variant="tertiary"
-          onClick={handleGoBack}
-          className={styles.backButton}
-          aria-label="Вернуться на главную страницу"
-        >
-          <Icon
-            name="chevron-right"
-            size={24}
-            className={styles.backIcon}
-            fill="#253017"
-            stroke="#253017"
-            aria-hidden="true"
-          />
-          Назад
-        </Button>
+        <div className={styles.headerLeft}>
+          <TitleUI size="large" className={styles.title}>
+            Популярное
+          </TitleUI>
+        </div>
+        <div className={styles.headerRight}>
+          <Button
+            variant="tertiary"
+            onClick={handleGoBack}
+            className={styles.backButton}
+            aria-label="Вернуться на главную страницу"
+          >
+            <Icon
+              name="chevron-right"
+              size={24}
+              className={styles.backIcon}
+              fill="#253017"
+              stroke="#253017"
+              aria-hidden="true"
+            />
+            Назад
+          </Button>
+        </div>
       </div>
       <div className={styles.content}>
         <InfiniteGridUI
