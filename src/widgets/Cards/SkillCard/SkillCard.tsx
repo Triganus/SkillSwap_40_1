@@ -154,7 +154,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 {learningSkills.length > 0 && (
                   <div className={styles.skillGroup}>
                     <TitleUI size="xsmall">Хочет научиться:</TitleUI>
-                <div className={styles.skillTags} aria-label="Хочет научиться">
+                    <div className={styles.skillTags} aria-label="Хочет научиться">
                       {learningSkills.slice(0, 1).map((skill) => (
                         <TagUI
                           key={skill.id}
