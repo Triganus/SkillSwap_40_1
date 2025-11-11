@@ -15,9 +15,15 @@ const SkillPage = lazy(() => import('@pages/skill-page'));
 const PopularSkillsPage = lazy(() => import('@pages/popular-skills'));
 const NewSkillsPage = lazy(() => import('@pages/new-skills'));
 const CreateSkillPage = lazy(() => import('@pages/create-skill'));
-const ProfilePersonalPage = lazy(() => import('@features/profile/ui/ProfilePersonal/ProfilePersonal'));
-const ProfileRequestsPage = lazy(() => import('@features/profile/ui/ProfileRequests/ProfileRequests'));
-const ProfileExchangesPage = lazy(() => import('@features/profile/ui/ProfileExchanges/ProfileExchanges'));
+const ProfilePersonalPage = lazy(
+  () => import('@features/profile/ui/ProfilePersonal/ProfilePersonal')
+);
+const ProfileRequestsPage = lazy(
+  () => import('@features/profile/ui/ProfileRequests/ProfileRequests')
+);
+const ProfileExchangesPage = lazy(
+  () => import('@features/profile/ui/ProfileExchanges/ProfileExchanges')
+);
 const ProfileSkillsPage = lazy(() => import('@features/profile/ui/ProfileSkills/ProfileSkills'));
 const NotFoundPage = lazy(() =>
   import('@pages/not-found404').then((m) => ({ default: m.NotFoundPage }))

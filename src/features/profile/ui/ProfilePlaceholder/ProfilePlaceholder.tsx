@@ -22,4 +22,3 @@ export const ProfilePlaceholder = ({ title, description, children }: ProfilePlac
 );
 
 export default ProfilePlaceholder;
-

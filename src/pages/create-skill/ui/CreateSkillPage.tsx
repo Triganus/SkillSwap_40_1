@@ -36,4 +36,3 @@ const CreateSkillPage = () => {
 };
 
 export default CreateSkillPage;
-

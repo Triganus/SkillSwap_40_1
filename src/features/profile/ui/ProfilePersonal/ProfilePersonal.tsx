@@ -16,7 +16,11 @@ export const ProfilePersonal = () => {
   } = useProfileForm();
 
   if (!isAuthenticated) {
-    return <div className={styles.state}>Пожалуйста, войдите в систему, чтобы просматривать профиль.</div>;
+    return (
+      <div className={styles.state}>
+        Пожалуйста, войдите в систему, чтобы просматривать профиль.
+      </div>
+    );
   }
 
   if (isLoading) {
@@ -39,4 +43,3 @@ export const ProfilePersonal = () => {
 };
 
 export default ProfilePersonal;
-
