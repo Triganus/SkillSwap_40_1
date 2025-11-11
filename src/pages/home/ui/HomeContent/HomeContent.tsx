@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { SkillCardProps } from '@/widgets/Cards/SkillCard';
 import { SkillCard } from '@/widgets/Cards/SkillCard';
 import { CardSectionUI } from '@shared/ui/CardSection';
@@ -6,9 +6,9 @@ import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { TitleUI } from '@shared/ui/Title';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { ActiveFilters } from '@/features/filters/ui/ActiveFilters';
-import { Icon } from '@/shared/ui/Icon';
 import type { FilterChip } from '@/entities/filtered-content/model/types';
 import styles from './HomeContent.module.scss';
+import { SearchHeaderUI } from '@/shared/ui/SearchHeader/SearchHeaderUI';
 
 interface HomeContentProps {
   cards: SkillCardProps[];
@@ -46,12 +46,6 @@ export const HomeContent: React.FC<HomeContentProps> = ({
   onViewAllNew,
   onSkillDetailsClick,
 }) => {
-  const handleSortClick = useCallback(() => {
-    if (onSortChange) {
-      onSortChange(sortOrder === 'newest' ? 'oldest' : 'newest');
-    }
-  }, [sortOrder, onSortChange]);
-
   // Подготавливаем карточки для обычного режима (всегда вызываем хуки)
   const popularCards = useMemo(() => {
     return cards.slice(0, 3).map((card) => ({
@@ -88,26 +82,13 @@ export const HomeContent: React.FC<HomeContentProps> = ({
           <ActiveFilters filters={activeFilters} onRemove={onRemoveFilter} />
         )}
         <div className={styles.searchResults}>
-          <div className={styles.searchHeader}>
-            <TitleUI size="large" className={styles.searchTitle}>
-              Подходящие предложения: {totalUsers}
-            </TitleUI>
-            {onSortChange && (
-              <button
-                type="button"
-                className={styles.sortButton}
-                onClick={handleSortClick}
-                aria-label={
-                  sortOrder === 'newest'
-                    ? 'Сортировать сначала старые'
-                    : 'Сортировать сначала новые'
-                }
-              >
-                <Icon name="sort" size={24} className={styles.sortIcon} />
-                {sortOrder === 'newest' ? 'Сначала новые' : 'Сначала старые'}
-              </button>
-            )}
-          </div>
+          <SearchHeaderUI
+            title="Подходящие предложения"
+            total={totalUsers}
+            sortOrder={sortOrder}
+            onSortChange={onSortChange}
+          />
+
           <InfiniteGridUI
             onLoadMore={onLoadMore}
             hasMore={hasMore}

@@ -1,10 +1,10 @@
 .content {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  display: flex;
+  justify-content: space-between;
   align-items: stretch;
-  gap: 32px;
+  gap: 24px;
   width: 100%;
-  max-width: 1280px;
+  width: 1368px;
   margin: 0 auto;
 
   & > :first-child {
@@ -20,10 +20,6 @@
 }
 
 .main {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  min-width: 0;
   height: 100%;
 
   & > * {

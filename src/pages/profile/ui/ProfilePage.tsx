@@ -6,6 +6,7 @@ export default function ProfilePage() {
   return (
     <div className={styles.content}>
       <ProfileSidebar />
+
       <section className={styles.main}>
         <Outlet />
       </section>
