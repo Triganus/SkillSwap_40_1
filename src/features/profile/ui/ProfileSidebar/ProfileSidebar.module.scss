@@ -30,8 +30,8 @@
   border-radius: 12px;
   padding: 12px 20px;
   min-height: 48px;
-  width: 100%;
   transition: background-color 0.2s ease-in-out;
+  align-self: flex-start;
 
   .link:hover & {
     background-color: var(--color-disabled);
