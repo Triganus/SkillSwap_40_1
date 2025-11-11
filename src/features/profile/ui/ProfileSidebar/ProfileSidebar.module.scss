@@ -22,7 +22,7 @@
   text-decoration: none;
 }
 
-.linkContent {
+.link-content {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -46,6 +46,6 @@
   }
 }
 
-.linkActive {
+.link-active {
   background-color: var(--color-button-hover);
 }

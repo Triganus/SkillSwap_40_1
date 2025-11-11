@@ -249,6 +249,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TagUI
                   key={skill.id}
                   label={skill.title}
+                  w
                   category={skill.category as TagCategory}
                 />
               ))}
