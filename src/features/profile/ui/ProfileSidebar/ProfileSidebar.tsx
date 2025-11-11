@@ -43,22 +43,21 @@ export const ProfileSidebar: React.FC = () => {
   return (
     <nav aria-label="Боковая панель профиля пользователя" className={styles.sidebar}>
       {sidebarItems.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          className={({ isActive }) => `${styles.link} ${isActive ? styles.link_active : ''}`}
-          end
-        >
-          <Icon
-            name={item.icon}
-            size={24}
-            fill={item.strokeIcon ? 'none' : '#253017'}
-            stroke={item.strokeIcon ? '#253017' : 'none'}
-            aria-hidden="true"
-          />
-          <TextUI variant="body" color="primary">
-            {item.text}
-          </TextUI>
+        <NavLink key={item.to} to={item.to} className={styles.link} end>
+          {({ isActive }) => (
+            <span className={`${styles.linkContent} ${isActive ? styles.linkActive : ''}`}>
+              <Icon
+                name={item.icon}
+                size={24}
+                fill={item.strokeIcon ? 'none' : '#253017'}
+                stroke={item.strokeIcon ? '#253017' : 'none'}
+                aria-hidden="true"
+              />
+              <TextUI variant="body" color="primary">
+                {item.text}
+              </TextUI>
+            </span>
+          )}
         </NavLink>
       ))}
     </nav>
