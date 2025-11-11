@@ -22,7 +22,7 @@ const sidebarItems: ISidebarItem[] = [
     text: 'Мои обмены',
   },
   {
-    to: '/profile/favorites',
+    to: '/favorites',
     icon: 'like',
     text: 'Избранное',
   },
