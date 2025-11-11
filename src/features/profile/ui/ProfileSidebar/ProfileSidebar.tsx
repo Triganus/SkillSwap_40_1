@@ -22,7 +22,7 @@ const sidebarItems: ISidebarItem[] = [
     text: 'Мои обмены',
   },
   {
-    to: '/profile/favorites',
+    to: '/favorites',
     icon: 'like',
     text: 'Избранное',
   },
@@ -46,19 +46,23 @@ export const ProfileSidebar: React.FC = () => {
         <NavLink
           key={item.to}
           to={item.to}
-          className={({ isActive }) => `${styles.link} ${isActive ? styles.link_active : ''}`}
+          className={styles.link}
           end
         >
-          <Icon
-            name={item.icon}
-            size={24}
-            fill={item.strokeIcon ? 'none' : '#253017'}
-            stroke={item.strokeIcon ? '#253017' : 'none'}
-            aria-hidden="true"
-          />
-          <TextUI variant="body" color="primary">
-            {item.text}
-          </TextUI>
+          {({ isActive }) => (
+            <span className={`${styles.linkContent} ${isActive ? styles.linkActive : ''}`}>
+              <Icon
+                name={item.icon}
+                size={24}
+                fill={item.strokeIcon ? 'none' : '#253017'}
+                stroke={item.strokeIcon ? '#253017' : 'none'}
+                aria-hidden="true"
+              />
+              <TextUI variant="body" color="primary">
+                {item.text}
+              </TextUI>
+            </span>
+          )}
         </NavLink>
       ))}
     </nav>
