@@ -148,6 +148,7 @@ export default function NewSkillsPage() {
               onDetailsClick={card.onDetailsClick}
               onLikeClick={card.onLikeClick}
               isLiked={card.isLiked}
+              likesCount={card.likesCount}
             />
           ))}
         </InfiniteGridUI>

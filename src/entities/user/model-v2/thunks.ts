@@ -22,10 +22,69 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
     searchType?: 'all' | 'want_to_learn' | 'can_teach';
     replace?: boolean; // Заменить существующие данные или добавить к ним
   } | void
->('usersV2/fetchUsersWithSkills', async (params, { getState }) => {
-  // Получаем currentUserId из auth state
-  const state = getState() as RootState;
-  const currentUserId = state.authV2?.user?.id;
+>('usersV2/fetchUsersWithSkills', async (params, { getState, dispatch }) => {
+  const resolveCurrentUserId = () => {
+    const state = getState() as RootState;
+    return state.authV2?.user?.id;
+  };
+
+  const currentUserId = resolveCurrentUserId();
+
+  const handleLikeClick = ({ skillOwnerUserId, primarySkillId }: {
+    skillOwnerUserId: string;
+    primarySkillId?: string;
+  }) => {
+      const currentUserId = resolveCurrentUserId();
+
+      if (!currentUserId) {
+        console.log('Cannot toggle like: user is not authenticated');
+        return;
+      }
+
+      void dispatch(
+        toggleSkillLikeByUserIdThunk({
+          currentUserId,
+          skillOwnerUserId,
+        })
+      )
+        .unwrap()
+        .then((result) => {
+          const skillId = result.skillId || primarySkillId;
+          if (!skillId) {
+            return;
+          }
+
+          const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
+          try {
+            const likesData = JSON.parse(
+              localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+            ) as { count: number; users: string[] };
+
+            likesData.count = result.likesCount;
+
+            if (result.liked) {
+              if (!likesData.users.includes(currentUserId)) {
+                likesData.users.push(currentUserId);
+              }
+            } else {
+              likesData.users = likesData.users.filter((id) => id !== currentUserId);
+            }
+
+            localStorage.setItem(likesKey, JSON.stringify(likesData));
+          } catch (error) {
+            console.warn('[fetchUsersWithSkillsThunk] Failed to persist likes', error);
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to toggle like for skill card:', error);
+        });
+    };
+
+  const transformUserToCard = (user: UserListItem) =>
+    userListItemToSkillCard(user, {
+      currentUserId,
+      onLikeClick: handleLikeClick,
+    });
 
   // Если параметры не переданы, загружаем данные по умолчанию (популярные + новые + рекомендованные)
   if (!params) {
@@ -41,7 +100,7 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
     });
 
     return {
-      users: Array.from(allUsers.values()).map((user) => userListItemToSkillCard(user)),
+      users: Array.from(allUsers.values()).map((user) => transformUserToCard(user)),
       replace: true, // Данные по умолчанию всегда заменяют
       total: allUsers.size, // Общее количество для данных по умолчанию
     };
@@ -61,7 +120,7 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
   });
 
   return {
-    users: result.users.map((user) => userListItemToSkillCard(user)),
+    users: result.users.map((user) => transformUserToCard(user)),
     replace: params.replace !== undefined ? params.replace : true,
     total: result.total,
   };
@@ -73,9 +132,63 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
 export const fetchRecommendedUsersThunk = createAsyncThunk<
   { users: SkillCardProps[]; hasMore: boolean; replace: boolean },
   { page?: number; limit?: number; replace?: boolean }
->('usersV2/fetchRecommended', async (params = {}, { getState }) => {
-  const state = getState() as RootState;
-  const currentUserId = state.authV2?.user?.id;
+>('usersV2/fetchRecommended', async (params = {}, { getState, dispatch }) => {
+  const resolveCurrentUserId = () => {
+    const state = getState() as RootState;
+    return state.authV2?.user?.id;
+  };
+
+  const handleLikeClick = ({ skillOwnerUserId, primarySkillId }: {
+    skillOwnerUserId: string;
+    primarySkillId?: string;
+  }) => {
+      const currentUserId = resolveCurrentUserId();
+
+      if (!currentUserId) {
+        console.log('Cannot toggle like: user is not authenticated');
+        return;
+      }
+
+      void dispatch(
+        toggleSkillLikeByUserIdThunk({
+          currentUserId,
+          skillOwnerUserId,
+        })
+      )
+        .unwrap()
+        .then((result) => {
+          const skillId = result.skillId || primarySkillId;
+          if (!skillId) {
+            return;
+          }
+
+          const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
+          try {
+            const likesData = JSON.parse(
+              localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+            ) as { count: number; users: string[] };
+
+            likesData.count = result.likesCount;
+
+            if (result.liked) {
+              if (!likesData.users.includes(currentUserId)) {
+                likesData.users.push(currentUserId);
+              }
+            } else {
+              likesData.users = likesData.users.filter((id) => id !== currentUserId);
+            }
+
+            localStorage.setItem(likesKey, JSON.stringify(likesData));
+          } catch (error) {
+            console.warn('[fetchRecommendedUsersThunk] Failed to persist likes', error);
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to toggle like for recommended skill card:', error);
+        });
+    };
+
+  const currentUserId = resolveCurrentUserId();
 
   const result = await usersApi.fetchRecommendedUsers({
     page: params.page || 1,
@@ -84,7 +197,12 @@ export const fetchRecommendedUsersThunk = createAsyncThunk<
   });
 
   return {
-    users: result.users.map((user) => userListItemToSkillCard(user)),
+    users: result.users.map((user) =>
+      userListItemToSkillCard(user, {
+        currentUserId,
+        onLikeClick: handleLikeClick,
+      })
+    ),
     hasMore: result.hasMore,
     replace: params.replace !== undefined ? params.replace : true,
   };
@@ -159,12 +277,19 @@ export const toggleSkillLikeThunk = createAsyncThunk<
  * Используется когда у нас нет конкретного skillId
  */
 export const toggleSkillLikeByUserIdThunk = createAsyncThunk<
-  { currentUserId: string; skillId: string; liked: boolean; likesCount: number },
+  {
+    currentUserId: string;
+    skillOwnerUserId: string;
+    skillId: string;
+    liked: boolean;
+    likesCount: number;
+  },
   { currentUserId: string; skillOwnerUserId: string }
 >('usersV2/toggleSkillLikeByUserId', async ({ currentUserId, skillOwnerUserId }) => {
   const result = await usersApi.toggleSkillLikeByUserId(currentUserId, skillOwnerUserId);
   return {
     currentUserId,
+    skillOwnerUserId,
     skillId: result.skillId,
     liked: result.liked,
     likesCount: result.likesCount,

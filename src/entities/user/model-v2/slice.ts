@@ -192,7 +192,7 @@ export const usersSliceV2 = createSlice({
 
     // ========== toggleSkillLikeByUserIdThunk ==========
     builder.addCase(toggleSkillLikeByUserIdThunk.fulfilled, (state, action) => {
-      const { currentUserId, skillId, liked } = action.payload;
+      const { currentUserId, skillOwnerUserId, skillId, liked, likesCount } = action.payload;
       const user = state.profiles.entities[currentUserId];
       if (user) {
         if (liked) {
@@ -204,6 +204,15 @@ export const usersSliceV2 = createSlice({
           if (index > -1) {
             user.likedSkillIds.splice(index, 1);
           }
+        }
+      }
+
+      if (state.skillCards) {
+        const targetCard = state.skillCards.find((card) => card.user.id === skillOwnerUserId);
+
+        if (targetCard) {
+          targetCard.isLiked = liked;
+          targetCard.likesCount = likesCount;
         }
       }
     });
