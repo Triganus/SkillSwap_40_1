@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { TextUI } from '@/shared/ui/Text';
 import { Icon } from '@/shared/ui';
 import type { TFilterSideBarProps } from './TFilterSideBarProps';
@@ -19,6 +19,7 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const reduxFilters = useAppSelector(getSideBarFilters);
   const onChangeRef = useRef(onChange);
   const prevFiltersRef = useRef<string>('');
+  const isSyncingFromReduxRef = useRef(false);
 
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -46,6 +47,8 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
   const reduxSkillsKey = useMemo(() => JSON.stringify(reduxFilters.skills), [reduxFilters.skills]);
 
   useEffect(() => {
+    isSyncingFromReduxRef.current = true;
+
     const newGeneral = reduxFilters.general || '';
     const newGender = reduxFilters.gender || '';
 
@@ -60,6 +63,13 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduxFilters.general, reduxFilters.gender, reduxSkillsKey, reduxCitiesKey]);
+
+  // Сбрасываем флаг синхронизации после обновления DOM
+  useLayoutEffect(() => {
+    if (isSyncingFromReduxRef.current) {
+      isSyncingFromReduxRef.current = false;
+    }
+  });
 
   const handleGeneralChange = useCallback((value: string) => {
     setGeneralFilterValue(value);
@@ -119,9 +129,13 @@ export const FilterSideBar: React.FC<TFilterSideBarProps> = ({ skillsCatalog, on
 
     const newFiltersKey = JSON.stringify(newPayload);
 
-    if (newFiltersKey !== prevFiltersRef.current) {
+    // Не вызываем onChange, если это синхронизация из Redux
+    if (newFiltersKey !== prevFiltersRef.current && !isSyncingFromReduxRef.current) {
       prevFiltersRef.current = newFiltersKey;
       onChangeRef.current?.(newPayload);
+    } else if (isSyncingFromReduxRef.current) {
+      // Обновляем prevFiltersRef при синхронизации, чтобы не сбивать отслеживание
+      prevFiltersRef.current = newFiltersKey;
     }
   }, [generalFilterValue, genderValue, skillsData, citiesSelected]);
   return (

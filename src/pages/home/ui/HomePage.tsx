@@ -6,10 +6,11 @@ import {
   selectSkillCards,
   selectUsersLoading,
   selectUsersTotal,
+  selectUsersError,
   fetchRecommendedUsersThunk,
   fetchUsersWithSkillsThunk,
 } from '@/entities/user/model-v2';
-import { setFilter } from '@/entities/filterSideBar/model/filterSideBarSlice';
+import { setFilter, getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { useContentFiltering } from '@/entities/filtered-content';
 import { HomeContent } from './HomeContent';
 import type { SkillCardProps } from '@widgets/Cards/SkillCard/type';
@@ -28,6 +29,8 @@ export default function HomePage() {
   const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
   const loadingUsers = useAppSelector(selectUsersLoading);
   const totalUsers = useAppSelector(selectUsersTotal);
+  const usersError = useAppSelector(selectUsersError);
+  const currentFilters = useAppSelector(getSideBarFilters);
 
   // Справочники из Redux (загружаются централизованно в Provider)
   const skillsCatalog = useAppSelector(selectSkillsCatalog);
@@ -38,6 +41,10 @@ export default function HomePage() {
 
   // Состояние сортировки
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+
+  // Флаги для предотвращения зацикливания
+  const initialLoadAttemptedRef = useRef(false);
+  const isLoadingRef = useRef(false);
 
   // Режим поиска
   const searchFromUrl = searchParams.get('search') || '';
@@ -66,27 +73,82 @@ export default function HomePage() {
   // Отслеживаем предыдущее состояние фильтрации
   const prevIsFilteringRef = useRef(isFiltering);
 
+  // Синхронизация loadingUsers с ref для предотвращения race conditions
+  useEffect(() => {
+    isLoadingRef.current = loadingUsers;
+  }, [loadingUsers]);
+
+  // Это позволяет загрузить данные при возвращении на страницу
+  useEffect(() => {
+    initialLoadAttemptedRef.current = false;
+  }, []);
+
   // Загрузка навыков для справочника
   useEffect(() => {
-    dispatch(fetchSkills());
+    const loadSkills = async () => {
+      try {
+        await dispatch(fetchSkills()).unwrap();
+      } catch (error) {
+        console.error('Failed to load skills catalog:', error);
+      }
+    };
+
+    loadSkills();
   }, [dispatch]);
 
   // Загрузка данных по умолчанию при первом монтировании (популярные + новые + рекомендованные)
   useEffect(() => {
-    if (!isFiltering && usersData.length === 0 && !loadingUsers) {
-      dispatch(fetchUsersWithSkillsThunk());
+    // Предотвращаем повторные попытки, если уже пытались загрузить или идет загрузка
+    if (initialLoadAttemptedRef.current || isLoadingRef.current) {
+      return;
     }
-  }, [dispatch, isFiltering, usersData.length, loadingUsers]);
+
+    // Не загружаем данные, если в режиме фильтрации
+    if (isFiltering) {
+      return;
+    }
+
+    const needsInitialLoad = usersData.length === 0 && !loadingUsers && !usersError;
+
+    if (needsInitialLoad) {
+      initialLoadAttemptedRef.current = true;
+      isLoadingRef.current = true;
+
+      dispatch(fetchUsersWithSkillsThunk())
+        .unwrap()
+        .catch((error) => {
+          console.error('Failed to load initial users data:', error);
+
+          setTimeout(() => {
+            initialLoadAttemptedRef.current = false;
+          }, 5000);
+        })
+        .finally(() => {
+          isLoadingRef.current = false;
+        });
+    }
+  }, [dispatch, isFiltering, usersData.length, loadingUsers, usersError]);
 
   // Отслеживаем переход из режима фильтрации в обычный режим
   useEffect(() => {
     const wasFiltering = prevIsFilteringRef.current;
 
     // Если были в фильтрации и вышли из неё - загружаем данные по умолчанию
-    if (wasFiltering && !isFiltering && !loadingUsers) {
-      dispatch(fetchUsersWithSkillsThunk());
-      setCurrentRecommendedPage(1);
-      setHasMoreRecommended(true);
+    if (wasFiltering && !isFiltering && !loadingUsers && !isLoadingRef.current) {
+      isLoadingRef.current = true;
+
+      dispatch(fetchUsersWithSkillsThunk())
+        .unwrap()
+        .then(() => {
+          setCurrentRecommendedPage(1);
+          setHasMoreRecommended(true);
+        })
+        .catch((error) => {
+          console.error('Failed to reload users after filtering:', error);
+        })
+        .finally(() => {
+          isLoadingRef.current = false;
+        });
     }
 
     prevIsFilteringRef.current = isFiltering;
@@ -103,12 +165,17 @@ export default function HomePage() {
   // Обработчик изменения фильтров
   const handleFiltersChange = useCallback(
     (filters: FilterPayload) => {
-      console.log('Filters applied:', filters);
-      dispatch(setFilter(filters));
+      const filtersChanged = JSON.stringify(filters) !== JSON.stringify(currentFilters);
+
+      if (filtersChanged) {
+        console.log('Filters applied:', filters);
+
+        dispatch(setFilter(filters));
+      }
 
       // TODO: применить фильтры к данным после готовности API
     },
-    [dispatch]
+    [dispatch, currentFilters]
   );
 
   // Обработчики для CardSection
@@ -130,11 +197,12 @@ export default function HomePage() {
 
   // Обработчик для бесконечного скролла рекомендованных
   const handleLoadMoreRecommended = useCallback(() => {
-    if (!hasMoreRecommended || loadingUsers) {
+    if (!hasMoreRecommended || loadingUsers || isLoadingRef.current) {
       return;
     }
 
     const nextPage = currentRecommendedPage + 1;
+    isLoadingRef.current = true;
 
     dispatch(
       fetchRecommendedUsersThunk({
@@ -142,17 +210,25 @@ export default function HomePage() {
         limit: 9,
         replace: false,
       })
-    ).then((result) => {
-      if (result.payload && typeof result.payload === 'object' && 'hasMore' in result.payload) {
-        const payload = result.payload as { hasMore: boolean };
+    )
+      .unwrap()
+      .then((result) => {
+        if (result && typeof result === 'object' && 'hasMore' in result) {
+          const payload = result as { hasMore: boolean };
 
-        setHasMoreRecommended(payload.hasMore);
+          setHasMoreRecommended(payload.hasMore);
 
-        if (payload.hasMore) {
-          setCurrentRecommendedPage(nextPage);
+          if (payload.hasMore) {
+            setCurrentRecommendedPage(nextPage);
+          }
         }
-      }
-    });
+      })
+      .catch((error) => {
+        console.error('Failed to load more recommended users:', error);
+      })
+      .finally(() => {
+        isLoadingRef.current = false;
+      });
   }, [dispatch, currentRecommendedPage, hasMoreRecommended, loadingUsers]);
 
   // Режим поиска - отображаем только результаты
@@ -184,6 +260,9 @@ export default function HomePage() {
     );
   }
 
+  const shouldShowLoader =
+    usersData.length === 0 && (loadingUsers || (!usersError && initialLoadAttemptedRef.current));
+
   // Обычный режим - отображаем все блоки
   return (
     <div className={styles.container}>
@@ -195,7 +274,7 @@ export default function HomePage() {
       <section className={styles.content}>
         <HomeContent
           cards={usersData}
-          isLoading={loadingUsers}
+          isLoading={shouldShowLoader}
           hasMore={hasMoreRecommended}
           onLoadMore={handleLoadMoreRecommended}
           onViewAllPopular={handleViewAllPopular}
