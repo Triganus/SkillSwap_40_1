@@ -74,7 +74,7 @@ function enrichUsersWithLikes(
 }
 
 // Утилиты для генерации детерминированных случайных данных
-function mulberry32(a: number) {
+export function mulberry32(a: number) {
   return function () {
     a |= 0;
     a = (a + 0x6d2b79f5) | 0;
@@ -328,7 +328,7 @@ function generateAdditionalUsers(
   return users;
 }
 
-async function ensureData(): Promise<{
+export async function ensureData(): Promise<{
   users: UserListItem[];
   skillPool: Array<{ id: string; name: string; categoryId: string }>;
 }> {
