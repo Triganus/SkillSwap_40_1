@@ -221,15 +221,9 @@ export const usersSliceV2 = createSlice({
     });
 
     // ========== fetchUsersWithSkillsThunk (для HomePage) ==========
-    builder.addCase(fetchUsersWithSkillsThunk.pending, (state, action) => {
+    builder.addCase(fetchUsersWithSkillsThunk.pending, (state) => {
       state.loading = true;
       state.error = null;
-      // Очищаем карточки при замене данных:
-      // 1. Если вызов без параметров (загрузка по умолчанию)
-      // 2. Если явно указан replace: true (смена фильтров)
-      if (!action.meta.arg || action.meta.arg.replace) {
-        state.skillCards = [];
-      }
     });
     builder.addCase(fetchUsersWithSkillsThunk.fulfilled, (state, action) => {
       state.loading = false;
@@ -250,14 +244,9 @@ export const usersSliceV2 = createSlice({
     });
 
     // ========== fetchRecommendedUsersThunk (для рекомендованных с пагинацией) ==========
-    builder.addCase(fetchRecommendedUsersThunk.pending, (state, action) => {
+    builder.addCase(fetchRecommendedUsersThunk.pending, (state) => {
       state.loading = true;
       state.error = null;
-
-      // Очищаем карточки только при замене данных (переход из фильтрации)
-      if (action.meta.arg && action.meta.arg.replace) {
-        state.skillCards = [];
-      }
     });
     builder.addCase(fetchRecommendedUsersThunk.fulfilled, (state, action) => {
       state.loading = false;

@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from '@shared/hooks/redux';
 import {
   selectSkillCards,
   selectUsersLoading,
+  selectUsersError,
   fetchUsersWithSkillsThunk,
 } from '@/entities/user/model-v2';
 import {
@@ -38,6 +39,7 @@ export function useContentFiltering(
   const dispatch = useAppDispatch();
   const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
   const loadingUsers = useAppSelector(selectUsersLoading);
+  const usersError = useAppSelector(selectUsersError);
   const currentFilters = useAppSelector(getSideBarFilters);
   const genders = useAppSelector(selectAllGenders);
   const cities = useAppSelector(selectAllCities);
@@ -49,9 +51,11 @@ export function useContentFiltering(
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  // Ref для отслеживания последнего запроса
+  // Ref для отслеживания последнего запроса и защиты от зацикливания
   const lastRequestRef = useRef<string>('');
   const isInitialMount = useRef(true);
+  const isLoadingRef = useRef(false);
+  const loadAttemptRef = useRef(0);
 
   // Проверяем активность боковых фильтров
   const isSidebarFilterActive = useMemo(() => {
@@ -65,6 +69,11 @@ export function useContentFiltering(
         (currentFilters.cities && currentFilters.cities.length > 0))
     );
   }, [currentFilters]);
+
+  // Синхронизация loadingUsers с ref для предотвращения race conditions
+  useEffect(() => {
+    isLoadingRef.current = loadingUsers;
+  }, [loadingUsers]);
 
   // Стабилизируем параметры через useMemo
   const apiParams = useMemo(() => {
@@ -137,8 +146,12 @@ export function useContentFiltering(
 
   // Выполняем запрос при изменении параметров
   useEffect(() => {
-    // Пропускаем первый рендер, если данные уже есть
-    if (isInitialMount.current && usersData.length > 0) {
+    // Пропускаем первый рендер только если данные уже есть и мы в режиме фильтрации
+    if (
+      isInitialMount.current &&
+      usersData.length > 0 &&
+      (isSearchActive || isSidebarFilterActive)
+    ) {
       isInitialMount.current = false;
 
       return;
@@ -152,29 +165,73 @@ export function useContentFiltering(
       return;
     }
 
+    // Защита от зацикливания - ограничиваем количество попыток
+    if (loadAttemptRef.current > 3 && usersError) {
+      console.error('Too many failed attempts, stopping requests');
+
+      return;
+    }
+
+    if (isLoadingRef.current) {
+      return;
+    }
+
     lastRequestRef.current = apiParams.requestKey;
+    isLoadingRef.current = true;
+    loadAttemptRef.current += 1;
 
     if (apiParams.params) {
-      dispatch(fetchUsersWithSkillsThunk(apiParams.params)).then((result) => {
-        if (result.payload && typeof result.payload === 'object' && 'users' in result.payload) {
-          const payload = result.payload as { users: unknown[] };
+      dispatch(fetchUsersWithSkillsThunk(apiParams.params))
+        .unwrap()
+        .then((result) => {
+          if (result && typeof result === 'object' && 'users' in result) {
+            const payload = result as { users: unknown[] };
 
-          setHasMore(payload.users.length === 9);
-        }
-      });
+            setHasMore(payload.users.length === 9);
+
+            loadAttemptRef.current = 0;
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to fetch users:', error);
+
+          setHasMore(false);
+        })
+        .finally(() => {
+          isLoadingRef.current = false;
+        });
     } else {
-      dispatch(fetchUsersWithSkillsThunk()).then(() => {
-        setHasMore(false);
-      });
+      dispatch(fetchUsersWithSkillsThunk())
+        .unwrap()
+        .then(() => {
+          setHasMore(false);
+          loadAttemptRef.current = 0;
+        })
+        .catch((error) => {
+          console.error('Failed to fetch default users:', error);
+
+          setHasMore(false);
+        })
+        .finally(() => {
+          isLoadingRef.current = false;
+        });
     }
-  }, [dispatch, apiParams.requestKey, apiParams.params, usersData.length]);
+  }, [
+    dispatch,
+    apiParams.requestKey,
+    apiParams.params,
+    usersData.length,
+    usersError,
+    isSearchActive,
+    isSidebarFilterActive,
+  ]);
 
   // Функция для загрузки следующей страницы
   const loadMore = useCallback(() => {
-    if (!loadingUsers && hasMore) {
+    if (!loadingUsers && !isLoadingRef.current && hasMore && !usersError) {
       setCurrentPage((prev) => prev + 1);
     }
-  }, [loadingUsers, hasMore]);
+  }, [loadingUsers, hasMore, usersError]);
 
   const filteredContent: FilteredContent = useMemo(
     () => ({
