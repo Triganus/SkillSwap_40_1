@@ -23,8 +23,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 0;
 
   @media (width <= 767px) {
     flex-direction: column;
@@ -62,6 +65,8 @@
 
 .content {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .grid {
