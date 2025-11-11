@@ -16,6 +16,11 @@ import type { SkillCardProps } from '@widgets/Cards/SkillCard/type';
 import { FilterSideBar } from '@widgets/FilterSideBar/FilterSideBar';
 import type { FilterPayload } from '@/entities/filterSideBar/model';
 import { selectSkillsCatalog } from '@/entities/directory';
+import { NotificationToastList } from '@/features/notifications/ui/NotificationToastList';
+import { selectNewNotifications } from '@/features/notifications/model/selectors';
+import { markNotificationViewed } from '@/features/notifications/model/notificationsSlice';
+import type { INotification } from '@/entities/notification/model/types/types';
+import { useAuthV2 } from '@app/Provider.tsx';
 import styles from './HomePage.module.scss';
 
 export default function HomePage() {
@@ -31,6 +36,8 @@ export default function HomePage() {
 
   // Справочники из Redux (загружаются централизованно в Provider)
   const skillsCatalog = useAppSelector(selectSkillsCatalog);
+  const newNotifications = useAppSelector(selectNewNotifications);
+  const { isAuthenticated } = useAuthV2();
 
   // Локальное состояние для бесконечного скролла рекомендованных
   const [currentRecommendedPage, setCurrentRecommendedPage] = useState(1);
@@ -155,15 +162,50 @@ export default function HomePage() {
     });
   }, [dispatch, currentRecommendedPage, hasMoreRecommended, loadingUsers]);
 
+  const handleToastClick = useCallback(
+    (notification: INotification) => {
+      if (!notification.isViewed) {
+        dispatch(markNotificationViewed(notification.id));
+      }
+
+      if (notification.link) {
+        navigate(notification.link);
+      }
+    },
+    [dispatch, navigate]
+  );
+
+  const handleToastDismiss = useCallback(
+    (notification: INotification) => {
+      if (!notification.isViewed) {
+        dispatch(markNotificationViewed(notification.id));
+      }
+    },
+    [dispatch]
+  );
+
+  const sidebarContent = (
+    <div className={styles.sidebarInner}>
+      {skillsCatalog && (
+        <FilterSideBar skillsCatalog={skillsCatalog} onChange={handleFiltersChange} />
+      )}
+
+      {isAuthenticated && (
+        <NotificationToastList
+          className={styles.toastContainer}
+          notifications={newNotifications}
+          onNotificationClick={handleToastClick}
+          onNotificationDismiss={handleToastDismiss}
+        />
+      )}
+    </div>
+  );
+
   // Режим поиска - отображаем только результаты
   if (isFiltering) {
     return (
       <div className={styles.container}>
-        <aside className={styles.sidebar}>
-          {skillsCatalog && (
-            <FilterSideBar skillsCatalog={skillsCatalog} onChange={handleFiltersChange} />
-          )}
-        </aside>
+        <aside className={styles.sidebar}>{sidebarContent}</aside>
         <section className={styles.content}>
           <HomeContent
             cards={filteredContent.items}
@@ -187,11 +229,7 @@ export default function HomePage() {
   // Обычный режим - отображаем все блоки
   return (
     <div className={styles.container}>
-      <aside className={styles.sidebar}>
-        {skillsCatalog && (
-          <FilterSideBar skillsCatalog={skillsCatalog} onChange={handleFiltersChange} />
-        )}
-      </aside>
+      <aside className={styles.sidebar}>{sidebarContent}</aside>
       <section className={styles.content}>
         <HomeContent
           cards={usersData}

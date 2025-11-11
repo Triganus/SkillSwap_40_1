@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import clsx from 'clsx';
 import type { INotification } from '@/entities/notification/model/types/types';
 import { formatNotification } from '@/features/notifications/lib/formatNotification';
 import IdeaIcon from '@/shared/assets/icons/idea.svg?react';
@@ -8,16 +9,26 @@ interface NotificationToastListProps {
   notifications: INotification[];
   onNotificationClick: (notification: INotification) => void;
   onNotificationDismiss: (notification: INotification) => void;
+  className?: string;
 }
 
 export const NotificationToastList = memo(
-  ({ notifications, onNotificationClick, onNotificationDismiss }: NotificationToastListProps) => {
+  ({
+    notifications,
+    onNotificationClick,
+    onNotificationDismiss,
+    className,
+  }: NotificationToastListProps) => {
     if (notifications.length === 0) {
       return null;
     }
 
     return (
-      <div className={styles.container} role="status" aria-live="polite">
+      <div
+        className={clsx(styles.container, className)}
+        role="status"
+        aria-live="polite"
+      >
         {notifications.map((notification) => {
           const formatted = formatNotification(notification);
 

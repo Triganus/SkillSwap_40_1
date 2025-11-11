@@ -16,13 +16,10 @@ import { useAuthV2 } from '@app/Provider.tsx';
 import type { AppDispatch } from '@/app/store';
 import {
   fetchNotifications,
-  markNotificationViewed,
 } from '@/features/notifications/model/notificationsSlice';
 import { selectNewNotifications } from '@/features/notifications/model/selectors';
 import { NotificationMenu } from './ui/NotificationMenu';
 import { useNotificationsPolling } from '@/features/notifications/lib/useNotificationsPolling';
-import { NotificationToastList } from '@/features/notifications/ui/NotificationToastList';
-import type { INotification } from '@/entities/notification/model/types/types';
 
 export const HeaderWidget: React.FC = () => {
   const { isAuthenticated } = useAuthV2();
@@ -139,28 +136,6 @@ export const HeaderWidget: React.FC = () => {
     [setSearchParams, navigate, location.pathname]
   );
 
-  const handleToastClick = useCallback(
-    (notification: INotification) => {
-      if (!notification.isViewed) {
-        dispatch(markNotificationViewed(notification.id));
-      }
-
-      if (notification.link) {
-        navigate(notification.link);
-      }
-    },
-    [dispatch, navigate]
-  );
-
-  const handleToastDismiss = useCallback(
-    (notification: INotification) => {
-      if (!notification.isViewed) {
-        dispatch(markNotificationViewed(notification.id));
-      }
-    },
-    [dispatch]
-  );
-
   return (
     <>
       <header className={classes}>
@@ -203,13 +178,6 @@ export const HeaderWidget: React.FC = () => {
           buttonRef={skillsButtonRef}
         />
       </header>
-      {isAuthenticated && (
-        <NotificationToastList
-          notifications={newNotifications}
-          onNotificationClick={handleToastClick}
-          onNotificationDismiss={handleToastDismiss}
-        />
-      )}
     </>
   );
 };
