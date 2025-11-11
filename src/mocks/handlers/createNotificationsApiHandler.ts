@@ -206,7 +206,7 @@ async function generateNotifications(
 
   const { users, skillPool } = await ensureData();
   if (!users.length) {
-    return { notifications: target, seenPairs: seen };
+    return { notifications: target, seenPairs: Array.from(seen) };
   }
 
   const currentUser = pickCurrentUser(users);
