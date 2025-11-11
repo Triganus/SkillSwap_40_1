@@ -17,7 +17,7 @@ import {
   getCategoriesFromStore,
 } from '@/entities/directory/lib/getFromStore';
 import { fetchSimilarUsers } from '@/api/users-api-v2';
-import { toggleSkillLikeThunk, toggleSkillLikeByUserIdThunk } from '@/entities/user/model-v2';
+import { toggleSkillLikeByUserIdThunk } from '@/entities/user/model-v2';
 import type { User } from '@/entities/user/model/types/types';
 import type { Skill } from '@/entities/skill/model/types/types';
 import type { TagCategory } from '@/shared/ui/Tag';
@@ -161,7 +161,7 @@ export default function SkillPage() {
 
   // Обработчик лайка на странице навыка (есть skillId)
   const onLikeClick = useCallback(async () => {
-    if (!isAuthenticated || !currentUser || !primarySkill || likingInProgress) {
+    if (!isAuthenticated || !currentUser || !primarySkill || !profile || likingInProgress) {
       console.log('Cannot like: not authenticated or already in progress');
       return;
     }
@@ -170,20 +170,22 @@ export default function SkillPage() {
 
     try {
       const result = await dispatch(
-        toggleSkillLikeThunk({
-          userId: currentUser.id,
-          skillId: primarySkill.id,
+        toggleSkillLikeByUserIdThunk({
+          currentUserId: currentUser.id,
+          skillOwnerUserId: profile.id,
         })
       ).unwrap();
+
+      const toggledSkillId = result.skillId || primarySkill.id;
 
       // Обновляем локальное состояние лайков
       setLikedSkills((prev) => {
         const newSet = new Set(prev);
 
         if (result.liked) {
-          newSet.add(primarySkill.id);
+          newSet.add(toggledSkillId);
         } else {
-          newSet.delete(primarySkill.id);
+          newSet.delete(toggledSkillId);
         }
         return newSet;
       });
@@ -192,16 +194,38 @@ export default function SkillPage() {
       setSkillLikesCount((prev) => {
         const newMap = new Map(prev);
 
-        newMap.set(primarySkill.id, result.likesCount);
+        newMap.set(toggledSkillId, result.likesCount);
 
         return newMap;
       });
+
+      // Синхронизируем локальное хранилище, чтобы карточки сохранили состояние
+      const likesKey = `likes_${toggledSkillId}_${profile.id}`;
+      try {
+        const likesData = JSON.parse(
+          localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+        ) as { count: number; users: string[] };
+
+        likesData.count = result.likesCount;
+
+        if (result.liked) {
+          if (!likesData.users.includes(currentUser.id)) {
+            likesData.users.push(currentUser.id);
+          }
+        } else {
+          likesData.users = likesData.users.filter((id) => id !== currentUser.id);
+        }
+
+        localStorage.setItem(likesKey, JSON.stringify(likesData));
+      } catch (storageError) {
+        console.warn('[SkillPage] Failed to persist likes to localStorage', storageError);
+      }
     } catch (error) {
       console.error('Failed to toggle like:', error);
     } finally {
       setLikingInProgress(false);
     }
-  }, [isAuthenticated, currentUser, primarySkill, dispatch, likingInProgress]);
+  }, [isAuthenticated, currentUser, primarySkill, profile, dispatch, likingInProgress]);
 
   // Обработчик лайка в карточке (только userId владельца навыка)
   const onCardLikeClick = useCallback(
