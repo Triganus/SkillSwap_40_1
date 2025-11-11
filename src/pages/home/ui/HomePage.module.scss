@@ -35,6 +35,26 @@
   }
 }
 
+.sidebar-inner {
+  position: sticky;
+  top: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (width <= 1024px) {
+  .sidebar-inner {
+    position: static;
+    gap: 16px;
+  }
+}
+
+.toast-container {
+  width: 100%;
+  margin-top: 16px;
+}
+
 .content {
   flex: 1;
   display: flex;

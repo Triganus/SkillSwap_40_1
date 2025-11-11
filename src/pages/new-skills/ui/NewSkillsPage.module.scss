@@ -23,8 +23,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 0;
 
   @media (width <= 767px) {
     flex-direction: column;
@@ -36,6 +39,21 @@
   @media (width <= 480px) {
     margin-bottom: 16px;
   }
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-left {
+  flex: 1 1 auto;
+}
+
+.header-right {
+  flex: 0 0 auto;
 }
 
 .back-button {
@@ -62,6 +80,8 @@
 
 .content {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .grid {
