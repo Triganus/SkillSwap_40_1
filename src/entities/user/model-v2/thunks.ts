@@ -30,55 +30,58 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
 
   const currentUserId = resolveCurrentUserId();
 
-  const handleLikeClick = ({ skillOwnerUserId, primarySkillId }: {
+  const handleLikeClick = ({
+    skillOwnerUserId,
+    primarySkillId,
+  }: {
     skillOwnerUserId: string;
     primarySkillId?: string;
   }) => {
-      const currentUserId = resolveCurrentUserId();
+    const currentUserId = resolveCurrentUserId();
 
-      if (!currentUserId) {
-        console.log('Cannot toggle like: user is not authenticated');
-        return;
-      }
+    if (!currentUserId) {
+      console.log('Cannot toggle like: user is not authenticated');
+      return;
+    }
 
-      void dispatch(
-        toggleSkillLikeByUserIdThunk({
-          currentUserId,
-          skillOwnerUserId,
-        })
-      )
-        .unwrap()
-        .then((result) => {
-          const skillId = result.skillId || primarySkillId;
-          if (!skillId) {
-            return;
-          }
+    void dispatch(
+      toggleSkillLikeByUserIdThunk({
+        currentUserId,
+        skillOwnerUserId,
+      })
+    )
+      .unwrap()
+      .then((result) => {
+        const skillId = result.skillId || primarySkillId;
+        if (!skillId) {
+          return;
+        }
 
-          const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
-          try {
-            const likesData = JSON.parse(
-              localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
-            ) as { count: number; users: string[] };
+        const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
+        try {
+          const likesData = JSON.parse(
+            localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+          ) as { count: number; users: string[] };
 
-            likesData.count = result.likesCount;
+          likesData.count = result.likesCount;
 
-            if (result.liked) {
-              if (!likesData.users.includes(currentUserId)) {
-                likesData.users.push(currentUserId);
-              }
-            } else {
-              likesData.users = likesData.users.filter((id) => id !== currentUserId);
+          if (result.liked) {
+            if (!likesData.users.includes(currentUserId)) {
+              likesData.users.push(currentUserId);
             }
-
-            localStorage.setItem(likesKey, JSON.stringify(likesData));
-          } catch (error) {
-            console.warn('[fetchUsersWithSkillsThunk] Failed to persist likes', error);
+          } else {
+            likesData.users = likesData.users.filter((id) => id !== currentUserId);
           }
-        })
-        .catch((error) => {
-          console.error('Failed to toggle like for skill card:', error);
-        });
-    };
+
+          localStorage.setItem(likesKey, JSON.stringify(likesData));
+        } catch (error) {
+          console.warn('[fetchUsersWithSkillsThunk] Failed to persist likes', error);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to toggle like for skill card:', error);
+      });
+  };
 
   const transformUserToCard = (user: UserListItem) =>
     userListItemToSkillCard(user, {
@@ -138,55 +141,58 @@ export const fetchRecommendedUsersThunk = createAsyncThunk<
     return state.authV2?.user?.id;
   };
 
-  const handleLikeClick = ({ skillOwnerUserId, primarySkillId }: {
+  const handleLikeClick = ({
+    skillOwnerUserId,
+    primarySkillId,
+  }: {
     skillOwnerUserId: string;
     primarySkillId?: string;
   }) => {
-      const currentUserId = resolveCurrentUserId();
+    const currentUserId = resolveCurrentUserId();
 
-      if (!currentUserId) {
-        console.log('Cannot toggle like: user is not authenticated');
-        return;
-      }
+    if (!currentUserId) {
+      console.log('Cannot toggle like: user is not authenticated');
+      return;
+    }
 
-      void dispatch(
-        toggleSkillLikeByUserIdThunk({
-          currentUserId,
-          skillOwnerUserId,
-        })
-      )
-        .unwrap()
-        .then((result) => {
-          const skillId = result.skillId || primarySkillId;
-          if (!skillId) {
-            return;
-          }
+    void dispatch(
+      toggleSkillLikeByUserIdThunk({
+        currentUserId,
+        skillOwnerUserId,
+      })
+    )
+      .unwrap()
+      .then((result) => {
+        const skillId = result.skillId || primarySkillId;
+        if (!skillId) {
+          return;
+        }
 
-          const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
-          try {
-            const likesData = JSON.parse(
-              localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
-            ) as { count: number; users: string[] };
+        const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
+        try {
+          const likesData = JSON.parse(
+            localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+          ) as { count: number; users: string[] };
 
-            likesData.count = result.likesCount;
+          likesData.count = result.likesCount;
 
-            if (result.liked) {
-              if (!likesData.users.includes(currentUserId)) {
-                likesData.users.push(currentUserId);
-              }
-            } else {
-              likesData.users = likesData.users.filter((id) => id !== currentUserId);
+          if (result.liked) {
+            if (!likesData.users.includes(currentUserId)) {
+              likesData.users.push(currentUserId);
             }
-
-            localStorage.setItem(likesKey, JSON.stringify(likesData));
-          } catch (error) {
-            console.warn('[fetchRecommendedUsersThunk] Failed to persist likes', error);
+          } else {
+            likesData.users = likesData.users.filter((id) => id !== currentUserId);
           }
-        })
-        .catch((error) => {
-          console.error('Failed to toggle like for recommended skill card:', error);
-        });
-    };
+
+          localStorage.setItem(likesKey, JSON.stringify(likesData));
+        } catch (error) {
+          console.warn('[fetchRecommendedUsersThunk] Failed to persist likes', error);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to toggle like for recommended skill card:', error);
+      });
+  };
 
   const currentUserId = resolveCurrentUserId();
 

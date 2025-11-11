@@ -101,10 +101,7 @@ export function userListItemToSkillCard(
           card.likesCount = likesData.count;
         }
 
-        const resolvedUserId =
-          currentUserId ||
-          sessionStorage.getItem('guestId') ||
-          null;
+        const resolvedUserId = currentUserId || sessionStorage.getItem('guestId') || null;
 
         if (resolvedUserId) {
           card.isLiked = likesData.users.includes(resolvedUserId);

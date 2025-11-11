@@ -119,11 +119,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({
                 <TextUI variant="caption" color="primary">
                   {user.bio || 'Город не указан'}
                 </TextUI>
-              {publishedDateLabel && (
-                <TextUI variant="caption" className={styles.publishedAt}>
-                  Дата публикации: {publishedDateLabel}
-                </TextUI>
-              )}
+                {publishedDateLabel && (
+                  <TextUI variant="caption" className={styles.publishedAt}>
+                    Дата публикации: {publishedDateLabel}
+                  </TextUI>
+                )}
               </div>
             </div>
 
