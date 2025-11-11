@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.toast {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 280px;
+  max-width: 340px;
+  padding: 14px 16px 14px 20px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ecf6e4 0%, #e2f0d7 100%);
+  border: 1px solid rgb(90 131 42 / 25%);
+  box-shadow: 0 18px 36px rgb(28 45 64 / 16%);
+}
+
+.close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover .close-icon::before,
+  &:hover .close-icon::after {
+    background: rgb(37 48 23 / 80%);
+  }
+}
+
+.close-icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    background: #253017;
+    border-radius: 2px;
+    transform-origin: center;
+    transition: background 0.2s ease;
+  }
+
+  &::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  &::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #5a832a;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1b1f27;
+  line-height: 1.3;
+}
+
+.cta {
+  border: none;
+  border-radius: 18px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #253017;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgb(90 131 42 / 18%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
+
+  &:hover {
+    box-shadow: 0 12px 24px rgb(90 131 42 / 22%);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.toast:hover .cta {
+  opacity: 1;
+  pointer-events: auto;
+}

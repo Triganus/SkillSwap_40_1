@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { LogoUI } from '@shared/ui/Logo';
 import { NavMenu } from '@widgets/NavMenu';
@@ -12,18 +13,34 @@ import { HeaderUserBlock } from './ui/HeaderUserBlock';
 import { SkillsPopup } from '@widgets/SkillsPopup';
 import cls from './Header.module.scss';
 import { useAuthV2 } from '@app/Provider.tsx';
+import type { AppDispatch } from '@/app/store';
+import { fetchNotifications } from '@/features/notifications/model/notificationsSlice';
+import { selectNewNotifications } from '@/features/notifications/model/selectors';
+import { NotificationMenu } from './ui/NotificationMenu';
+import { useNotificationsPolling } from '@/features/notifications/lib/useNotificationsPolling';
 
 export const HeaderWidget: React.FC = () => {
   const { isAuthenticated } = useAuthV2();
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const items = useHeaderActions();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchValue, setSearchValue] = useState(searchParams.get('search') ?? '');
   const [isSkillsPopupOpen, setIsSkillsPopupOpen] = useState(false);
+  const [isNotificationsOpen, setNotificationsOpen] = useState(false);
   const skillsButtonRef = useRef<HTMLButtonElement>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement | null>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const newNotifications = useSelector(selectNewNotifications);
+
+  const items = useHeaderActions({
+    onNotificationsClick: () => setNotificationsOpen((prev) => !prev),
+    notificationButtonRef,
+    unreadCount: isAuthenticated ? newNotifications.length : 0,
+  });
+
+  useNotificationsPolling({ enabled: isAuthenticated });
 
   useEffect(() => {
     const urlVal = searchParams.get('search') ?? '';
@@ -38,6 +55,22 @@ export const HeaderWidget: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated && isNotificationsOpen) {
+      dispatch(fetchNotifications());
+    }
+  }, [dispatch, isAuthenticated, isNotificationsOpen]);
+
+  useEffect(() => {
+    setNotificationsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setNotificationsOpen(false);
+    }
+  }, [isAuthenticated]);
 
   const classes = [cls.header, isAuthenticated && cls.authenticated].filter(Boolean).join(' ');
 
@@ -102,39 +135,47 @@ export const HeaderWidget: React.FC = () => {
   );
 
   return (
-    <header className={classes}>
-      <nav className={cls.nav} aria-label="Верхняя панель навигации">
-        <div className={cls.left}>
-          <div className={cls.logo}>
-            <LogoUI />
+    <>
+      <header className={classes}>
+        <nav className={cls.nav} aria-label="Верхняя панель навигации">
+          <div className={cls.left}>
+            <div className={cls.logo}>
+              <LogoUI />
+            </div>
+            <div className={cls.menu}>
+              <NavMenu orientation="row" items={navItems} />
+            </div>
           </div>
-          <div className={cls.menu}>
-            <NavMenu orientation="row" items={navItems} />
+          <div className={cls.center}>
+            <SearchUI
+              placeholder="Искать навык"
+              prefix={<Icon name="search" size={24} title="Поиск" />}
+              containerProps={{ style: { width: '100%' } }}
+              value={searchValue}
+              onChange={handleChange}
+            />
           </div>
-        </div>
-        <div className={cls.center}>
-          <SearchUI
-            placeholder="Искать навык"
-            prefix={<Icon name="search" size={24} title="Поиск" />}
-            containerProps={{ style: { width: '100%' } }}
-            value={searchValue}
-            onChange={handleChange}
-          />
-        </div>
-        <div className={cls.right}>
-          <div className={cls.actions}>
-            <Actions items={items} />
+          <div className={cls.right}>
+            <div className={cls.actions}>
+              <Actions items={items} />
+              {isNotificationsOpen && isAuthenticated && (
+                <NotificationMenu
+                  anchorRef={notificationButtonRef}
+                  onClose={() => setNotificationsOpen(false)}
+                />
+              )}
+            </div>
+            <div className={cls.user}>
+              <HeaderUserBlock />
+            </div>
           </div>
-          <div className={cls.user}>
-            <HeaderUserBlock />
-          </div>
-        </div>
-      </nav>
-      <SkillsPopup
-        isOpen={isSkillsPopupOpen}
-        onClose={() => setIsSkillsPopupOpen(false)}
-        buttonRef={skillsButtonRef}
-      />
-    </header>
+        </nav>
+        <SkillsPopup
+          isOpen={isSkillsPopupOpen}
+          onClose={() => setIsSkillsPopupOpen(false)}
+          buttonRef={skillsButtonRef}
+        />
+      </header>
+    </>
   );
 };

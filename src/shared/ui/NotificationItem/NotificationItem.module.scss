@@ -1,47 +1,113 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4); /* 16px */
-  padding: 0; /* по макету */
+  gap: 20px;
+  width: 100%;
+  color: #253017;
+}
 
-  /* ширина/высота из фигмы можно сделать адаптивными */
-  max-width: 436px;
+.new-item {
+  .title {
+    color: #253017;
+  }
+
+  .description {
+    color: rgb(37 48 23 / 68%);
+  }
+
+  .meta-text {
+    color: rgb(37 48 23 / 60%);
+  }
+
+  .icon {
+    color: #253017;
+  }
+}
+
+.viewed {
+  .title {
+    color: #253017;
+  }
+
+  .description {
+    color: rgb(37 48 23 / 68%);
+  }
+
+  .meta-text {
+    color: rgb(37 48 23 / 60%);
+  }
+
+  .icon {
+    color: #253017;
+  }
 }
 
 .top-row {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3); /* 12px */
+  gap: 20px;
   width: 100%;
 }
 
 .icon {
   flex: none;
-  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: transparent;
+  color: #253017;
+  box-shadow: none;
 }
 
 .texts {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   flex: 1 1 auto;
+}
+
+.title {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #253017;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #69735d;
 }
 
 .meta {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   white-space: nowrap;
+}
+
+.meta-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #253017;
 }
 
 .cta-row {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 16px;
+  padding-left: 52px;
 }
 
-.icon-base {
-  color: var(--color-text);
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+.cta-button {
+  min-width: 140px;
+  min-height: 44px;
+  padding: 0 28px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
 }

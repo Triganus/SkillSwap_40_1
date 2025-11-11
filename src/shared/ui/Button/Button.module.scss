@@ -66,3 +66,19 @@
   background-color: var(--color-surface);
   color: var(--color-text);
 }
+
+.white {
+  background-color: #ffffff;
+  color: #1b1f27;
+  border: 1px solid rgb(27 31 39 / 12%);
+  box-shadow: 0 8px 24px rgb(27 31 39 / 10%);
+
+  &:hover:not(:disabled) {
+    background-color: rgb(27 31 39 / 4%);
+    border-color: rgb(27 31 39 / 16%);
+  }
+
+  &:active:not(:disabled) {
+    background-color: rgb(27 31 39 / 8%);
+  }
+}

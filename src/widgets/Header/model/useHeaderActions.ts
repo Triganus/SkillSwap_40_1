@@ -1,17 +1,34 @@
 import { useMemo, createElement } from 'react';
+import type { RefObject } from 'react';
 import { Icon } from '@shared/ui/Icon';
 import type { ActionItem } from '@shared/ui';
 import { toggleTheme } from '@shared/lib/theme';
 import { useAuthV2 } from '@app/Provider';
 import { useNavigate } from 'react-router-dom';
 
+interface UseHeaderActionsParams {
+  onNotificationsClick?: () => void;
+  notificationButtonRef?: RefObject<HTMLButtonElement | null>;
+  unreadCount?: number;
+}
+
 /**
  * Модель для Header: формирует список действий (иконок) в зависимости от контекста приложения.
  * Виджет Header отвечает только за отображение, а не за принятие решения, какие элементы показывать.
  */
-export function useHeaderActions(): ActionItem[] {
+export function useHeaderActions({
+  onNotificationsClick,
+  notificationButtonRef,
+  unreadCount,
+}: UseHeaderActionsParams = {}): ActionItem[] {
   const { isAuthenticated } = useAuthV2();
   const navigate = useNavigate();
+  const hasUnread = (unreadCount ?? 0) > 0;
+  const badgeContent = hasUnread
+    ? unreadCount && unreadCount > 9
+      ? '9+'
+      : String(unreadCount)
+    : undefined;
 
   return useMemo<ActionItem[]>(() => {
     const common: ActionItem[] = [
@@ -34,7 +51,7 @@ export function useHeaderActions(): ActionItem[] {
         id: 'notifications',
         kind: 'button',
         ariaLabel: 'Уведомления',
-        hint: 'События',
+        hint: hasUnread ? `Непрочитанных: ${unreadCount}` : 'События',
         hasIndicator: false,
         icon: createElement(Icon, {
           name: 'notification',
@@ -43,7 +60,9 @@ export function useHeaderActions(): ActionItem[] {
           stroke: 'currentColor',
           fill: 'none',
         }),
-        onClick: () => {},
+        onClick: onNotificationsClick,
+        buttonRef: notificationButtonRef,
+        badgeContent,
       },
       {
         id: 'favorites',
@@ -58,5 +77,12 @@ export function useHeaderActions(): ActionItem[] {
     return [...common, ...authedExtra];
     // navigate из useNavigate стабильный, но ESLint требует его в deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  }, [
+    isAuthenticated,
+    hasUnread,
+    unreadCount,
+    onNotificationsClick,
+    notificationButtonRef,
+    badgeContent,
+  ]);
 }

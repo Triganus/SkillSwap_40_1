@@ -25,6 +25,7 @@ export const Actions: React.FC<ActionsProps> = ({ items, className }) => {
         const btnCls = [cls.btn, it.className, it.hasIndicator ? cls.indicator : '']
           .filter(Boolean)
           .join(' ');
+        const showBadge = Boolean(it.badgeContent);
 
         return (
           <button
@@ -34,8 +35,10 @@ export const Actions: React.FC<ActionsProps> = ({ items, className }) => {
             onClick={it.onClick}
             aria-label={it.ariaLabel}
             title={it.hint}
+            ref={it.buttonRef}
           >
             {it.icon}
+            {showBadge && <span className={cls.badge}>{it.badgeContent}</span>}
           </button>
         );
       })}
