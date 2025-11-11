@@ -44,6 +44,11 @@
   overflow: hidden;
 }
 
+.published-at {
+  color: var(--color-caption, #69735d);
+  font-size: var(--fs-caption, 14px);
+}
+
 .like-button {
   position: absolute !important;
   inset: 20px 20px auto auto !important;

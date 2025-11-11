@@ -8,13 +8,21 @@ import {
   getCitiesFromStore,
 } from '@/entities/directory/lib/getFromStore';
 
+type UserListItemToSkillCardOptions = {
+  currentUserId?: string | null;
+  onDetailsClick?: (userId: string) => void;
+  onLikeClick?: (params: { skillOwnerUserId: string; primarySkillId?: string }) => void;
+};
+
 /**
  * Утилита для преобразования UserListItem в SkillCardProps
  */
 export function userListItemToSkillCard(
   userItem: UserListItem,
-  onDetailsClick?: (userId: string) => void
+  options: UserListItemToSkillCardOptions = {}
 ): SkillCardProps {
+  const { currentUserId, onDetailsClick, onLikeClick } = options;
+
   const subcategories = getSubcategoriesFromStore();
   const cities = getCitiesFromStore();
 
@@ -66,13 +74,43 @@ export function userListItemToSkillCard(
     };
   });
 
-  return {
+  const card: SkillCardProps = {
     user,
     teachingSkills,
     learningSkills,
     onDetailsClick: onDetailsClick ? () => onDetailsClick(userItem.id) : undefined,
-    onLikeClick: () => console.log(`Like clicked for ${userItem.name}`),
+    onLikeClick: onLikeClick
+      ? () =>
+          onLikeClick({
+            skillOwnerUserId: userItem.id,
+            primarySkillId: userItem.primarySkillId,
+          })
+      : () => console.log(`Like clicked for ${userItem.name}`),
     isLiked: userItem.isLikedByCurrentUser || false,
     likesCount: userItem.primarySkillLikesCount || 0,
   };
+
+  // Синхронизируемся с локальным состоянием лайков (как в SkillPage)
+  if (userItem.primarySkillId) {
+    const likesKey = `likes_${userItem.primarySkillId}_${userItem.id}`;
+    try {
+      const likesDataRaw = localStorage.getItem(likesKey);
+      if (likesDataRaw) {
+        const likesData = JSON.parse(likesDataRaw) as { count: number; users: string[] };
+        if (Number.isFinite(likesData.count)) {
+          card.likesCount = likesData.count;
+        }
+
+        const resolvedUserId = currentUserId || sessionStorage.getItem('guestId') || null;
+
+        if (resolvedUserId) {
+          card.isLiked = likesData.users.includes(resolvedUserId);
+        }
+      }
+    } catch (error) {
+      console.warn('[userListItemToSkillCard] Failed to read likes from localStorage', error);
+    }
+  }
+
+  return card;
 }
