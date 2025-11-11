@@ -14,9 +14,7 @@ import { SkillsPopup } from '@widgets/SkillsPopup';
 import cls from './Header.module.scss';
 import { useAuthV2 } from '@app/Provider.tsx';
 import type { AppDispatch } from '@/app/store';
-import {
-  fetchNotifications,
-} from '@/features/notifications/model/notificationsSlice';
+import { fetchNotifications } from '@/features/notifications/model/notificationsSlice';
 import { selectNewNotifications } from '@/features/notifications/model/selectors';
 import { NotificationMenu } from './ui/NotificationMenu';
 import { useNotificationsPolling } from '@/features/notifications/lib/useNotificationsPolling';

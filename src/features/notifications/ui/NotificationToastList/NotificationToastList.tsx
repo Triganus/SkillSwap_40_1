@@ -24,11 +24,7 @@ export const NotificationToastList = memo(
     }
 
     return (
-      <div
-        className={clsx(styles.container, className)}
-        role="status"
-        aria-live="polite"
-      >
+      <div className={clsx(styles.container, className)} role="status" aria-live="polite">
         {notifications.map((notification) => {
           const formatted = formatNotification(notification);
 
