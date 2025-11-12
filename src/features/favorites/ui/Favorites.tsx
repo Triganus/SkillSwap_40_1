@@ -1,7 +1,7 @@
 import { TitleUI } from '@/shared/ui/Title';
 import type React from 'react';
 import styles from './Favorites.module.scss';
-import { InfiniteGridUI, TextUI } from '@/shared/ui';
+import { Button, InfiniteGridUI, TextUI } from '@/shared/ui';
 import { SearchHeaderUI } from '@/shared/ui/SearchHeader';
 import { SkillCard, type SkillCardProps } from '@/widgets/Cards/SkillCard';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/redux';
@@ -12,6 +12,7 @@ import { selectSortOrder } from '@/entities/sort/model/selector';
 import { useMemo } from 'react';
 import { sortSkillCards } from '@/entities/sort/lib/sortUtils';
 import { showCardDetails } from '@/entities/sort/lib/cardUtils';
+import { Link } from 'react-router-dom';
 
 export type FavoritesProps = {
   totalCards?: number;
@@ -80,6 +81,9 @@ export const Favorites: React.FC<FavoritesProps> = ({
             Начните лайкать карточки участников — те, кто вас вдохновляет, с кем вы хотели бы
             обменяться навыками. Сюда попадут все профили, которые вы отметите лайком.
           </TextUI>
+          <Link to='/'>
+            <Button variant='primary'>Вернуться в католог</Button>
+          </Link>
         </div>
       ) : (
         <InfiniteGridUI
