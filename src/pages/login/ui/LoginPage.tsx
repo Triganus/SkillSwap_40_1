@@ -1,21 +1,14 @@
-import { useMemo } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthV2 } from '@app/Provider';
-import { useGuestHeaderContent } from '@app/layouts';
 import { TwoColumnLayout } from '@shared/ui';
 import { SocialAuthGroup } from '@shared/ui/AuthButton';
 import { AuthMethodsSeparator } from '@shared/ui';
 import { AuthForm, InfoBlock } from '@features/auth';
 import { login as authLogin } from '@api/auth';
 import lightBulb from '@shared/assets/images/light-bulb.svg';
-import styles from './LoginPage.module.scss';
 import { useLoginForm } from '@features/auth/model/hooks/useLoginForm';
 
 export default function LoginPage() {
-  const headerContent = useMemo(() => <h1 className={styles.title}>Вход</h1>, []);
-
-  useGuestHeaderContent(headerContent);
-
   const { isAuthenticated, isLoading, login, startLogin, failLogin } = useAuthV2();
   const navigate = useNavigate();
   const location = useLocation() as unknown as { state?: { from?: Location } };
