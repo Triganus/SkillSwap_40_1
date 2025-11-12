@@ -19,6 +19,7 @@ import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { FilteredContent, FilterChip, FilterConfig } from './types';
 import { selectAllGenders, selectAllCities } from '@/entities/directory/model/selectors';
 import { GENERAL_RB_FILTER_OPTIONS } from '@/shared/lib/constants/GeneralRbFilter';
+import { useSidebarFilter } from '@/shared/hooks/useSidebarFilter';
 
 /**
  * Хук для фильтрации через API (серверная фильтрация с пагинацией)
@@ -47,17 +48,7 @@ export function useContentFiltering(
   const normalizedSearchQuery = searchQuery.trim();
   const isSearchActive = normalizedSearchQuery.length > 0;
 
-  // Состояние пагинации
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-
-  // Ref для отслеживания последнего запроса и защиты от зацикливания
-  const lastRequestRef = useRef<string>('');
-  const isInitialMount = useRef(true);
-  const isLoadingRef = useRef(false);
-  const loadAttemptRef = useRef(0);
-
-  // Проверяем активность боковых фильтров
+  // Проверяем активность боковых фильтров (объявляем до использования)
   const isSidebarFilterActive = useMemo(() => {
     return (
       !!currentFilters &&
@@ -69,6 +60,50 @@ export function useContentFiltering(
         (currentFilters.cities && currentFilters.cities.length > 0))
     );
   }, [currentFilters]);
+
+  // Хук для проверки соответствия боковым фильтрам
+  const { matchesSidebar } = useSidebarFilter(currentFilters);
+
+  // Состояние пагинации
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  // Ref для отслеживания последнего запроса и защиты от зацикливания
+  const lastRequestRef = useRef<string>('');
+  const isInitialMount = useRef(true);
+  const isLoadingRef = useRef(false);
+  const loadAttemptRef = useRef(0);
+
+  // Отладочное логирование состояния данных
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[useContentFilteringServer] Data state:', {
+        usersDataCount: usersData.length,
+        loadingUsers,
+        usersError,
+        isSearchActive,
+        searchQuery: normalizedSearchQuery,
+        isSidebarFilterActive,
+        currentFilters: {
+          general: currentFilters?.general,
+          hasSkills: currentFilters?.skills?.skill_categories?.some(
+            (cat) => cat.skills && cat.skills.length > 0
+          ),
+          selectedSkillIds: currentFilters?.skills?.skill_categories?.flatMap((cat) =>
+            cat.skills.map((s) => s.skill_id)
+          ),
+        },
+      });
+    }
+  }, [
+    usersData.length,
+    loadingUsers,
+    usersError,
+    isSearchActive,
+    normalizedSearchQuery,
+    isSidebarFilterActive,
+    currentFilters,
+  ]);
 
   // Синхронизация loadingUsers с ref для предотвращения race conditions
   useEffect(() => {
@@ -181,11 +216,26 @@ export function useContentFiltering(
     loadAttemptRef.current += 1;
 
     if (apiParams.params) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[useContentFilteringServer] Fetching users with params:', {
+          params: apiParams.params,
+          hasSearch: isSearchActive,
+          hasFilters: isSidebarFilterActive,
+        });
+      }
+
       dispatch(fetchUsersWithSkillsThunk(apiParams.params))
         .unwrap()
         .then((result) => {
           if (result && typeof result === 'object' && 'users' in result) {
             const payload = result as { users: unknown[] };
+
+            if (process.env.NODE_ENV === 'development') {
+              console.log('[useContentFilteringServer] Users fetched:', {
+                count: payload.users.length,
+                hasMore: payload.users.length === 9,
+              });
+            }
 
             setHasMore(payload.users.length === 9);
 
@@ -193,7 +243,7 @@ export function useContentFiltering(
           }
         })
         .catch((error) => {
-          console.error('Failed to fetch users:', error);
+          console.error('[useContentFilteringServer] Failed to fetch users:', error);
 
           setHasMore(false);
         })
@@ -233,17 +283,182 @@ export function useContentFiltering(
     }
   }, [loadingUsers, hasMore, usersError]);
 
+  // Клиентская фильтрация результатов поиска
+  // При активном фильтре "Могу научить" или "Хочу научиться" поиск должен учитывать только соответствующую категорию
+  const searchFilteredData = useMemo(() => {
+    if (!isSearchActive) {
+      // Отладочное логирование для случая без поиска
+      if (process.env.NODE_ENV === 'development' && isSidebarFilterActive) {
+        const selectedSkillIds =
+          currentFilters?.skills?.skill_categories?.flatMap((cat) =>
+            cat.skills.map((s) => s.skill_id)
+          ) || [];
+
+        console.log('[useContentFilteringServer] No search, using usersData:', {
+          usersDataCount: usersData.length,
+          generalFilter: currentFilters?.general,
+          hasSkills: currentFilters?.skills?.skill_categories?.some(
+            (cat) => cat.skills && cat.skills.length > 0
+          ),
+          selectedSkillIds,
+          sampleCard: usersData[0]
+            ? {
+                userId: usersData[0].user.id,
+                userName: usersData[0].user.name,
+                teachingSkillIds: usersData[0].teachingSkills.map((s) => String(s.id)),
+                learningSkillIds: usersData[0].learningSkills.map((s) => String(s.id)),
+                teachingSkills: usersData[0].teachingSkills.map((s) => ({
+                  id: String(s.id),
+                  title: s.title,
+                })),
+                learningSkills: usersData[0].learningSkills.map((s) => ({
+                  id: String(s.id),
+                  title: s.title,
+                })),
+              }
+            : null,
+        });
+      }
+      return usersData;
+    }
+
+    const generalFilter = currentFilters?.general;
+
+    // Если активен фильтр "Могу научить", ищем навык только в teachingSkills
+    if (generalFilter === 'can_teach') {
+      return usersData.filter((card) => {
+        return card.teachingSkills.some((skill) =>
+          skill.title.toLowerCase().includes(normalizedSearchQuery.toLowerCase())
+        );
+      });
+    }
+
+    // Если активен фильтр "Хочу научиться", ищем навык только в learningSkills
+    if (generalFilter === 'want_to_learn') {
+      return usersData.filter((card) => {
+        return card.learningSkills.some((skill) =>
+          skill.title.toLowerCase().includes(normalizedSearchQuery.toLowerCase())
+        );
+      });
+    }
+
+    // Если фильтр "Всё" или нет фильтра, ищем везде
+    return usersData.filter((card) => {
+      return (
+        card.user.name.toLowerCase().includes(normalizedSearchQuery.toLowerCase()) ||
+        card.teachingSkills.some((skill) =>
+          skill.title.toLowerCase().includes(normalizedSearchQuery.toLowerCase())
+        ) ||
+        card.learningSkills.some((skill) =>
+          skill.title.toLowerCase().includes(normalizedSearchQuery.toLowerCase())
+        )
+      );
+    });
+  }, [usersData, isSearchActive, normalizedSearchQuery, currentFilters?.general]);
+
+  // Применение боковых фильтров к данным после клиентской фильтрации поиска
+  const sidebarFilteredData = useMemo(() => {
+    // Применяем фильтрацию, если есть хотя бы один фильтр
+    const hasAnyFilter =
+      (currentFilters?.general && currentFilters.general !== '') ||
+      (currentFilters?.skills?.skill_categories?.some(
+        (cat) => cat.skills && cat.skills.length > 0
+      ) ??
+        false) ||
+      (currentFilters?.gender && currentFilters.gender !== '') ||
+      (currentFilters?.cities && currentFilters.cities.length > 0);
+
+    if (!hasAnyFilter) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(
+          '[useContentFilteringServer] No filters active, returning searchFilteredData:',
+          {
+            count: searchFilteredData.length,
+          }
+        );
+      }
+      return searchFilteredData;
+    }
+
+    // Детальное логирование перед фильтрацией
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[useContentFilteringServer] Before filtering:', {
+        inputCount: searchFilteredData.length,
+        hasSearch: isSearchActive,
+        generalFilter: currentFilters?.general,
+        selectedSkillIds: currentFilters?.skills?.skill_categories?.flatMap((cat) =>
+          cat.skills.map((s) => s.skill_id)
+        ),
+        sampleCard: searchFilteredData[0]
+          ? {
+              userId: searchFilteredData[0].user.id,
+              userName: searchFilteredData[0].user.name,
+              teachingSkills: searchFilteredData[0].teachingSkills.map((s) => ({
+                id: String(s.id),
+                title: s.title,
+              })),
+              learningSkills: searchFilteredData[0].learningSkills.map((s) => ({
+                id: String(s.id),
+                title: s.title,
+              })),
+            }
+          : null,
+      });
+    }
+
+    const filtered = searchFilteredData.filter(matchesSidebar);
+
+    // Отладочное логирование после фильтрации
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[useContentFilteringServer] After filtering:', {
+        inputCount: searchFilteredData.length,
+        outputCount: filtered.length,
+        hasSearch: isSearchActive,
+        generalFilter: currentFilters?.general,
+        hasSkills: currentFilters?.skills?.skill_categories?.some(
+          (cat) => cat.skills && cat.skills.length > 0
+        ),
+        selectedSkillIds: currentFilters?.skills?.skill_categories?.flatMap((cat) =>
+          cat.skills.map((s) => s.skill_id)
+        ),
+        filteredCards: filtered.slice(0, 3).map((card) => ({
+          userId: card.user.id,
+          userName: card.user.name,
+          teachingSkills: card.teachingSkills.map((s) => ({ id: String(s.id), title: s.title })),
+          learningSkills: card.learningSkills.map((s) => ({ id: String(s.id), title: s.title })),
+        })),
+      });
+    }
+
+    return filtered;
+  }, [searchFilteredData, currentFilters, matchesSidebar, isSearchActive]);
+
+  // Сортировка отфильтрованных данных
+  const sortedData = useMemo(() => {
+    const sorted = [...sidebarFilteredData];
+    const sortOrder = config.sortOrder || 'newest';
+
+    sorted.sort((a, b) => {
+      const dateA = new Date(a.user.createdAt).getTime();
+      const dateB = new Date(b.user.createdAt).getTime();
+
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    return sorted;
+  }, [sidebarFilteredData, config.sortOrder]);
+
   const filteredContent: FilteredContent = useMemo(
     () => ({
-      items: usersData,
-      totalCount: usersData.length,
-      filteredCount: usersData.length,
+      items: sortedData,
+      totalCount: sortedData.length,
+      filteredCount: sortedData.length,
       isSearchActive,
       isSidebarFilterActive,
       searchQuery: normalizedSearchQuery,
       sortOrder: config.sortOrder || 'newest',
     }),
-    [usersData, isSearchActive, isSidebarFilterActive, normalizedSearchQuery, config.sortOrder]
+    [sortedData, isSearchActive, isSidebarFilterActive, normalizedSearchQuery, config.sortOrder]
   );
 
   // Генерация чипсов активных фильтров
