@@ -6,7 +6,7 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
   const selectedSkillIds = useMemo(() => {
     const cats = currentFilters.skills?.skill_categories ?? [];
     const ids = cats.flatMap((c) => c.skills.map((s) => String(s.skill_id)));
-    
+
     // Отладочное логирование
     if (process.env.NODE_ENV === 'development' && ids.length > 0) {
       console.log('[useSidebarFilter] Selected skill IDs:', {
@@ -18,7 +18,7 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
         })),
       });
     }
-    
+
     return new Set(ids);
   }, [currentFilters.skills]);
 
@@ -41,11 +41,11 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
           // (ищем тех, кто ТОЖЕ МОЖЕТ НАУЧИТЬ этому навыку - похожие пользователи)
           const cardTeachingSkillIds = card.teachingSkills.map((s) => String(s.id).trim());
           const selectedIdsArray = Array.from(selectedSkillIds).map((id) => String(id).trim());
-          
+
           const hasMatchingSkill = cardTeachingSkillIds.some((cardId) => {
             return selectedIdsArray.includes(cardId);
           });
-          
+
           if (!hasMatchingSkill) {
             if (process.env.NODE_ENV === 'development') {
               console.log('[useSidebarFilter] Card filtered out (can_teach):', {
@@ -53,7 +53,10 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
                 userName: card.user.name,
                 selectedSkillIds: selectedIdsArray,
                 cardTeachingSkillIds,
-                cardTeachingSkills: card.teachingSkills.map((s) => ({ id: String(s.id), title: s.title })),
+                cardTeachingSkills: card.teachingSkills.map((s) => ({
+                  id: String(s.id),
+                  title: s.title,
+                })),
                 matchAttempts: cardTeachingSkillIds.map((cardId) => ({
                   cardId,
                   matches: selectedIdsArray.filter((selId) => selId === cardId),
@@ -62,7 +65,7 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
             }
             return false;
           }
-          
+
           if (process.env.NODE_ENV === 'development') {
             console.log('[useSidebarFilter] Card matches (can_teach):', {
               userId: card.user.id,
@@ -77,11 +80,11 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
           // (ищем тех, кто ТОЖЕ ХОЧЕТ НАУЧИТЬСЯ этому навыку - похожие пользователи)
           const cardLearningSkillIds = card.learningSkills.map((s) => String(s.id).trim());
           const selectedIdsArray = Array.from(selectedSkillIds).map((id) => String(id).trim());
-          
+
           const hasMatchingSkill = cardLearningSkillIds.some((cardId) => {
             return selectedIdsArray.includes(cardId);
           });
-          
+
           if (!hasMatchingSkill) {
             if (process.env.NODE_ENV === 'development') {
               console.log('[useSidebarFilter] Card filtered out (want_to_learn):', {
@@ -89,7 +92,10 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
                 userName: card.user.name,
                 selectedSkillIds: selectedIdsArray,
                 cardLearningSkillIds,
-                cardLearningSkills: card.learningSkills.map((s) => ({ id: String(s.id), title: s.title })),
+                cardLearningSkills: card.learningSkills.map((s) => ({
+                  id: String(s.id),
+                  title: s.title,
+                })),
                 matchAttempts: cardLearningSkillIds.map((cardId) => ({
                   cardId,
                   matches: selectedIdsArray.filter((selId) => selId === cardId),
@@ -98,7 +104,7 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
             }
             return false;
           }
-          
+
           if (process.env.NODE_ENV === 'development') {
             console.log('[useSidebarFilter] Card matches (want_to_learn):', {
               userId: card.user.id,
@@ -113,10 +119,10 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
           const cardTeachingSkillIds = card.teachingSkills.map((s) => String(s.id).trim());
           const cardLearningSkillIds = card.learningSkills.map((s) => String(s.id).trim());
           const selectedIdsArray = Array.from(selectedSkillIds).map((id) => String(id).trim());
-          
+
           const teachHit = cardTeachingSkillIds.some((cardId) => selectedIdsArray.includes(cardId));
           const learnHit = cardLearningSkillIds.some((cardId) => selectedIdsArray.includes(cardId));
-          
+
           if (!teachHit && !learnHit) return false;
         }
       } else {
