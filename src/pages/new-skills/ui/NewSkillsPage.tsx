@@ -38,12 +38,18 @@ export default function NewSkillsPage() {
     return usersData.map((card) => ({
       ...card,
       onDetailsClick: () => {
-        const firstSkill = card.teachingSkills[0];
-        if (firstSkill) {
-          console.log('[NewSkillsPage] Navigating to skill:', firstSkill.id);
-          navigate(`/skill/${firstSkill.id}`);
+        if (card.user?.id) {
+          console.log('[NewSkillsPage] Navigating to user:', card.user.id);
+          navigate(`/skill/${card.user.id}`);
+        } else if (card.teachingSkills[0]) {
+          const fallbackSkill = card.teachingSkills[0];
+          console.warn(
+            '[NewSkillsPage] User id is missing, fallback to first skill:',
+            fallbackSkill.id
+          );
+          navigate(`/skill/${fallbackSkill.id}`);
         } else {
-          console.warn('[NewSkillsPage] No teaching skills found for user:', card.user.name);
+          console.warn('[NewSkillsPage] No user id or teaching skills for card:', card);
         }
       },
     }));
