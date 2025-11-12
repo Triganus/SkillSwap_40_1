@@ -4,10 +4,12 @@ import { Favorites } from '@/features/favorites/ui/Favorites';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/redux';
 import { useAuthV2 } from '@/app/Provider';
 import { selectFavoriteCards } from '@/entities/user/model-v2/selectors';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { fetchUsersWithSkillsThunk } from '@/entities/user/model-v2';
+import { useNavigate } from 'react-router-dom';
 
 export default function FavoritesPage() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isAuthenticated, user: currentUser } = useAuthV2();
   const favoriteCards = useAppSelector(selectFavoriteCards);
@@ -18,10 +20,12 @@ export default function FavoritesPage() {
     }
   }, [dispatch, isAuthenticated, currentUser]);
 
-  const handleSkillDetailsClick = (userId: string) => {
-    console.log(`Navigate to skill/profile of user ${userId}`);
-  };
-
+  const handleSkillDetailsClick = useCallback(
+    (userId: string) => {
+      navigate(`/skill/${userId}`);
+    },
+    [navigate]
+  );
   if (!isAuthenticated) {
     return <div>Требуется авторизация для просмотра избранного.</div>;
   }
