@@ -59,10 +59,31 @@ export function useContentFiltering(
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
   const isSearchActive = normalizedSearchQuery.length > 0;
 
-  // Фильтрация по поиску
+  // Фильтрация по поиску с учетом активного фильтра
   const searchFilteredData = useMemo(() => {
     if (!isSearchActive) return usersData;
 
+    const generalFilter = currentFilters?.general;
+
+    // Если активен фильтр "Могу научить", ищем навык только в teachingSkills
+    if (generalFilter === 'can_teach') {
+      return usersData.filter((card) => {
+        return card.teachingSkills.some((skill) =>
+          skill.title.toLowerCase().includes(normalizedSearchQuery)
+        );
+      });
+    }
+
+    // Если активен фильтр "Хочу научиться", ищем навык только в learningSkills
+    if (generalFilter === 'want_to_learn') {
+      return usersData.filter((card) => {
+        return card.learningSkills.some((skill) =>
+          skill.title.toLowerCase().includes(normalizedSearchQuery)
+        );
+      });
+    }
+
+    // Если фильтр "Всё" или нет фильтра, ищем везде
     return usersData.filter(
       (card) =>
         card.user.name.toLowerCase().includes(normalizedSearchQuery) ||
@@ -73,7 +94,7 @@ export function useContentFiltering(
           skill.title.toLowerCase().includes(normalizedSearchQuery)
         )
     );
-  }, [usersData, normalizedSearchQuery, isSearchActive]);
+  }, [usersData, normalizedSearchQuery, isSearchActive, currentFilters?.general]);
 
   // Применение боковых фильтров
   const finalFilteredData = useMemo(() => {

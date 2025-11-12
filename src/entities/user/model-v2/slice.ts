@@ -250,6 +250,15 @@ export const usersSliceV2 = createSlice({
       state.loading = false;
       state.total = action.payload.total || 0;
 
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[usersSlice] fetchUsersWithSkillsThunk.fulfilled:', {
+          usersCount: action.payload.users.length,
+          replace: action.payload.replace,
+          previousCount: state.skillCards?.length || 0,
+          total: action.payload.total || 0,
+        });
+      }
+
       if (action.payload.replace) {
         state.skillCards = action.payload.users;
       } else {
@@ -257,6 +266,10 @@ export const usersSliceV2 = createSlice({
         const newUsers = action.payload.users.filter((u) => !existingIds.has(u.user.id));
 
         state.skillCards = [...(state.skillCards || []), ...newUsers];
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[usersSlice] After update, skillCards count:', state.skillCards?.length || 0);
       }
     });
     builder.addCase(fetchUsersWithSkillsThunk.rejected, (state, action) => {

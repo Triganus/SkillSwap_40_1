@@ -110,6 +110,19 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
   }
 
   // Если параметры переданы, используем fetchUserListItems с фильтрацией
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[fetchUsersWithSkillsThunk] Fetching with params:', {
+      page: params.page || 1,
+      limit: params.limit || 9,
+      searchQuery: params.searchQuery,
+      subcategoryIds: params.subcategoryIds,
+      cities: params.cities,
+      gender: params.gender,
+      sortBy: params.sortBy || 'newest',
+      searchType: params.searchType,
+    });
+  }
+
   const result = await usersApi.fetchUserListItems({
     page: params.page || 1,
     limit: params.limit || 9, // По умолчанию 9 карточек
@@ -121,6 +134,14 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
     searchType: params.searchType,
     currentUserId,
   });
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[fetchUsersWithSkillsThunk] API returned:', {
+      usersCount: result.users.length,
+      total: result.total,
+      replace: params.replace !== undefined ? params.replace : true,
+    });
+  }
 
   return {
     users: result.users.map((user) => transformUserToCard(user)),
