@@ -326,7 +326,7 @@ export default function Step3() {
 
       <div className={styles.field}>
         <FormField
-          label="Изображения навыка"
+          label=""
           htmlFor="skillImages"
           error={imagesTouched || triedSubmit ? form.getFieldClientError('images') : null}
           forceError={forceAllFieldsError}
