@@ -307,10 +307,33 @@ export default function SkillPage() {
         };
       });
 
-      const isLiked = u.primarySkillId ? likedSkills.has(u.primarySkillId) : false;
-      const likesCount = u.primarySkillId
-        ? (skillLikesCount.get(u.primarySkillId) ?? u.primarySkillLikesCount ?? 0)
-        : 0;
+      // Синхронизируем с localStorage для похожих пользователей (как на главной странице)
+      let isLiked = false;
+      let likesCount = u.primarySkillLikesCount ?? 0;
+
+      if (u.primarySkillId) {
+        // Проверяем состояние из локального состояния (которое синхронизировано с localStorage)
+        isLiked = likedSkills.has(u.primarySkillId);
+        likesCount = skillLikesCount.get(u.primarySkillId) ?? u.primarySkillLikesCount ?? 0;
+
+        // Дополнительно проверяем localStorage для надежности
+        const resolvedUserId = currentUser?.id || sessionStorage.getItem('guestId') || null;
+        const likesKey = `likes_${u.primarySkillId}_${u.id}`;
+        try {
+          const likesDataRaw = localStorage.getItem(likesKey);
+          if (likesDataRaw) {
+            const likesData = JSON.parse(likesDataRaw) as { count: number; users: string[] };
+            if (Number.isFinite(likesData.count)) {
+              likesCount = likesData.count;
+            }
+            if (resolvedUserId && likesData.users.includes(resolvedUserId)) {
+              isLiked = true;
+            }
+          }
+        } catch (error) {
+          console.warn('[SkillPage] Failed to read likes from localStorage for similar user', error);
+        }
+      }
 
       return {
         user: {
@@ -339,6 +362,7 @@ export default function SkillPage() {
     skillLikesCount,
     onCardLikeClick,
     navigate,
+    currentUser,
   ]);
 
   const onExchangeClick = useCallback(() => {
@@ -361,23 +385,59 @@ export default function SkillPage() {
   }, [userId]);
 
   // Инициализация количества лайков и состояния лайков из навыков
+  // Синхронизируем с localStorage для согласованности с главной страницей
   useEffect(() => {
-    if (!skills || skills.length === 0 || !currentUser) return;
+    if (!skills || skills.length === 0 || !profile) return;
 
+    const resolvedUserId = currentUser?.id || sessionStorage.getItem('guestId') || null;
     const likesMap = new Map<string, number>();
     const likedSet = new Set<string>();
 
     skills.forEach((skill) => {
-      likesMap.set(skill.id, skill.likesCount || 0);
+      // Сначала берем данные из API
+      let likesCount = skill.likesCount || 0;
+      let isLiked = false;
 
-      if (skill.likedByUserIds?.includes(currentUser.id)) {
+      // Синхронизируем с localStorage (как на главной странице)
+      const likesKey = `likes_${skill.id}_${profile.id}`;
+      try {
+        const likesDataRaw = localStorage.getItem(likesKey);
+        if (likesDataRaw) {
+          const likesData = JSON.parse(likesDataRaw) as { count: number; users: string[] };
+          
+          // Используем количество из localStorage, если оно есть
+          if (Number.isFinite(likesData.count)) {
+            likesCount = likesData.count;
+          }
+
+          // Проверяем, лайкнул ли текущий пользователь
+          if (resolvedUserId && likesData.users.includes(resolvedUserId)) {
+            isLiked = true;
+          } else if (currentUser && skill.likedByUserIds?.includes(currentUser.id)) {
+            // Если в localStorage нет, но в API есть - используем API
+            isLiked = true;
+          }
+        } else if (currentUser && skill.likedByUserIds?.includes(currentUser.id)) {
+          // Если localStorage пуст, используем данные из API
+          isLiked = true;
+        }
+      } catch (error) {
+        console.warn('[SkillPage] Failed to read likes from localStorage', error);
+        // Fallback на API данные
+        if (currentUser && skill.likedByUserIds?.includes(currentUser.id)) {
+          isLiked = true;
+        }
+      }
+
+      likesMap.set(skill.id, likesCount);
+      if (isLiked) {
         likedSet.add(skill.id);
       }
     });
 
     setSkillLikesCount(likesMap);
     setLikedSkills(likedSet);
-  }, [skills, currentUser]);
+  }, [skills, currentUser, profile]);
 
   // Загрузка похожих пользователей через API
   useEffect(() => {
