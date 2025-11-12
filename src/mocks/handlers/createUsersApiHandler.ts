@@ -425,15 +425,15 @@ function applyQuery(
         return teachHit || learnHit;
       }
 
-      // Логика правильная:
-      // "Хочу научиться" (want_to_learn) → ищем тех, кто МОЖЕТ НАУЧИТЬ (canTeachSkills)
-      // "Могу научить" (can_teach) → ищем тех, кто ХОЧЕТ НАУЧИТЬСЯ (wantsToLearnSkills)
-      if (searchType === 'want_to_learn') {
-        // Пользователь хочет научиться → ищем тех, у кого этот навык в canTeachSkills
+      // Логика "похожие пользователи":
+      // "Могу научить" (can_teach) → ищем тех, кто ТОЖЕ МОЖЕТ НАУЧИТЬ (canTeachSkills)
+      // "Хочу научиться" (want_to_learn) → ищем тех, кто ТОЖЕ ХОЧЕТ НАУЧИТЬСЯ (wantsToLearnSkills)
+      if (searchType === 'can_teach') {
+        // Пользователь может научить → ищем тех, у кого этот навык тоже в canTeachSkills
         return teachHit;
       }
-      if (searchType === 'can_teach') {
-        // Пользователь может научить → ищем тех, у кого этот навык в wantsToLearnSkills
+      if (searchType === 'want_to_learn') {
+        // Пользователь хочет научиться → ищем тех, у кого этот навык тоже в wantsToLearnSkills
         return learnHit;
       }
 
@@ -442,11 +442,11 @@ function applyQuery(
   } else if (searchType) {
     // Если выбран тип поиска без конкретных навыков
     list = list.filter((u) => {
-      // Логика правильная:
-      // "Хочу научиться" → показываем тех, кто МОЖЕТ НАУЧИТЬ (canTeachSkills)
-      // "Могу научить" → показываем тех, кто ХОЧЕТ НАУЧИТЬСЯ (wantsToLearnSkills)
-      if (searchType === 'want_to_learn') return u.canTeachSkills.length > 0;
-      if (searchType === 'can_teach') return u.wantsToLearnSkills.length > 0;
+      // Логика "похожие пользователи":
+      // "Могу научить" → показываем тех, кто ТОЖЕ МОЖЕТ НАУЧИТЬ (canTeachSkills)
+      // "Хочу научиться" → показываем тех, кто ТОЖЕ ХОЧЕТ НАУЧИТЬСЯ (wantsToLearnSkills)
+      if (searchType === 'can_teach') return u.canTeachSkills.length > 0;
+      if (searchType === 'want_to_learn') return u.wantsToLearnSkills.length > 0;
       return true;
     });
   }

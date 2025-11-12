@@ -37,44 +37,8 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
       if (hasSkillFilter) {
         // Если выбраны конкретные навыки, проверяем их наличие в соответствующей категории
         if (isCanTeach) {
-          // "Могу научить" + категория → показываем карточки, у которых эта категория в learningSkills
-          // (ищем тех, кто ХОЧЕТ НАУЧИТЬСЯ этому навыку)
-          const cardLearningSkillIds = card.learningSkills.map((s) => String(s.id).trim());
-          const selectedIdsArray = Array.from(selectedSkillIds).map((id) => String(id).trim());
-          
-          const hasMatchingSkill = cardLearningSkillIds.some((cardId) => {
-            return selectedIdsArray.includes(cardId);
-          });
-          
-          if (!hasMatchingSkill) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('[useSidebarFilter] Card filtered out (can_teach):', {
-                userId: card.user.id,
-                userName: card.user.name,
-                selectedSkillIds: selectedIdsArray,
-                cardLearningSkillIds,
-                cardLearningSkills: card.learningSkills.map((s) => ({ id: String(s.id), title: s.title })),
-                matchAttempts: cardLearningSkillIds.map((cardId) => ({
-                  cardId,
-                  matches: selectedIdsArray.filter((selId) => selId === cardId),
-                })),
-              });
-            }
-            return false;
-          }
-          
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[useSidebarFilter] Card matches (can_teach):', {
-              userId: card.user.id,
-              userName: card.user.name,
-              selectedSkillIds: selectedIdsArray,
-              cardLearningSkillIds,
-              matched: true,
-            });
-          }
-        } else if (isWantToLearn) {
-          // "Хочу научиться" + категория → показываем карточки, у которых эта категория в teachingSkills
-          // (ищем тех, кто МОЖЕТ НАУЧИТЬ этому навыку)
+          // "Могу научить" + категория → показываем карточки, у которых эта категория в teachingSkills
+          // (ищем тех, кто ТОЖЕ МОЖЕТ НАУЧИТЬ этому навыку - похожие пользователи)
           const cardTeachingSkillIds = card.teachingSkills.map((s) => String(s.id).trim());
           const selectedIdsArray = Array.from(selectedSkillIds).map((id) => String(id).trim());
           
@@ -84,7 +48,7 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
           
           if (!hasMatchingSkill) {
             if (process.env.NODE_ENV === 'development') {
-              console.log('[useSidebarFilter] Card filtered out (want_to_learn):', {
+              console.log('[useSidebarFilter] Card filtered out (can_teach):', {
                 userId: card.user.id,
                 userName: card.user.name,
                 selectedSkillIds: selectedIdsArray,
@@ -100,11 +64,47 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
           }
           
           if (process.env.NODE_ENV === 'development') {
-            console.log('[useSidebarFilter] Card matches (want_to_learn):', {
+            console.log('[useSidebarFilter] Card matches (can_teach):', {
               userId: card.user.id,
               userName: card.user.name,
               selectedSkillIds: selectedIdsArray,
               cardTeachingSkillIds,
+              matched: true,
+            });
+          }
+        } else if (isWantToLearn) {
+          // "Хочу научиться" + категория → показываем карточки, у которых эта категория в learningSkills
+          // (ищем тех, кто ТОЖЕ ХОЧЕТ НАУЧИТЬСЯ этому навыку - похожие пользователи)
+          const cardLearningSkillIds = card.learningSkills.map((s) => String(s.id).trim());
+          const selectedIdsArray = Array.from(selectedSkillIds).map((id) => String(id).trim());
+          
+          const hasMatchingSkill = cardLearningSkillIds.some((cardId) => {
+            return selectedIdsArray.includes(cardId);
+          });
+          
+          if (!hasMatchingSkill) {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('[useSidebarFilter] Card filtered out (want_to_learn):', {
+                userId: card.user.id,
+                userName: card.user.name,
+                selectedSkillIds: selectedIdsArray,
+                cardLearningSkillIds,
+                cardLearningSkills: card.learningSkills.map((s) => ({ id: String(s.id), title: s.title })),
+                matchAttempts: cardLearningSkillIds.map((cardId) => ({
+                  cardId,
+                  matches: selectedIdsArray.filter((selId) => selId === cardId),
+                })),
+              });
+            }
+            return false;
+          }
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[useSidebarFilter] Card matches (want_to_learn):', {
+              userId: card.user.id,
+              userName: card.user.name,
+              selectedSkillIds: selectedIdsArray,
+              cardLearningSkillIds,
               matched: true,
             });
           }
