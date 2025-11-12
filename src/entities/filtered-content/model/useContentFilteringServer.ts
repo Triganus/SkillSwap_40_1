@@ -359,6 +359,7 @@ export function useContentFiltering(
   // Применение боковых фильтров к данным после клиентской фильтрации поиска
   const sidebarFilteredData = useMemo(() => {
     // Применяем фильтрацию, если есть хотя бы один фильтр
+
     const hasAnyFilter =
       (currentFilters?.general && currentFilters.general !== '') ||
       (currentFilters?.skills?.skill_categories?.some(

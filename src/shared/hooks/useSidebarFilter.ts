@@ -2,6 +2,24 @@ import { useCallback, useMemo } from 'react';
 import type { SkillCardProps } from '@widgets/Cards/SkillCard';
 import type { FilterPayload } from '@/entities/filterSideBar/model';
 
+export const CITY_ID_TO_NAME: Record<string, string> = {
+  city_msk: 'Москва',
+  city_spb: 'Санкт-Петербург',
+  city_nsk: 'Новосибирск',
+  city_ekb: 'Екатеринбург',
+  city_kzn: 'Казань',
+  city_nnv: 'Нижний Новгород',
+  city_chel: 'Челябинск',
+  city_sam: 'Самара',
+  city_ufa: 'Уфа',
+  city_rst: 'Ростов-на-Дону',
+  city_omsk: 'Омск',
+  city_krsk: 'Красноярск',
+  city_vrn: 'Воронеж',
+  city_perm: 'Пермь',
+  city_vlg: 'Волгоград',
+};
+
 export function useSidebarFilter(currentFilters: FilterPayload) {
   const selectedSkillIds = useMemo(() => {
     const cats = currentFilters.skills?.skill_categories ?? [];
@@ -25,9 +43,16 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
   const matchesSidebar = useCallback(
     (card: SkillCardProps) => {
       const general = currentFilters.general;
-      const gender = currentFilters.gender;
+      const gender =
+        currentFilters.gender === 'мужской'
+          ? 'male'
+          : currentFilters.gender === 'женский'
+            ? 'female'
+            : undefined;
+
       const hasSkillFilter = selectedSkillIds.size > 0;
-      const hasGenderFilter = gender && gender !== 'Не имеет значения';
+
+      const hasGenderFilter = !!gender;
 
       // В Redux хранятся английские значения: 'can_teach', 'want_to_learn', ''
       const isCanTeach = general === 'can_teach';
@@ -143,7 +168,14 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
 
       if (currentFilters.cities.length) {
         const bio = (card.user.bio || '').toLowerCase();
-        const inCity = currentFilters.cities.some((c) => bio.includes(c.toLowerCase()));
+
+        const inCity = currentFilters.cities.some((cityId) => {
+          const cityName = CITY_ID_TO_NAME[cityId];
+          if (!cityName) return false;
+
+          return bio.includes(cityName.toLowerCase());
+        });
+
         if (!inCity) return false;
       }
 
