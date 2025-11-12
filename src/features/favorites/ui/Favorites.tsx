@@ -81,8 +81,8 @@ export const Favorites: React.FC<FavoritesProps> = ({
             Начните лайкать карточки участников — те, кто вас вдохновляет, с кем вы хотели бы
             обменяться навыками. Сюда попадут все профили, которые вы отметите лайком.
           </TextUI>
-          <Link to='/'>
-            <Button variant='primary'>Вернуться в католог</Button>
+          <Link to="/">
+            <Button variant="primary">Вернуться в католог</Button>
           </Link>
         </div>
       ) : (
