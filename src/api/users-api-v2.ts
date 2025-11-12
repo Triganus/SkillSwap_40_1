@@ -1,5 +1,13 @@
 import type { UserListItem, UserProfile, TeachingSkill } from '@/entities/user/model-v2';
 
+function normalizeId(id?: string | null): string | undefined {
+  if (!id) return undefined;
+
+  const segments = id.split('/').filter(Boolean);
+
+  return segments.length ? segments[segments.length - 1] : id;
+}
+
 /**
  * Получить список пользователей для каталога
  */
@@ -46,7 +54,13 @@ export async function fetchUserProfile(userId: string): Promise<{
   profile: UserProfile;
   skills: TeachingSkill[];
 }> {
-  const response = await fetch(`/api/users/${userId}`);
+  const normalizedId = normalizeId(userId);
+
+  if (!normalizedId) {
+    throw new Error('Failed to fetch user profile: invalid user id');
+  }
+
+  const response = await fetch(`/api/users/${normalizedId}`);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch user profile: ${response.statusText}`);
@@ -62,7 +76,13 @@ export async function updateUserProfile(
   userId: string,
   updates: Partial<Omit<UserProfile, 'id'>>
 ): Promise<UserProfile> {
-  const response = await fetch(`/api/users/${userId}`, {
+  const normalizedId = normalizeId(userId);
+
+  if (!normalizedId) {
+    throw new Error('Failed to update user profile: invalid user id');
+  }
+
+  const response = await fetch(`/api/users/${normalizedId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
@@ -82,7 +102,13 @@ export async function toggleSkillLike(
   userId: string,
   skillId: string
 ): Promise<{ liked: boolean; likesCount: number }> {
-  const response = await fetch(`/api/users/${userId}/likes/${skillId}`, {
+  const normalizedUserId = normalizeId(userId);
+
+  if (!normalizedUserId) {
+    throw new Error('Failed to toggle skill like: invalid user id');
+  }
+
+  const response = await fetch(`/api/users/${normalizedUserId}/likes/${skillId}`, {
     method: 'POST',
   });
 
@@ -97,9 +123,19 @@ export async function toggleSkillLikeByUserId(
   currentUserId: string,
   skillOwnerUserId: string
 ): Promise<{ liked: boolean; skillId: string; likesCount: number }> {
-  const response = await fetch(`/api/users/${currentUserId}/likes/by-user/${skillOwnerUserId}`, {
-    method: 'POST',
-  });
+  const normalizedCurrentUserId = normalizeId(currentUserId);
+  const normalizedOwnerId = normalizeId(skillOwnerUserId);
+
+  if (!normalizedCurrentUserId || !normalizedOwnerId) {
+    throw new Error('Failed to toggle skill like: invalid user id');
+  }
+
+  const response = await fetch(
+    `/api/users/${normalizedCurrentUserId}/likes/by-user/${normalizedOwnerId}`,
+    {
+      method: 'POST',
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to toggle skill like by user: ${response.statusText}`);
@@ -120,7 +156,11 @@ export async function fetchRecommendedUsers(params?: {
 
   if (params?.page) searchParams.set('page', String(params.page));
   if (params?.limit) searchParams.set('limit', String(params.limit));
-  if (params?.currentUserId) searchParams.set('currentUserId', params.currentUserId);
+  if (params?.currentUserId) {
+    const normalizedId = normalizeId(params.currentUserId);
+
+    if (normalizedId) searchParams.set('currentUserId', normalizedId);
+  }
 
   const response = await fetch(`/api/users/recommended?${searchParams.toString()}`);
 
@@ -139,7 +179,11 @@ export async function fetchPopularUsers(currentUserId?: string): Promise<UserLis
 
   searchParams.set('limit', '3');
 
-  if (currentUserId) searchParams.set('currentUserId', currentUserId);
+  if (currentUserId) {
+    const normalizedId = normalizeId(currentUserId);
+
+    if (normalizedId) searchParams.set('currentUserId', normalizedId);
+  }
 
   const response = await fetch(`/api/users/popular?${searchParams.toString()}`);
 
@@ -160,7 +204,11 @@ export async function fetchNewUsers(currentUserId?: string): Promise<UserListIte
 
   searchParams.set('limit', '3');
 
-  if (currentUserId) searchParams.set('currentUserId', currentUserId);
+  if (currentUserId) {
+    const normalizedId = normalizeId(currentUserId);
+
+    if (normalizedId) searchParams.set('currentUserId', normalizedId);
+  }
 
   const response = await fetch(`/api/users/new?${searchParams.toString()}`);
 
@@ -184,7 +232,14 @@ export async function fetchSimilarUsers(params: {
 }): Promise<UserListItem[]> {
   const searchParams = new URLSearchParams();
 
-  searchParams.set('userId', params.userId);
+  const normalizedUserId = normalizeId(params.userId);
+
+  if (!normalizedUserId) {
+    throw new Error('Failed to fetch similar users: invalid user id');
+  }
+
+  searchParams.set('userId', normalizedUserId);
+
   searchParams.set('canTeachSkills', params.canTeachSkills.join(','));
   searchParams.set('wantsToLearnSkills', params.wantsToLearnSkills.join(','));
   if (params.limit) searchParams.set('limit', String(params.limit));

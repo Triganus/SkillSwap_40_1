@@ -1,6 +1,9 @@
 import type { IRequestHandler } from '../types';
 import type { AuthUser } from '@entities/user/model/types/types';
 import { delay } from 'msw';
+import { registerMockUser } from './createUsersApiHandler';
+import type { RegisterMockUserPayload } from './createUsersApiHandler';
+import type { Gender, UserListItem } from '@/entities/user/model-v2/types';
 
 interface CompleteRegistrationRequestBody {
   email: string;
@@ -52,17 +55,68 @@ export function createRegistrationCompleteHandler(priority = 100): IRequestHandl
         return Response.json({ message: 'Email and name are required' }, { status: 400 });
       }
 
-      const skillId = `skill_${Date.now()}_${body.skill.category}_${body.skill.subcategory}`;
+      const safeGender = (['male', 'female', 'not_specified'] as Gender[]).includes(
+        body.gender as Gender
+      )
+        ? (body.gender as Gender)
+        : ('not_specified' as Gender);
+
+      const createdAt = Date.now();
+      const userId = `user_${createdAt}`;
+      const skillId = `skill_${userId}_0`;
+
+      const birthDate = new Date(body.birthDate);
+      const now = new Date();
+      let age = now.getFullYear() - birthDate.getFullYear();
+      const monthDiff = now.getMonth() - birthDate.getMonth();
+
+      if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDate.getDate())) {
+        age -= 1;
+      }
+
+      const listItem: UserListItem = {
+        id: userId,
+        name: body.name,
+        cityId: body.city,
+        age: Number.isFinite(age) ? age : 18,
+        gender: safeGender,
+        avatar: body.avatar || null,
+        canTeachSkills: [body.skill.subcategory],
+        wantsToLearnSkills: body.interests?.subcategories || [],
+        createdAt,
+        primarySkillId: skillId,
+        primarySkillLikesCount: 0,
+      };
+
+      const payload: RegisterMockUserPayload = {
+        listItem,
+        profile: {
+          bio:
+            body.skill.description ||
+            `Привет! Меня зовут ${body.name}. Я готов делиться своими знаниями и навыками.`,
+        },
+        skills: [
+          {
+            subcategoryId: body.skill.subcategory,
+            title: body.skill.title,
+            description: body.skill.description,
+            categoryId: body.skill.category,
+            images: body.skill.images || [],
+          },
+        ],
+      };
+
+      await registerMockUser(payload);
 
       const mockUser: AuthUser = {
-        id: `user_${Date.now()}`,
+        id: userId,
         email: body.email,
         name: body.name,
         avatar_image: body.avatar || undefined,
         date_of_birth: body.birthDate,
-        gender: body.gender,
+        gender: safeGender,
         location: body.city,
-        date_of_registration: new Date().toISOString(),
+        date_of_registration: new Date(createdAt).toISOString(),
         my_skills: {
           teach: [
             {
