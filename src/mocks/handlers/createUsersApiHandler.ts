@@ -4,6 +4,7 @@ import type { UserListItem, UserProfile, TeachingSkill } from '@/entities/user/m
 
 const GENERATED_USER_COUNT = 30; // Дополнительно генерируем 30 пользователей
 const STORAGE_KEY = 'mock_generated_users_v1'; // Ключ для localStorage
+const CUSTOM_USERS_KEY = 'mock_custom_users_v1'; // Ключ для сохранения зарегистрированных пользователей
 
 let cache: {
   users: UserListItem[];
@@ -12,6 +13,23 @@ let cache: {
 
 // Хранилище лайков в памяти: Map<skillId, Set<userId>>
 let likesCache: Map<string, Set<string>> | null = null;
+
+interface CustomSkillDetail {
+  title?: string;
+  description?: string;
+  categoryId?: string;
+  images?: string[];
+}
+
+interface StoredCustomUser {
+  listItem: UserListItem;
+  profile?: {
+    bio?: string;
+  };
+  skills?: Record<string, CustomSkillDetail>;
+}
+
+let customUsersCache: StoredCustomUser[] | null = null;
 
 /**
  * Инициализация лайков со случайными значениями
@@ -45,6 +63,63 @@ function ensureLikesCache(users: UserListItem[]): Map<string, Set<string>> {
     likesCache = initializeLikes(users);
   }
   return likesCache;
+}
+
+function loadStoredCustomUsers(): StoredCustomUser[] {
+  if (typeof localStorage === 'undefined') {
+    return [];
+  }
+
+  try {
+    const raw = localStorage.getItem(CUSTOM_USERS_KEY);
+
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw) as StoredCustomUser[];
+
+    return parsed.map((user) => {
+      return {
+        ...user,
+        listItem: {
+          ...user.listItem,
+          createdAt: Number(user.listItem.createdAt),
+        },
+      };
+    });
+  } catch (error) {
+    console.warn('[Mock] Failed to load custom users:', error);
+
+    return [];
+  }
+}
+
+function saveStoredCustomUsers(users: StoredCustomUser[]): void {
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
+
+  try {
+    localStorage.setItem(CUSTOM_USERS_KEY, JSON.stringify(users));
+  } catch (error) {
+    console.warn('[Mock] Failed to save custom users:', error);
+  }
+}
+
+function ensureCustomUsers(): StoredCustomUser[] {
+  if (!customUsersCache) {
+    customUsersCache = loadStoredCustomUsers();
+  }
+
+  return customUsersCache;
+}
+
+function setCustomUsers(users: StoredCustomUser[]): void {
+  customUsersCache = users;
+  saveStoredCustomUsers(users);
+}
+
+function getCustomUserRecord(userId: string): StoredCustomUser | undefined {
+  return ensureCustomUsers().find((user) => user.listItem.id === userId);
 }
 
 function enrichUsersWithLikes(
@@ -349,11 +424,90 @@ export async function ensureData(): Promise<{
     console.log('[Mock] Using cached generated users');
   }
 
-  const allUsers = [...dbUsers, ...generatedUsers];
+  const customUsers = ensureCustomUsers();
+  const customListItems = customUsers.map((user) => user.listItem);
+
+  const allUsers = [...dbUsers, ...generatedUsers, ...customListItems];
 
   cache = { users: allUsers, skillPool };
 
   return cache;
+}
+
+function upsertCustomUser(record: StoredCustomUser): void {
+  const customUsers = ensureCustomUsers();
+  const existingIndex = customUsers.findIndex((user) => user.listItem.id === record.listItem.id);
+
+  if (existingIndex >= 0) {
+    customUsers[existingIndex] = record;
+  } else {
+    customUsers.push(record);
+  }
+
+  setCustomUsers(customUsers);
+
+  if (cache) {
+    const existingCacheIndex = cache.users.findIndex((user) => user.id === record.listItem.id);
+
+    if (existingCacheIndex >= 0) {
+      cache.users[existingCacheIndex] = record.listItem;
+    } else {
+      cache.users.push(record.listItem);
+    }
+  }
+
+  if (record.listItem.canTeachSkills.length) {
+    const primarySkillId = `skill_${record.listItem.id}_0`;
+
+    if (cache) {
+      const likes = ensureLikesCache(cache.users);
+
+      if (!likes.has(primarySkillId)) {
+        likes.set(primarySkillId, new Set());
+      }
+    } else if (likesCache) {
+      if (!likesCache.has(primarySkillId)) {
+        likesCache.set(primarySkillId, new Set());
+      }
+    }
+  }
+}
+
+export interface RegisterMockUserPayload {
+  listItem: UserListItem;
+  profile?: {
+    bio?: string;
+  };
+  skills?: Array<{
+    subcategoryId: string;
+    title?: string;
+    description?: string;
+    categoryId?: string;
+    images?: string[];
+  }>;
+}
+
+export async function registerMockUser(payload: RegisterMockUserPayload): Promise<void> {
+  await ensureData();
+
+  const skills: Record<string, CustomSkillDetail> = {};
+
+  payload.skills?.forEach((skill) => {
+    skills[skill.subcategoryId] = {
+      title: skill.title,
+      description: skill.description,
+      categoryId: skill.categoryId,
+      images: skill.images,
+    };
+  });
+
+  const record: StoredCustomUser = {
+    listItem: payload.listItem,
+    profile: payload.profile,
+    skills: Object.keys(skills).length ? skills : undefined,
+  };
+
+  upsertCustomUser(record);
 }
 
 interface QueryParams {
@@ -693,6 +847,8 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
 function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSkill[] } {
   const { skillPool } = cache || { skillPool: [] };
   const seed = mulberry32(parseInt(u.id.replace(/\D/g, ''), 10) || 42);
+  const customRecord = getCustomUserRecord(u.id);
+  const customSkills = customRecord?.skills || {};
 
   const localImages = [
     '/src/mocks/images/image-01.jpg',
@@ -717,7 +873,7 @@ function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSki
     '/src/mocks/images/image-20.jpg',
   ];
 
-  const skillDescriptions = [
+  const defaultDescriptions = [
     'Научу основам и поделюсь практическими навыками. Индивидуальный подход к каждому ученику.',
     'Делюсь своим многолетним опытом и знаниями. Гарантирую качественное обучение.',
     'Помогу освоить с нуля или усовершенствовать существующие навыки. Профессиональный подход.',
@@ -725,31 +881,34 @@ function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSki
     'Передам свои знания и опыт. Доступно объясню любые сложные моменты.',
   ];
 
-  // Создаем ОТДЕЛЬНЫЕ объекты навыков
   const skills: TeachingSkill[] = u.canTeachSkills.map((subcategoryId, index) => {
     const skillInfo = skillPool.find((s) => s.id === subcategoryId);
+    const customSkill = customSkills[subcategoryId];
     const images: string[] = [];
 
-    for (let i = 0; i < 5; i++) {
-      const randomIndex = Math.floor(seed() * localImages.length);
+    if (customSkill?.images && customSkill.images.length > 0) {
+      images.push(...customSkill.images);
+    } else {
+      for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(seed() * localImages.length);
 
-      images.push(localImages[randomIndex]);
+        images.push(localImages[randomIndex]);
+      }
     }
 
-    const descriptionIndex = Math.floor(seed() * skillDescriptions.length);
+    const descriptionIndex = Math.floor(seed() * defaultDescriptions.length);
     const skillId = `skill_${u.id}_${index}`;
 
-    // Получаем лайки для этого навыка из кеша
     const likes = likesCache || new Map();
     const likedByUserIds: string[] = Array.from(likes.get(skillId) || []);
 
     return {
       id: skillId,
       userId: u.id,
-      title: skillInfo?.name || 'Навык',
-      description: skillDescriptions[descriptionIndex],
-      categoryId: skillInfo?.categoryId || 'other',
-      subcategoryId: subcategoryId,
+      title: customSkill?.title || skillInfo?.name || 'Навык',
+      description: customSkill?.description || defaultDescriptions[descriptionIndex],
+      categoryId: customSkill?.categoryId || skillInfo?.categoryId || 'other',
+      subcategoryId,
       images,
       createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
       likesCount: likedByUserIds.length,
@@ -764,7 +923,9 @@ function toProfile(u: UserListItem): { profile: UserProfile; skills: TeachingSki
     age: u.age,
     gender: u.gender,
     avatar: u.avatar,
-    bio: `Привет! Меня зовут ${u.name}. Я готов делиться своими знаниями и навыками.`,
+    bio:
+      customRecord?.profile?.bio ||
+      `Привет! Меня зовут ${u.name}. Я готов делиться своими знаниями и навыками.`,
     canTeachSkills: u.canTeachSkills,
     wantsToLearnSkills: u.wantsToLearnSkills,
     likedSkillIds: [],
