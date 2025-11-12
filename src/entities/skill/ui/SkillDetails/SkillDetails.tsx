@@ -5,6 +5,8 @@ import { Button } from '@/shared/ui/Button/Button';
 import { SkillContent } from '@/entities/skill/ui/SkillContent';
 import type { SkillDetailsProps } from './types';
 import styles from './SkillDetails.module.scss';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuthV2 } from '@app/Provider';
 
 export const SkillDetails: React.FC<SkillDetailsProps> = ({
   title,
@@ -33,6 +35,18 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
     }
     return classes.filter(Boolean).join(' ');
   }, [variant, className]);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuthV2();
+
+  const handleExchangeClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+    onExchangeClick?.();
+  };
 
   return (
     <div className={rootClassName}>
@@ -97,7 +111,7 @@ export const SkillDetails: React.FC<SkillDetailsProps> = ({
             ) : (
               <Button
                 variant="primary"
-                onClick={onExchangeClick}
+                onClick={handleExchangeClick}
                 type="button"
                 className={styles.exchangeButton}
               >
