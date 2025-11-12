@@ -208,11 +208,23 @@ export const usersSliceV2 = createSlice({
       }
 
       if (state.skillCards) {
-        const targetCard = state.skillCards.find((card) => card.user.id === skillOwnerUserId);
+        const targetCardIndex = state.skillCards.findIndex(
+          (card) => card.user.id === skillOwnerUserId
+        );
 
-        if (targetCard) {
+        if (targetCardIndex > -1) {
+          const targetCard = state.skillCards[targetCardIndex];
           targetCard.isLiked = liked;
           targetCard.likesCount = likesCount;
+          state.skillCards[targetCardIndex] = targetCard;
+        }
+      }
+
+      const listItem = state.listItems.entities[skillOwnerUserId];
+      if (listItem) {
+        listItem.isLikedByCurrentUser = liked;
+        if (listItem.primarySkillId === skillId) {
+          listItem.primarySkillLikesCount = likesCount;
         }
       }
     });

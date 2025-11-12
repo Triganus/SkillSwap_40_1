@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { SkillCardProps } from '@/widgets/Cards/SkillCard';
 import { SkillCard } from '@/widgets/Cards/SkillCard';
 import { CardSectionUI } from '@shared/ui/CardSection';
@@ -6,9 +6,11 @@ import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 import { TitleUI } from '@shared/ui/Title';
 import { PreloaderUI } from '@shared/ui/Preloader';
 import { ActiveFilters } from '@/features/filters/ui/ActiveFilters';
-import { Icon } from '@/shared/ui/Icon';
 import type { FilterChip } from '@/entities/filtered-content/model/types';
 import styles from './HomeContent.module.scss';
+import { SearchHeaderUI } from '@/shared/ui/SearchHeader/SearchHeaderUI';
+import { showCardDetails } from '@/entities/sort/lib/cardUtils';
+import { sortSkillCards } from '@/entities/sort/lib/sortUtils';
 
 interface HomeContentProps {
   cards: SkillCardProps[];
@@ -46,30 +48,22 @@ export const HomeContent: React.FC<HomeContentProps> = ({
   onViewAllNew,
   onSkillDetailsClick,
 }) => {
-  const handleSortClick = useCallback(() => {
-    if (onSortChange) {
-      onSortChange(sortOrder === 'newest' ? 'oldest' : 'newest');
-    }
-  }, [sortOrder, onSortChange]);
-
   // Подготавливаем карточки для обычного режима (всегда вызываем хуки)
-  const popularCards = useMemo(() => {
-    return cards.slice(0, 3).map((card) => ({
-      ...card,
-      onDetailsClick: onSkillDetailsClick
-        ? () => onSkillDetailsClick(card.user.id)
-        : card.onDetailsClick,
-    }));
+  const preparedCards = useMemo(() => {
+    return showCardDetails(cards, onSkillDetailsClick);
   }, [cards, onSkillDetailsClick]);
+
+  const popularCards = useMemo(() => {
+    return preparedCards.slice(0, 3);
+  }, [preparedCards]);
 
   const newCards = useMemo(() => {
-    return cards.slice(3, 6).map((card) => ({
-      ...card,
-      onDetailsClick: onSkillDetailsClick
-        ? () => onSkillDetailsClick(card.user.id)
-        : card.onDetailsClick,
-    }));
-  }, [cards, onSkillDetailsClick]);
+    return preparedCards.slice(3, 6);
+  }, [preparedCards]);
+
+  const sortedCards = useMemo(() => {
+    return sortSkillCards(preparedCards, sortOrder);
+  }, [preparedCards, sortOrder]);
 
   // Показываем большой прелоадер только при первой загрузке (когда нет карточек)
   if (isLoading && cards.length === 0) {
@@ -88,26 +82,13 @@ export const HomeContent: React.FC<HomeContentProps> = ({
           <ActiveFilters filters={activeFilters} onRemove={onRemoveFilter} />
         )}
         <div className={styles.searchResults}>
-          <div className={styles.searchHeader}>
-            <TitleUI size="large" className={styles.searchTitle}>
-              Подходящие предложения: {totalUsers}
-            </TitleUI>
-            {onSortChange && (
-              <button
-                type="button"
-                className={styles.sortButton}
-                onClick={handleSortClick}
-                aria-label={
-                  sortOrder === 'newest'
-                    ? 'Сортировать сначала старые'
-                    : 'Сортировать сначала новые'
-                }
-              >
-                <Icon name="sort" size={24} className={styles.sortIcon} />
-                {sortOrder === 'newest' ? 'Сначала новые' : 'Сначала старые'}
-              </button>
-            )}
-          </div>
+          <SearchHeaderUI
+            title="Подходящие предложения"
+            total={totalUsers}
+            sortOrder={sortOrder}
+            onSortChange={onSortChange}
+          />
+
           <InfiniteGridUI
             onLoadMore={onLoadMore}
             hasMore={hasMore}
@@ -116,17 +97,13 @@ export const HomeContent: React.FC<HomeContentProps> = ({
             gap="24px"
             className={styles.grid}
           >
-            {cards.map((card) => (
+            {sortedCards.map((card) => (
               <SkillCard
                 key={card.user.id}
                 user={card.user}
                 teachingSkills={card.teachingSkills}
                 learningSkills={card.learningSkills}
-                onDetailsClick={
-                  onSkillDetailsClick
-                    ? () => onSkillDetailsClick(card.user.id)
-                    : card.onDetailsClick
-                }
+                onDetailsClick={card.onDetailsClick}
                 onLikeClick={card.onLikeClick}
                 isLiked={card.isLiked}
                 likesCount={card.likesCount}
@@ -177,15 +154,13 @@ export const HomeContent: React.FC<HomeContentProps> = ({
           gap="24px"
           className={styles.grid}
         >
-          {cards.map((card) => (
+          {sortedCards.map((card) => (
             <SkillCard
               key={card.user.id}
               user={card.user}
               teachingSkills={card.teachingSkills}
               learningSkills={card.learningSkills}
-              onDetailsClick={
-                onSkillDetailsClick ? () => onSkillDetailsClick(card.user.id) : card.onDetailsClick
-              }
+              onDetailsClick={card.onDetailsClick}
               onLikeClick={card.onLikeClick}
               isLiked={card.isLiked}
               likesCount={card.likesCount}

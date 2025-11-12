@@ -1,37 +1,41 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 40px 32px;
-  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 40px;
+  width: 324px;
   height: 100%;
-  min-height: 100%;
-  align-self: stretch;
-  flex: 1 1 auto;
   background: var(--color-surface);
   border-radius: 24px;
 
+  @media (width <= 768px) {
+    width: 280px;
+    padding: 32px 24px;
+  }
+
   @media (width <= 480px) {
+    width: 100%;
     padding: 24px 16px;
+    border-radius: 16px;
   }
 }
 
 .link {
-  display: block;
-  width: 100%;
   text-decoration: none;
+  width: 100%;
 }
 
 .link-content {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 12px;
+  width: 100%;
   border-radius: 12px;
   padding: 12px 20px;
   min-height: 48px;
   transition: background-color 0.2s ease-in-out;
-  align-self: flex-start;
 
   .link:hover & {
     background-color: var(--color-disabled);
@@ -41,8 +45,16 @@
     flex-shrink: 0;
   }
 
+  @media (width <= 768px) {
+    padding: 10px 16px;
+    min-height: 44px;
+    gap: 10px;
+  }
+
   @media (width <= 480px) {
-    width: 100%;
+    padding: 8px 12px;
+    min-height: 40px;
+    gap: 8px;
   }
 }
 

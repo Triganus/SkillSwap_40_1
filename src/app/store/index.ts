@@ -8,6 +8,7 @@ import { createLocalStorageMiddleware } from '@shared/lib/redux/localStorageMidd
 import { loadState } from '@shared/lib/localStorage';
 import userReducer from '@/entities/user/model/userSlice';
 import notificationsReducer from '@/features/notifications/model/notificationsSlice';
+import sortReducer from '@/entities/sort/model/sortSlice';
 
 import { authReducerV2, usersReducerV2 } from '@/entities/user/model-v2';
 import {
@@ -99,6 +100,7 @@ export const store = configureStore({
     filterSideBar: filterSideBarReducer,
     notifications: notificationsReducer,
     popup: popupReducer,
+    sort: sortReducer,
 
     // Справочники
     genders: gendersReducer,
