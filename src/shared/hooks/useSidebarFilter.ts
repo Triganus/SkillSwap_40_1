@@ -21,14 +21,17 @@ export function useSidebarFilter(currentFilters: FilterPayload) {
       if (hasSkillFilter) {
         let teachHit = false;
         let learnHit = false;
+        // "Могу научить" - ищем людей, которые могут научить выбранному навыку
         if (activeTeach) teachHit = card.teachingSkills.some((s) => selectedSkillIds.has(s.id));
-        if (activeLearn) learnHit = card.learningSkills.some((s) => selectedSkillIds.has(s.id));
+        // "Хочу научиться" - ищем людей, которые могут научить выбранному навыку (тоже teachingSkills)
+        if (activeLearn) learnHit = card.teachingSkills.some((s) => selectedSkillIds.has(s.id));
         if (general === 'Могу научить' && !teachHit) return false;
         if (general === 'Хочу научиться' && !learnHit) return false;
         if ((!general || general === 'Всё') && !teachHit && !learnHit) return false;
       } else {
         if (general === 'Могу научить' && card.teachingSkills.length === 0) return false;
-        if (general === 'Хочу научиться' && card.learningSkills.length === 0) return false;
+        // "Хочу научиться" - проверяем, что у пользователя есть навыки для обучения
+        if (general === 'Хочу научиться' && card.teachingSkills.length === 0) return false;
       }
 
       if (hasGenderFilter && card.user.gender?.toLowerCase() !== gender.toLowerCase()) {
