@@ -331,7 +331,10 @@ export default function SkillPage() {
             }
           }
         } catch (error) {
-          console.warn('[SkillPage] Failed to read likes from localStorage for similar user', error);
+          console.warn(
+            '[SkillPage] Failed to read likes from localStorage for similar user',
+            error
+          );
         }
       }
 
@@ -404,7 +407,7 @@ export default function SkillPage() {
         const likesDataRaw = localStorage.getItem(likesKey);
         if (likesDataRaw) {
           const likesData = JSON.parse(likesDataRaw) as { count: number; users: string[] };
-          
+
           // Используем количество из localStorage, если оно есть
           if (Number.isFinite(likesData.count)) {
             likesCount = likesData.count;
