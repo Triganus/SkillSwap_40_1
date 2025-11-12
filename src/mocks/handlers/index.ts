@@ -3,6 +3,7 @@ import { createAuthApiHandler } from './createAuthApiHandler';
 import { createRegistrationCompleteHandler } from './createRegistrationCompleteHandler';
 import { createDirectoriesApiHandler } from './createDirectoriesApiHandler';
 import { createUsersApiHandler } from './createUsersApiHandler';
+import { createNotificationsApiHandler } from './createNotificationsApiHandler';
 
 /**
  * Регистрация обработчиков запросов
@@ -12,5 +13,6 @@ export function registerHandlers(orchestrator: IRequestOrchestrator): void {
   orchestrator.registerHandler(createAuthApiHandler(100));
   orchestrator.registerHandler(createRegistrationCompleteHandler(100));
   orchestrator.registerHandler(createDirectoriesApiHandler(100));
+  orchestrator.registerHandler(createNotificationsApiHandler(95));
   orchestrator.registerHandler(createUsersApiHandler(90));
 }

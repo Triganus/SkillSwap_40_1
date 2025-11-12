@@ -1,39 +1,60 @@
 import { TitleUI } from '@/shared/ui/Title';
 import type React from 'react';
 import styles from './Favorites.module.scss';
-import { Icon, InfiniteGridUI, TextUI } from '@/shared/ui';
+import { InfiniteGridUI, TextUI } from '@/shared/ui';
 import { SearchHeaderUI } from '@/shared/ui/SearchHeader';
 import { SkillCard, type SkillCardProps } from '@/widgets/Cards/SkillCard';
-import { useAppDispatch } from '@/shared/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks/redux';
 import { toggleSkillLikeByUserIdThunk } from '@/entities/user/model-v2';
+import { useAuthV2 } from '@/app/Provider';
+import { setSortOrder } from '@/entities/sort/model/sortSlice';
+import { selectSortOrder } from '@/entities/sort/model/selector';
+import { useMemo } from 'react';
+import { sortSkillCards } from '@/entities/sort/lib/sortUtils';
+import { showCardDetails } from '@/entities/sort/lib/cardUtils';
 
 export type FavoritesProps = {
   totalCards?: number;
-  sortOrder?: 'newest' | 'oldest';
   hasMore?: boolean;
   isLoading?: boolean;
   favoriteCards: SkillCardProps[];
-  onSortChange?: (order: 'newest' | 'oldest') => void;
   onLoadMore?: () => void;
   onSkillDetailsClick?: (skillId: string) => void;
 };
 
 export const Favorites: React.FC<FavoritesProps> = ({
   totalCards = 0,
-  sortOrder = 'newest',
   hasMore,
   isLoading,
   favoriteCards,
-  onSortChange,
   onLoadMore,
   onSkillDetailsClick,
 }) => {
   const dispatch = useAppDispatch();
+  const { user: currentUser } = useAuthV2();
+
+  const activeSortOrder = useAppSelector(selectSortOrder);
+
+  const handleSortChange = (newOrder: 'newest' | 'oldest') => {
+    dispatch(setSortOrder(newOrder));
+  };
+
+  const showFavoriteCards = useMemo(() => {
+    return showCardDetails(favoriteCards, onSkillDetailsClick);
+  }, [favoriteCards, onSkillDetailsClick]);
+
+  const sortFavoriteCards = useMemo(() => {
+    return sortSkillCards(showFavoriteCards, activeSortOrder);
+  }, [showFavoriteCards, activeSortOrder]);
 
   const handleCardLike = (skillOwnerUserId: string) => {
+    if (!currentUser) {
+      console.error('User not authenticated');
+      return;
+    }
     dispatch(
       toggleSkillLikeByUserIdThunk({
-        currentUserId: 'current_user_id_placeholder',
+        currentUserId: currentUser.id,
         skillOwnerUserId,
       })
     );
@@ -46,8 +67,8 @@ export const Favorites: React.FC<FavoritesProps> = ({
       <SearchHeaderUI
         title="Избранное"
         total={totalCards}
-        sortOrder={sortOrder}
-        onSortChange={onSortChange}
+        sortOrder={activeSortOrder}
+        onSortChange={handleSortChange}
       />
 
       {empty ? (
@@ -55,9 +76,6 @@ export const Favorites: React.FC<FavoritesProps> = ({
           <TitleUI size="medium" className={styles.title}>
             Ваше избранное пока пустует
           </TitleUI>
-          <button>
-            <Icon name="sort" size={24} className={styles.sortIcon} />
-          </button>
           <TextUI variant="caption" color="primary">
             Начните лайкать карточки участников — те, кто вас вдохновляет, с кем вы хотели бы
             обменяться навыками. Сюда попадут все профили, которые вы отметите лайком.
@@ -71,17 +89,15 @@ export const Favorites: React.FC<FavoritesProps> = ({
           columns={{ mobile: 1, tablet: 2, desktop: 3 }}
           gap="24px"
         >
-          {favoriteCards.map((card) => (
+          {sortFavoriteCards.map((card) => (
             <SkillCard
               key={card.user.id}
               user={card.user}
               teachingSkills={card.teachingSkills}
               learningSkills={card.learningSkills}
-              onDetailsClick={
-                onSkillDetailsClick ? () => onSkillDetailsClick(card.user.id) : card.onDetailsClick
-              }
+              onDetailsClick={card.onDetailsClick}
               onLikeClick={() => handleCardLike(card.user.id)}
-              isLiked={true}
+              isLiked={card.isLiked}
               likesCount={card.likesCount}
             />
           ))}

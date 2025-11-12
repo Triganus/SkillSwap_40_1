@@ -212,3 +212,10 @@ export const selectNewUsers = createSelector(
   [selectNewUserIds, selectUserListItemsEntities],
   (ids, entities) => ids.map((id) => entities[id]).filter(Boolean) as UserListItem[]
 );
+
+/**
+ * ========== Селектор для избранного ==========
+ */
+export const selectFavoriteCards = createSelector([selectSkillCards], (skillCards) =>
+  skillCards.filter((card) => card.isLiked)
+);
