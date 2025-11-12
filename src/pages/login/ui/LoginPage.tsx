@@ -9,7 +9,6 @@ import lightBulb from '@shared/assets/images/light-bulb.svg';
 import { useLoginForm } from '@features/auth/model/hooks/useLoginForm';
 
 export default function LoginPage() {
-
   const { isAuthenticated, isLoading, login, startLogin, failLogin } = useAuthV2();
   const navigate = useNavigate();
   const location = useLocation() as unknown as { state?: { from?: Location } };
