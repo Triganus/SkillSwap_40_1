@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import { getSearchQuery, setSearchQuery, filterSkills, fetchSkills } from '@entities/skill/model';
 import {
@@ -26,6 +26,7 @@ import styles from './HomePage.module.scss';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -89,6 +90,30 @@ export default function HomePage() {
   useEffect(() => {
     initialLoadAttemptedRef.current = false;
   }, []);
+
+  // Обновляем данные при возвращении на главную страницу для синхронизации лайков
+  const prevLocationRef = useRef(location.pathname);
+  useEffect(() => {
+    const wasOnDifferentPage = prevLocationRef.current !== location.pathname;
+    const returnedToHome = location.pathname === '/';
+
+    // Если вернулись на главную с другой страницы и данные уже есть, обновляем их
+    if (
+      wasOnDifferentPage &&
+      returnedToHome &&
+      usersData.length > 0 &&
+      !isFiltering &&
+      !loadingUsers &&
+      !isLoadingRef.current
+    ) {
+      isLoadingRef.current = true;
+      dispatch(fetchUsersWithSkillsThunk()).finally(() => {
+        isLoadingRef.current = false;
+      });
+    }
+
+    prevLocationRef.current = location.pathname;
+  }, [location.pathname, dispatch, usersData.length, isFiltering, loadingUsers]);
 
   // Загрузка навыков для справочника
   useEffect(() => {
