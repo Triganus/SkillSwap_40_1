@@ -211,18 +211,29 @@ export const usersSliceV2 = createSlice({
         }
       }
 
-      if (state.skillCards) {
-        const targetCardIndex = state.skillCards.findIndex(
-          (card) => card.user.id === skillOwnerUserId
-        );
-
+      // Вспомогательная функция для обновления карточки в массиве (иммутабельно)
+      const updateCardInArray = (cards: SkillCardProps[] | undefined): SkillCardProps[] | undefined => {
+        if (!cards) return cards;
+        const targetCardIndex = cards.findIndex((card) => card.user.id === skillOwnerUserId);
         if (targetCardIndex > -1) {
-          const targetCard = state.skillCards[targetCardIndex];
-          targetCard.isLiked = liked;
-          targetCard.likesCount = likesCount;
-          state.skillCards[targetCardIndex] = targetCard;
+          // Создаем новый массив с обновленной карточкой
+          return cards.map((card, index) =>
+            index === targetCardIndex
+              ? {
+                  ...card,
+                  isLiked: liked,
+                  likesCount: likesCount,
+                }
+              : card
+          );
         }
-      }
+        return cards;
+      };
+
+      // Обновляем все массивы карточек (иммутабельно)
+      state.skillCards = updateCardInArray(state.skillCards);
+      state.popularCards = updateCardInArray(state.popularCards);
+      state.newCards = updateCardInArray(state.newCards);
 
       const listItem = state.listItems.entities[skillOwnerUserId];
       if (listItem) {
