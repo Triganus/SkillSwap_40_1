@@ -11,6 +11,7 @@ import {
   fetchPopularUsersThunk,
   fetchNewUsersThunk,
   fetchUsersWithSkillsThunk,
+  fetchNewUsersWithPaginationThunk,
 } from './thunks';
 
 /**
@@ -275,6 +276,43 @@ export const usersSliceV2 = createSlice({
     builder.addCase(fetchUsersWithSkillsThunk.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || 'Failed to fetch users with skills';
+    });
+
+    // ========== fetchNewUsersWithPaginationThunk (для NewSkillsPage) ==========
+    builder.addCase(fetchNewUsersWithPaginationThunk.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchNewUsersWithPaginationThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.total = action.payload.total;
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[usersSlice] fetchNewUsersWithPaginationThunk.fulfilled:', {
+          usersCount: action.payload.users.length,
+          replace: action.payload.replace,
+          previousCount: state.skillCards?.length || 0,
+          total: action.payload.total,
+          hasMore: action.payload.hasMore,
+        });
+      }
+
+      if (action.payload.replace) {
+        state.skillCards = action.payload.users;
+      } else {
+        const existingIds = new Set((state.skillCards || []).map((u) => u.user.id));
+        const newUsers = action.payload.users.filter((u) => !existingIds.has(u.user.id));
+
+        state.skillCards = [...(state.skillCards || []), ...newUsers];
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[usersSlice] After update, skillCards count:', state.skillCards?.length || 0);
+      }
+    });
+    builder.addCase(fetchNewUsersWithPaginationThunk.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || 'Failed to fetch new users with pagination';
     });
 
     // ========== fetchRecommendedUsersThunk (для рекомендованных с пагинацией) ==========

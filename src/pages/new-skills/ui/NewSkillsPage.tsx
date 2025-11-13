@@ -4,7 +4,8 @@ import { useAppDispatch, useAppSelector } from '@shared/hooks/redux';
 import {
   selectSkillCards,
   selectUsersLoading,
-  fetchUsersWithSkillsThunk,
+  fetchNewUsersWithPaginationThunk,
+  clearSkillCards,
 } from '@/entities/user/model-v2';
 import { InfiniteGridUI } from '@shared/ui/InfiniteGrid';
 
@@ -23,142 +24,127 @@ export default function NewSkillsPage() {
   const loading = useAppSelector(selectUsersLoading);
 
   // Локальное состояние для бесконечного скролла
-  const [displayedCount, setDisplayedCount] = useState(9);
+  const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  // Загружаем данные при монтировании, если их нет
+  // Очищаем данные при монтировании и размонтировании компонента
   useEffect(() => {
-    if (usersData.length === 0 && !loading) {
-      dispatch(fetchUsersWithSkillsThunk());
-    }
-  }, [dispatch, usersData.length, loading]);
+    dispatch(clearSkillCards());
 
-  // Обновляем обработчики для карточек с правильной навигацией
-  const cardsWithNavigation = useMemo(() => {
-    return usersData.map((card) => ({
-      ...card,
-      onDetailsClick: () => {
-        if (card.user?.id) {
-          console.log('[NewSkillsPage] Navigating to user:', card.user.id);
-          navigate(`/skill/${card.user.id}`);
-        } else if (card.teachingSkills[0]) {
-          const fallbackSkill = card.teachingSkills[0];
-          console.warn(
-            '[NewSkillsPage] User id is missing, fallback to first skill:',
-            fallbackSkill.id
-          );
-          navigate(`/skill/${fallbackSkill.id}`);
-        } else {
-          console.warn('[NewSkillsPage] No user id or teaching skills for card:', card);
-        }
-      },
-    }));
-  }, [usersData, navigate]);
+    return () => {
+      dispatch(clearSkillCards());
+    };
+  }, [dispatch]);
 
-  // Фильтруем новые карточки (сортируем по дате создания пользователя)
-  const sortedNewCards = useMemo(() => {
-    return [...cardsWithNavigation].sort((a, b) => {
-      const dateA = new Date(a.user.createdAt || 0).getTime();
-      const dateB = new Date(b.user.createdAt || 0).getTime();
-      return dateA - dateB; // По возрастанию даты (ранние сначала)
-    });
-  }, [cardsWithNavigation]);
 
-  // Обновляем hasMore при изменении данных
   useEffect(() => {
-    if (displayedCount >= sortedNewCards.length && sortedNewCards.length > 0) {
-      setHasMore(false);
-    } else if (sortedNewCards.length > 0) {
-      setHasMore(true);
-    }
-  }, [displayedCount, sortedNewCards.length]);
+    dispatch(fetchNewUsersWithPaginationThunk({ page: 1, limit: 9, replace: true }))
+      .unwrap()
+      .then((result) => {
+        setHasMore(result.hasMore);
+        setCurrentPage(1);
+      })
+      .catch((error) => {
+        console.error('[NewSkillsPage] Failed to load initial data:', error);
+      });
+  }, [dispatch]);
 
   // Обработчик для бесконечного скролла
   const handleLoadMore = useCallback(() => {
-    if (displayedCount >= sortedNewCards.length) {
-      setHasMore(false);
+    if (!hasMore || loading) {
       return;
     }
 
-    // Имитация загрузки (можно заменить на реальную загрузку с API)
-    setTimeout(() => {
-      const newCount = Math.min(displayedCount + 9, sortedNewCards.length);
-      setDisplayedCount(newCount);
+    const nextPage = currentPage + 1;
 
-      if (newCount >= sortedNewCards.length) {
-        setHasMore(false);
-      }
-    }, 500);
-  }, [displayedCount, sortedNewCards.length]);
-
-  const newCards = sortedNewCards.slice(0, displayedCount);
+    dispatch(fetchNewUsersWithPaginationThunk({ page: nextPage, limit: 9, replace: false }))
+      .unwrap()
+      .then((result) => {
+        setHasMore(result.hasMore);
+        setCurrentPage(nextPage);
+      })
+      .catch((error) => {
+        console.error('[NewSkillsPage] Failed to load more data:', error);
+      });
+  }, [dispatch, currentPage, hasMore, loading]);
 
   // Обработчик возврата на главную
   const handleGoBack = useCallback(() => {
     navigate('/');
   }, [navigate]);
 
-  // Показываем прелоадер пока загружаются данные
-  if (loading && usersData.length === 0) {
+  const handleCardDetailsClick = useCallback(
+    (userId: string) => {
+      navigate(`/skill/${userId}`);
+    },
+    [navigate]
+  );
+
+  const cardsWithNavigation = useMemo(() => {
+    return usersData.map((card) => ({
+      ...card,
+      onDetailsClick: () => handleCardDetailsClick(card.user.id),
+    }));
+  }, [usersData, handleCardDetailsClick]);
+
     return (
-      <div className={styles.container}>
+    <div className={styles.container}>
+      {loading && usersData.length === 0 ? (
         <div className={styles.preloaderContainer}>
           <PreloaderUI size="large" ariaLabel="Загрузка новых навыков" />
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          <TitleUI size="large" className={styles.title}>
-            Новое
-          </TitleUI>
-        </div>
-        <div className={styles.headerRight}>
-          <Button
-            variant="tertiary"
-            onClick={handleGoBack}
-            className={styles.backButton}
-            aria-label="Вернуться на главную страницу"
-          >
-            <Icon
-              name="chevron-right"
-              size={24}
-              className={styles.backIcon}
-              fill="#253017"
-              stroke="#253017"
-              aria-hidden="true"
-            />
-            Назад
-          </Button>
-        </div>
-      </div>
-      <div className={styles.content}>
-        <InfiniteGridUI
-          onLoadMore={handleLoadMore}
-          hasMore={hasMore}
-          loading={loading}
-          columns={{ mobile: 1, tablet: 2, desktop: 3 }}
-          gap="24px"
-          className={styles.grid}
-        >
-          {newCards.map((card) => (
-            <SkillCard
-              key={card.user.id}
-              user={card.user}
-              teachingSkills={card.teachingSkills}
-              learningSkills={card.learningSkills}
-              onDetailsClick={card.onDetailsClick}
-              onLikeClick={card.onLikeClick}
-              isLiked={card.isLiked}
-              likesCount={card.likesCount}
-            />
-          ))}
-        </InfiniteGridUI>
-      </div>
+      ) : (
+        <>
+          <div className={styles.header}>
+            <div className={styles.headerLeft}>
+              <TitleUI size="large" className={styles.title}>
+                Новое
+              </TitleUI>
+            </div>
+            <div className={styles.headerRight}>
+              <Button
+                variant="tertiary"
+                onClick={handleGoBack}
+                className={styles.backButton}
+                aria-label="Вернуться на главную страницу"
+              >
+                <Icon
+                  name="chevron-right"
+                  size={24}
+                  className={styles.backIcon}
+                  fill="#253017"
+                  stroke="#253017"
+                  aria-hidden="true"
+                />
+                Назад
+              </Button>
+            </div>
+          </div>
+          <div className={styles.content}>
+            <InfiniteGridUI
+              onLoadMore={handleLoadMore}
+              hasMore={hasMore}
+              loading={loading}
+              columns={{ mobile: 1, tablet: 2, desktop: 3 }}
+              gap="24px"
+              className={styles.grid}
+            >
+              {cardsWithNavigation.map((card) => (
+                <SkillCard
+                  key={card.user.id}
+                  user={card.user}
+                  teachingSkills={card.teachingSkills}
+                  learningSkills={card.learningSkills}
+                  onDetailsClick={card.onDetailsClick}
+                  onLikeClick={card.onLikeClick}
+                  isLiked={card.isLiked}
+                  likesCount={card.likesCount}
+                />
+              ))}
+            </InfiniteGridUI>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -640,12 +640,19 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         return Response.json({ users: enrichUsersWithLikes(popular, users, currentUserId) });
       }
 
-      // /api/users/new?limit=3
+      // /api/users/new?limit=3&page=1
       if (base === '/api/users/new') {
+        const page = Number(url.searchParams.get('page') || '1');
         const limit = Number(url.searchParams.get('limit') || '3');
-        const newest = [...users].sort((a, b) => b.createdAt - a.createdAt).slice(0, limit);
+        const sorted = [...users].sort((a, b) => b.createdAt - a.createdAt);
+        const start = (page - 1) * limit;
+        const slice = sorted.slice(start, start + limit);
 
-        return Response.json({ users: enrichUsersWithLikes(newest, users, currentUserId) });
+        return Response.json({
+          users: enrichUsersWithLikes(slice, users, currentUserId),
+          hasMore: start + limit < sorted.length,
+          total: sorted.length,
+        });
       }
 
       // /api/users/recommended
