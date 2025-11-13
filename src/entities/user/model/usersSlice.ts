@@ -131,9 +131,11 @@ export const fetchUsersWithSkills = createAsyncThunk<
     // Объединяем все данные без дубликатов
     const allUsers = new Map<string, UserListItem>();
     // Все три функции возвращают объекты с полем users
-    [...popularDataResponse.users, ...newDataResponse.users, ...recommendedData.users].forEach((user) => {
-      allUsers.set(user.id, user);
-    });
+    [...popularDataResponse.users, ...newDataResponse.users, ...recommendedData.users].forEach(
+      (user) => {
+        allUsers.set(user.id, user);
+      }
+    );
 
     // Преобразуем в SkillCardProps
     return Array.from(allUsers.values()).map(userListItemToSkillCard);
