@@ -48,7 +48,7 @@ export const Favorites: React.FC<FavoritesProps> = ({
     return sortSkillCards(showFavoriteCards, activeSortOrder);
   }, [showFavoriteCards, activeSortOrder]);
 
-  const handleCardLike = (skillOwnerUserId: string) => {
+  const handleCardLike = (skillOwnerUserId: string, primarySkillId?: string) => {
     if (!currentUser) {
       console.error('User not authenticated');
       return;
@@ -58,7 +58,39 @@ export const Favorites: React.FC<FavoritesProps> = ({
         currentUserId: currentUser.id,
         skillOwnerUserId,
       })
-    );
+    )
+      .unwrap()
+      .then((result) => {
+        // Обновляем localStorage после успешного переключения лайка
+        const skillId = result.skillId || primarySkillId;
+        if (!skillId) {
+          return;
+        }
+
+        const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
+        try {
+          const likesData = JSON.parse(
+            localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+          ) as { count: number; users: string[] };
+
+          likesData.count = result.likesCount;
+
+          if (result.liked) {
+            if (!likesData.users.includes(currentUser.id)) {
+              likesData.users.push(currentUser.id);
+            }
+          } else {
+            likesData.users = likesData.users.filter((id) => id !== currentUser.id);
+          }
+
+          localStorage.setItem(likesKey, JSON.stringify(likesData));
+        } catch (error) {
+          console.warn('[Favorites] Failed to persist likes to localStorage', error);
+        }
+      })
+      .catch((error) => {
+        console.error('[Favorites] Failed to toggle like:', error);
+      });
   };
 
   const empty = favoriteCards.length === 0;
@@ -93,18 +125,24 @@ export const Favorites: React.FC<FavoritesProps> = ({
           columns={{ mobile: 1, tablet: 2, desktop: 3 }}
           gap="24px"
         >
-          {sortFavoriteCards.map((card) => (
-            <SkillCard
-              key={card.user.id}
-              user={card.user}
-              teachingSkills={card.teachingSkills}
-              learningSkills={card.learningSkills}
-              onDetailsClick={card.onDetailsClick}
-              onLikeClick={() => handleCardLike(card.user.id)}
-              isLiked={card.isLiked}
-              likesCount={card.likesCount}
-            />
-          ))}
+          {sortFavoriteCards.map((card) => {
+            // Получаем primarySkillId из первой teaching skill или learning skill
+            const primarySkillId =
+              card.teachingSkills[0]?.id || card.learningSkills[0]?.id || undefined;
+
+            return (
+              <SkillCard
+                key={card.user.id}
+                user={card.user}
+                teachingSkills={card.teachingSkills}
+                learningSkills={card.learningSkills}
+                onDetailsClick={card.onDetailsClick}
+                onLikeClick={() => handleCardLike(card.user.id, primarySkillId)}
+                isLiked={card.isLiked}
+                likesCount={card.likesCount}
+              />
+            );
+          })}
         </InfiniteGridUI>
       )}
     </div>
