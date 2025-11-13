@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { gendersReducer, fetchGenders, setGenders, clearGenders } from '@/entities/directory/model/gendersSlice';
+import {
+  gendersReducer,
+  fetchGenders,
+  setGenders,
+  clearGenders,
+} from '@/entities/directory/model/gendersSlice';
 
 global.fetch = vi.fn((url: string) => {
   if (url.includes('/genders.json')) {
@@ -53,7 +58,7 @@ describe('gendersSlice', () => {
   it('should handle fetchGenders.rejected', () => {
     const state = gendersReducer(initialState, {
       type: fetchGenders.rejected.type,
-      error: { message: 'Failed to load genders' } as any,
+      error: { message: 'Failed to load genders' },
     });
     expect(state.loading).toBe(false);
     expect(state.error).toBe('Failed to load genders');

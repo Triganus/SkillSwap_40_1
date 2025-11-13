@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import subcategoriesReducer, { fetchSubcategories, resetSubcategories } from '@/entities/directory/model/subcategoriesSlice';
+import subcategoriesReducer, {
+  fetchSubcategories,
+  resetSubcategories,
+} from '@/entities/directory/model/subcategoriesSlice';
 
 global.fetch = vi.fn((url: string) => {
   if (url.includes('/subcategories')) {
@@ -41,7 +44,10 @@ describe('subcategoriesSlice', () => {
       { id: 'sub2', name: 'Skill2', categoryId: 'cat2' },
     ];
 
-    const state = subcategoriesReducer(initialState, { type: fetchSubcategories.fulfilled.type, payload });
+    const state = subcategoriesReducer(initialState, {
+      type: fetchSubcategories.fulfilled.type,
+      payload,
+    });
     expect(state.loading).toBe(false);
     expect(state.ids).toEqual(['sub1', 'sub2']);
     expect(state.entities).toEqual({

@@ -1,10 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 
-import {
-  setSearchQuery,
-  filterSkills,
-  fetchSkills,
-} from '@/entities/skill/model/skillsSlice';
+import { setSearchQuery, filterSkills, fetchSkills } from '@/entities/skill/model/skillsSlice';
 import { setUser, clearUser, fetchCurrentUser } from '@/entities/user/model/userSlice';
 import { store, type RootState } from '@/app/store';
 import { popupActions } from '@/app/store/popupSlice';
@@ -13,14 +9,14 @@ describe('Full Redux Store Integration', () => {
   let state: RootState;
 
   beforeEach(() => {
-  store.dispatch({
-    type: 'subcategories/fetchSubcategories/fulfilled',
-    payload: [
-      { id: 'sub1', name: 'Skill1', categoryId: 'cat1' },
-      { id: 'sub2', name: 'Skill2', categoryId: 'cat2' },
-    ],
+    store.dispatch({
+      type: 'subcategories/fetchSubcategories/fulfilled',
+      payload: [
+        { id: 'sub1', name: 'Skill1', categoryId: 'cat1' },
+        { id: 'sub2', name: 'Skill2', categoryId: 'cat2' },
+      ],
+    });
   });
-});
 
   it('should initialize with preloaded state', () => {
     state = store.getState();

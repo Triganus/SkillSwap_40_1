@@ -3,7 +3,10 @@ import { store } from '../index';
 import { popupActions } from '../popupSlice';
 import { setSearchQuery, filterSkills, fetchSkills } from '@/entities/skill/model/skillsSlice';
 import { setSortOrder } from '@/entities/sort/model/sortSlice';
-import { fetchSubcategories, resetSubcategories } from '@/entities/directory/model/subcategoriesSlice';
+import {
+  fetchSubcategories,
+  resetSubcategories,
+} from '@/entities/directory/model/subcategoriesSlice';
 import { setUser, clearUser } from '@/entities/user/model/userSlice';
 import type { DbUser } from '@/entities/user/model/types/types';
 
@@ -28,7 +31,7 @@ global.fetch = vi.fn((url: string) => {
 
 describe('Full Redux Store Integration', () => {
   beforeEach(() => {
-    store.dispatch({ type: 'RESET' } as any);
+    store.dispatch({ type: 'RESET' });
     store.dispatch(resetSubcategories());
   });
 
@@ -102,9 +105,9 @@ describe('Full Redux Store Integration', () => {
 
     expect(state.skills.popularSkills).toEqual(state.skills.skills.slice(0, 10));
     expect(state.skills.newSkills).toEqual(
-      [...state.skills.skills].sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ).slice(0, 10)
+      [...state.skills.skills]
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 10)
     );
   });
 });

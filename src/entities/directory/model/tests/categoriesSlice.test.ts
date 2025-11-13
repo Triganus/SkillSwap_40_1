@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import categoriesReducer, { fetchCategories, resetCategories } from '@/entities/directory/model/categoriesSlice';
+import categoriesReducer, {
+  fetchCategories,
+  resetCategories,
+} from '@/entities/directory/model/categoriesSlice';
 import { store } from '@/app/store';
 
 global.fetch = vi.fn((url: string) => {
@@ -23,7 +26,7 @@ global.fetch = vi.fn((url: string) => {
 
 describe('categoriesSlice integration', () => {
   beforeEach(() => {
-    store.dispatch({ type: 'RESET' } as any);
+    store.dispatch({ type: 'RESET' });
     store.dispatch(resetCategories());
   });
 
@@ -58,14 +61,14 @@ describe('categoriesSlice integration', () => {
 
   it('should reset categories', () => {
     const populatedState = {
-  ids: ['cat1', 'cat2'],
-  entities: {
-    cat1: { id: 'cat1', name: 'Category1', order: 1, subcategoryIds: [] },
-    cat2: { id: 'cat2', name: 'Category2', order: 2, subcategoryIds: [] },
-  },
-  loading: false,
-  error: null,
-};
+      ids: ['cat1', 'cat2'],
+      entities: {
+        cat1: { id: 'cat1', name: 'Category1', order: 1, subcategoryIds: [] },
+        cat2: { id: 'cat2', name: 'Category2', order: 2, subcategoryIds: [] },
+      },
+      loading: false,
+      error: null,
+    };
     const state = categoriesReducer(populatedState, resetCategories());
     expect(state.ids).toEqual([]);
     expect(state.entities).toEqual({});

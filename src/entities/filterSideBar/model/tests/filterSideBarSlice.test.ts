@@ -37,9 +37,7 @@ describe('filterSideBarSlice', () => {
         skill_categories: [
           {
             category: 'cat1',
-            skills: [
-              { skill_id: 's1', skill_name: 'Skill One', skill_image: '/img1.png' },
-            ],
+            skills: [{ skill_id: 's1', skill_name: 'Skill One', skill_image: '/img1.png' }],
           },
         ],
       },
@@ -56,7 +54,10 @@ describe('filterSideBarSlice', () => {
       cities: ['SPB'],
       skills: {
         skill_categories: [
-          { category: 'cat1', skills: [{ skill_id: 's1', skill_name: 'Skill1', skill_image: '/img.png' }] },
+          {
+            category: 'cat1',
+            skills: [{ skill_id: 's1', skill_name: 'Skill1', skill_image: '/img.png' }],
+          },
         ],
       },
       filtersApplied: true,

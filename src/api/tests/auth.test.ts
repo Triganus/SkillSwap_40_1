@@ -10,7 +10,7 @@ describe('login', () => {
     name: 'John Doe',
     email: 'john@example.com',
     avatar: null,
-    token: 'test-token'
+    token: 'test-token',
   };
 
   const request: LoginRequest = {
@@ -26,7 +26,6 @@ describe('login', () => {
 
   beforeEach(() => {
     mockFetch = vi.fn();
-    // @ts-ignore
     global.fetch = mockFetch;
   });
 
@@ -38,8 +37,7 @@ describe('login', () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       headers: {
-        get: (key: string) =>
-          key === 'content-type' ? 'application/json' : null,
+        get: (key: string) => (key === 'content-type' ? 'application/json' : null),
       },
       json: async () => response,
     });
@@ -60,8 +58,7 @@ describe('login', () => {
       ok: false,
       status: 401,
       headers: {
-        get: (key: string) =>
-          key === 'content-type' ? 'application/json' : null,
+        get: (key: string) => (key === 'content-type' ? 'application/json' : null),
       },
       json: async () => ({ message: errorMessage }),
     });

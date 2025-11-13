@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { completeRegistration, type CompleteRegistrationRequest, type CompleteRegistrationResponse } from '../registration';
+import {
+  completeRegistration,
+  type CompleteRegistrationRequest,
+  type CompleteRegistrationResponse,
+} from '../registration';
 import type { AuthUser } from '@entities/user/model/types/types';
 import type { TagCategory } from '@shared/ui/Tag';
 
@@ -41,7 +45,6 @@ describe('completeRegistration', () => {
 
   beforeEach(() => {
     mockFetch = vi.fn();
-    // @ts-ignore
     global.fetch = mockFetch;
   });
 

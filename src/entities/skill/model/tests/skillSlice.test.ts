@@ -30,8 +30,24 @@ describe('skillsSlice', () => {
 
   it('should filter skills correctly', () => {
     const skills: Skill[] = [
-      { id: '1', title: 'JavaScript', description: 'JS skill', type: 'learning', category: 'business', authorId: 'a1', createdAt: '2023-01-01' },
-      { id: '2', title: 'Python', description: 'Python skill', type: 'learning', category: 'education', authorId: 'a2', createdAt: '2023-02-01' },
+      {
+        id: '1',
+        title: 'JavaScript',
+        description: 'JS skill',
+        type: 'learning',
+        category: 'business',
+        authorId: 'a1',
+        createdAt: '2023-01-01',
+      },
+      {
+        id: '2',
+        title: 'Python',
+        description: 'Python skill',
+        type: 'learning',
+        category: 'education',
+        authorId: 'a2',
+        createdAt: '2023-02-01',
+      },
     ];
 
     const stateWithSkills = { ...initialState, skills };
@@ -43,7 +59,7 @@ describe('skillsSlice', () => {
     expect(filteredState.searchResults.length).toBe(1);
     expect(filteredState.searchResults[0].title).toBe('Python');
     expect(filteredState.popularSkills.length).toBe(2);
-    expect(filteredState.newSkills[0].title).toBe('Python'); 
+    expect(filteredState.newSkills[0].title).toBe('Python');
   });
 
   it('should handle fetchSkills pending', () => {
@@ -55,7 +71,15 @@ describe('skillsSlice', () => {
 
   it('should handle fetchSkills fulfilled', () => {
     const skills: Skill[] = [
-      { id: '1', title: 'Skill1', description: '', type: 'learning', category: 'other', authorId: 'a1', createdAt: '2023-01-01' },
+      {
+        id: '1',
+        title: 'Skill1',
+        description: '',
+        type: 'learning',
+        category: 'other',
+        authorId: 'a1',
+        createdAt: '2023-01-01',
+      },
     ];
     const action = { type: fetchSkills.fulfilled.type, payload: skills };
     const state = skillsReducer(initialState, action);

@@ -23,7 +23,7 @@ global.fetch = vi.fn((url: string) => {
 
 describe('citiesSlice integration', () => {
   beforeEach(() => {
-    store.dispatch({ type: 'RESET' } as any);
+    store.dispatch({ type: 'RESET' });
     store.dispatch(resetCities());
   });
 
@@ -36,8 +36,18 @@ describe('citiesSlice integration', () => {
     expect(Array.isArray(state.ids)).toBe(true);
     expect(state.ids.length).toBeGreaterThanOrEqual(2);
 
-    expect(state.entities['city1']).toMatchObject({ id: 'city1', name: 'Moscow', region: 'Moscow', population: 12000000 });
-    expect(state.entities['city2']).toMatchObject({ id: 'city2', name: 'Saint Petersburg', region: 'Leningrad', population: 5500000 });
+    expect(state.entities['city1']).toMatchObject({
+      id: 'city1',
+      name: 'Moscow',
+      region: 'Moscow',
+      population: 12000000,
+    });
+    expect(state.entities['city2']).toMatchObject({
+      id: 'city2',
+      name: 'Saint Petersburg',
+      region: 'Leningrad',
+      population: 5500000,
+    });
     expect(state.error).toBeNull();
   });
 
