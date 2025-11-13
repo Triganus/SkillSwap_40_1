@@ -40,6 +40,7 @@ export {
   fetchNewUsersThunk,
   fetchUsersWithSkillsThunk,
   fetchNewUsersWithPaginationThunk,
+  fetchPopularUsersWithPaginationThunk,
 } from './thunks';
 
 // Users selectors
