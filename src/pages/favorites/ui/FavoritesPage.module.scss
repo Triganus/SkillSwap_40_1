@@ -1,9 +1,12 @@
 .content {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
   gap: 24px;
   overflow-x: hidden;
+  width: 100%;
   width: 1368px;
+  margin: 0 auto;
 
   @media (width <= 768px) {
     flex-direction: column;
