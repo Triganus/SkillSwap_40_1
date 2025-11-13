@@ -66,7 +66,7 @@ const loadedGenders = loadState(
   PERSIST_VERSION
 );
 
-if (import.meta.env.DEV) {
+if (process.env.NODE_ENV === 'development') {
   console.log('[Store Init] Directories from localStorage:', {
     categoriesCount: loadedCategories.ids.length,
     subcategoriesCount: loadedSubcategories.ids.length,
@@ -126,7 +126,7 @@ export const store = configureStore({
         directories_cities: { stateKey: 'cities', version: PERSIST_VERSION },
       })
     ),
-  devTools: import.meta?.env?.MODE !== 'production',
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 export type RootState = ReturnType<typeof store.getState>;

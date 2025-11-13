@@ -10,7 +10,7 @@ export interface NotificationPopup {
   onClose?: () => void;
 }
 
-interface PopupState {
+export interface PopupState {
   activePopup: NotificationPopup | null;
 }
 
