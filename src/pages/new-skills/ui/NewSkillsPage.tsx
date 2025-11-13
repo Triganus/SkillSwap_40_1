@@ -36,7 +36,6 @@ export default function NewSkillsPage() {
     };
   }, [dispatch]);
 
-
   useEffect(() => {
     dispatch(fetchNewUsersWithPaginationThunk({ page: 1, limit: 9, replace: true }))
       .unwrap()
@@ -87,7 +86,7 @@ export default function NewSkillsPage() {
     }));
   }, [usersData, handleCardDetailsClick]);
 
-    return (
+  return (
     <div className={styles.container}>
       {loading && usersData.length === 0 ? (
         <div className={styles.preloaderContainer}>
