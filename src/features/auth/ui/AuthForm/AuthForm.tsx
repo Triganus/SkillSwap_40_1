@@ -163,7 +163,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               {loading ? 'Входим…' : submitText}
             </Button>
             {showRegisterLink && (
-              <div className={styles['bottom-link']}>
+              <div className={styles.bottomLink}>
                 <Link to={registerLinkTo} className={styles.link}>
                   {registerLinkText}
                 </Link>
