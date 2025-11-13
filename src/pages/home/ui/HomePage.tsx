@@ -96,16 +96,22 @@ export default function HomePage() {
   useEffect(() => {
     const wasOnDifferentPage = prevLocationRef.current !== location.pathname;
     const returnedToHome = location.pathname === '/';
-    
+
     // Если вернулись на главную с другой страницы и данные уже есть, обновляем их
-    if (wasOnDifferentPage && returnedToHome && usersData.length > 0 && !isFiltering && !loadingUsers && !isLoadingRef.current) {
+    if (
+      wasOnDifferentPage &&
+      returnedToHome &&
+      usersData.length > 0 &&
+      !isFiltering &&
+      !loadingUsers &&
+      !isLoadingRef.current
+    ) {
       isLoadingRef.current = true;
-      dispatch(fetchUsersWithSkillsThunk())
-        .finally(() => {
-          isLoadingRef.current = false;
-        });
+      dispatch(fetchUsersWithSkillsThunk()).finally(() => {
+        isLoadingRef.current = false;
+      });
     }
-    
+
     prevLocationRef.current = location.pathname;
   }, [location.pathname, dispatch, usersData.length, isFiltering, loadingUsers]);
 
