@@ -212,7 +212,9 @@ export const usersSliceV2 = createSlice({
       }
 
       // Вспомогательная функция для обновления карточки в массиве (иммутабельно)
-      const updateCardInArray = (cards: SkillCardProps[] | undefined): SkillCardProps[] | undefined => {
+      const updateCardInArray = (
+        cards: SkillCardProps[] | undefined
+      ): SkillCardProps[] | undefined => {
         if (!cards) return cards;
         const targetCardIndex = cards.findIndex((card) => card.user.id === skillOwnerUserId);
         if (targetCardIndex > -1) {
