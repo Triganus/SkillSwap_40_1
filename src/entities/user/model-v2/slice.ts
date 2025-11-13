@@ -1,6 +1,7 @@
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { UserListItem, UserProfile, UsersState } from './types';
+import type { SkillCardProps } from '@/widgets/Cards/SkillCard/type';
 import {
   fetchUserListItemsThunk,
   fetchUserProfileThunk,
