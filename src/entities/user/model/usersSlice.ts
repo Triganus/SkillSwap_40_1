@@ -122,7 +122,7 @@ export const fetchUsersWithSkills = createAsyncThunk<
 >('users/fetchUsersWithSkills', async (_, { rejectWithValue }) => {
   try {
     // Загружаем популярных (3), новых (3) и рекомендованных (30+)
-    const [popularData, newData, recommendedData] = await Promise.all([
+    const [popularDataResponse, newDataResponse, recommendedData] = await Promise.all([
       fetchPopularUsers(),
       fetchNewUsers(),
       fetchRecommendedUsers({ limit: 30 }),
@@ -130,9 +130,12 @@ export const fetchUsersWithSkills = createAsyncThunk<
 
     // Объединяем все данные без дубликатов
     const allUsers = new Map<string, UserListItem>();
-    [...popularData, ...newData, ...recommendedData.users].forEach((user) => {
-      allUsers.set(user.id, user);
-    });
+    // Все три функции возвращают объекты с полем users
+    [...popularDataResponse.users, ...newDataResponse.users, ...recommendedData.users].forEach(
+      (user) => {
+        allUsers.set(user.id, user);
+      }
+    );
 
     // Преобразуем в SkillCardProps
     return Array.from(allUsers.values()).map(userListItemToSkillCard);

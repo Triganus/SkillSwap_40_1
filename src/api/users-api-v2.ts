@@ -172,15 +172,20 @@ export async function fetchRecommendedUsers(params?: {
 }
 
 /**
- * Получить популярных пользователей (топ 3)
+ * Получить популярных пользователей с поддержкой пагинации
  */
-export async function fetchPopularUsers(currentUserId?: string): Promise<UserListItem[]> {
+export async function fetchPopularUsers(params?: {
+  page?: number;
+  limit?: number;
+  currentUserId?: string;
+}): Promise<{ users: UserListItem[]; hasMore: boolean; total: number }> {
   const searchParams = new URLSearchParams();
 
-  searchParams.set('limit', '3');
+  if (params?.page) searchParams.set('page', String(params.page));
+  if (params?.limit) searchParams.set('limit', String(params.limit));
 
-  if (currentUserId) {
-    const normalizedId = normalizeId(currentUserId);
+  if (params?.currentUserId) {
+    const normalizedId = normalizeId(params.currentUserId);
 
     if (normalizedId) searchParams.set('currentUserId', normalizedId);
   }
@@ -193,19 +198,29 @@ export async function fetchPopularUsers(currentUserId?: string): Promise<UserLis
 
   const data = await response.json();
 
-  return data.users || data;
+  // Для обратной совместимости: если API вернул массив, оборачиваем его
+  if (Array.isArray(data)) {
+    return { users: data, hasMore: false, total: data.length };
+  }
+
+  return data;
 }
 
 /**
- * Получить новых пользователей (топ 3)
+ * Получить новых пользователей с поддержкой пагинации
  */
-export async function fetchNewUsers(currentUserId?: string): Promise<UserListItem[]> {
+export async function fetchNewUsers(params?: {
+  page?: number;
+  limit?: number;
+  currentUserId?: string;
+}): Promise<{ users: UserListItem[]; hasMore: boolean; total: number }> {
   const searchParams = new URLSearchParams();
 
-  searchParams.set('limit', '3');
+  if (params?.page) searchParams.set('page', String(params.page));
+  if (params?.limit) searchParams.set('limit', String(params.limit));
 
-  if (currentUserId) {
-    const normalizedId = normalizeId(currentUserId);
+  if (params?.currentUserId) {
+    const normalizedId = normalizeId(params.currentUserId);
 
     if (normalizedId) searchParams.set('currentUserId', normalizedId);
   }
@@ -218,7 +233,12 @@ export async function fetchNewUsers(currentUserId?: string): Promise<UserListIte
 
   const data = await response.json();
 
-  return data.users || data;
+  // Для обратной совместимости: если API вернул массив, оборачиваем его
+  if (Array.isArray(data)) {
+    return { users: data, hasMore: false, total: data.length };
+  }
+
+  return data;
 }
 
 /**

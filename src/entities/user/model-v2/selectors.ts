@@ -63,6 +63,26 @@ export const selectSkillCards = (state: RootState): any[] => {
 };
 
 /**
+ * Селектор для popularCards (топ-3 популярных для HomePage)
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const selectPopularCards = (state: RootState): any[] => {
+  const usersState = selectUsersV2State(state);
+
+  return usersState?.popularCards || [];
+};
+
+/**
+ * Селектор для newCards (топ-3 новых для HomePage)
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const selectNewCards = (state: RootState): any[] => {
+  const usersState = selectUsersV2State(state);
+
+  return usersState?.newCards || [];
+};
+
+/**
  * Селектор для popularIds
  */
 export const selectPopularIds = (state: RootState) => {

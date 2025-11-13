@@ -25,6 +25,7 @@ export {
   setLoading,
   setError,
   resetUsers,
+  clearSkillCards,
 } from './slice';
 
 // Users thunks
@@ -38,6 +39,8 @@ export {
   fetchPopularUsersThunk,
   fetchNewUsersThunk,
   fetchUsersWithSkillsThunk,
+  fetchNewUsersWithPaginationThunk,
+  fetchPopularUsersWithPaginationThunk,
 } from './thunks';
 
 // Users selectors
@@ -51,6 +54,8 @@ export {
   selectUsersError,
   selectUsersTotal,
   selectSkillCards,
+  selectPopularCards,
+  selectNewCards,
   selectPopularIds,
   selectNewIds,
   selectAllUserListItems,

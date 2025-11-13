@@ -629,23 +629,49 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
       const { users, skillPool } = await ensureData();
       const currentUserId = url.searchParams.get('currentUserId') || undefined;
 
-      // /api/users/popular?limit=3
+      // /api/users/popular?limit=3&page=1
       if (base === '/api/users/popular') {
+        const page = Number(url.searchParams.get('page') || '1');
         const limit = Number(url.searchParams.get('limit') || '3');
-        const seed = mulberry32(12345);
-        const popular = [...users]
-          .sort(() => seed() - 0.5) // Стабильная "случайная" сортировка
-          .slice(0, limit);
 
-        return Response.json({ users: enrichUsersWithLikes(popular, users, currentUserId) });
+        // Сначала обогащаем всех пользователей актуальными лайками из кэша
+        const enrichedUsers = enrichUsersWithLikes(users, users, currentUserId);
+
+        // Затем сортируем по количеству лайков (популярность)
+        const sorted = [...enrichedUsers].sort((a, b) => {
+          const likesA = a.primarySkillLikesCount ?? 0;
+          const likesB = b.primarySkillLikesCount ?? 0;
+
+          if (likesB !== likesA) {
+            return likesB - likesA;
+          }
+
+          return b.createdAt - a.createdAt;
+        });
+
+        const start = (page - 1) * limit;
+        const slice = sorted.slice(start, start + limit);
+
+        return Response.json({
+          users: slice,
+          hasMore: start + limit < sorted.length,
+          total: sorted.length,
+        });
       }
 
-      // /api/users/new?limit=3
+      // /api/users/new?limit=3&page=1
       if (base === '/api/users/new') {
+        const page = Number(url.searchParams.get('page') || '1');
         const limit = Number(url.searchParams.get('limit') || '3');
-        const newest = [...users].sort((a, b) => b.createdAt - a.createdAt).slice(0, limit);
+        const sorted = [...users].sort((a, b) => b.createdAt - a.createdAt);
+        const start = (page - 1) * limit;
+        const slice = sorted.slice(start, start + limit);
 
-        return Response.json({ users: enrichUsersWithLikes(newest, users, currentUserId) });
+        return Response.json({
+          users: enrichUsersWithLikes(slice, users, currentUserId),
+          hasMore: start + limit < sorted.length,
+          total: sorted.length,
+        });
       }
 
       // /api/users/recommended

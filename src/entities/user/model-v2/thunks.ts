@@ -10,7 +10,13 @@ import type { RootState } from '@/app/store';
  * Возвращает данные в формате для SkillCard
  */
 export const fetchUsersWithSkillsThunk = createAsyncThunk<
-  { users: SkillCardProps[]; replace: boolean; total?: number },
+  {
+    users: SkillCardProps[];
+    replace: boolean;
+    total?: number;
+    popularCards?: SkillCardProps[];
+    newCards?: SkillCardProps[];
+  },
   {
     page?: number;
     limit?: number;
@@ -91,21 +97,30 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
 
   // Если параметры не переданы, загружаем данные по умолчанию (популярные + новые + рекомендованные)
   if (!params) {
-    const [popularData, newData, recommendedData] = await Promise.all([
-      usersApi.fetchPopularUsers(currentUserId),
-      usersApi.fetchNewUsers(currentUserId),
+    const [popularDataResponse, newDataResponse, recommendedData] = await Promise.all([
+      usersApi.fetchPopularUsers({ limit: 3, currentUserId }),
+      usersApi.fetchNewUsers({ limit: 3, currentUserId }),
       usersApi.fetchRecommendedUsers({ limit: 9, currentUserId }),
     ]);
+
+    const popularCards = popularDataResponse.users.map((user) => transformUserToCard(user));
+    const newCards = newDataResponse.users.map((user) => transformUserToCard(user));
+
+    // Для списка "Рекомендуем" создаем общий массив без дубликатов
     const allUsers = new Map<string, UserListItem>();
 
-    [...popularData, ...newData, ...recommendedData.users].forEach((user) => {
-      allUsers.set(user.id, user);
-    });
+    [...popularDataResponse.users, ...newDataResponse.users, ...recommendedData.users].forEach(
+      (user) => {
+        allUsers.set(user.id, user);
+      }
+    );
 
     return {
       users: Array.from(allUsers.values()).map((user) => transformUserToCard(user)),
       replace: true, // Данные по умолчанию всегда заменяют
       total: allUsers.size, // Общее количество для данных по умолчанию
+      popularCards, // Сохраняем отдельно топ-3 популярных
+      newCards, // Сохраняем отдельно топ-3 новых
     };
   }
 
@@ -324,18 +339,230 @@ export const toggleSkillLikeByUserIdThunk = createAsyncThunk<
 });
 
 /**
- * Загрузить популярных пользователей (топ 3)
+ * Загрузить популярных пользователей (топ 3) для HomePage
  */
 export const fetchPopularUsersThunk = createAsyncThunk<UserListItem[]>(
   'usersV2/fetchPopular',
   async () => {
-    return await usersApi.fetchPopularUsers();
+    const response = await usersApi.fetchPopularUsers({ limit: 3 });
+    return response.users;
   }
 );
 
 /**
- * Загрузить новых пользователей (топ 3)
+ * Загрузить новых пользователей (топ 3) для HomePage
  */
 export const fetchNewUsersThunk = createAsyncThunk<UserListItem[]>('usersV2/fetchNew', async () => {
-  return await usersApi.fetchNewUsers();
+  const response = await usersApi.fetchNewUsers({ limit: 3 });
+  return response.users;
+});
+
+/**
+ * Загрузить популярных пользователей с пагинацией для PopularSkillsPage
+ * Возвращает данные в формате для SkillCard с сортировкой по количеству лайков
+ */
+export const fetchPopularUsersWithPaginationThunk = createAsyncThunk<
+  { users: SkillCardProps[]; replace: boolean; total: number; hasMore: boolean },
+  {
+    page?: number;
+    limit?: number;
+    replace?: boolean;
+  } | void
+>('usersV2/fetchPopularWithPagination', async (params, { getState, dispatch }) => {
+  const resolveCurrentUserId = () => {
+    const state = getState() as RootState;
+    return state.authV2?.user?.id;
+  };
+
+  const currentUserId = resolveCurrentUserId();
+
+  const handleLikeClick = ({
+    skillOwnerUserId,
+    primarySkillId,
+  }: {
+    skillOwnerUserId: string;
+    primarySkillId?: string;
+  }) => {
+    const currentUserId = resolveCurrentUserId();
+
+    if (!currentUserId) {
+      console.log('Cannot toggle like: user is not authenticated');
+      return;
+    }
+
+    void dispatch(
+      toggleSkillLikeByUserIdThunk({
+        currentUserId,
+        skillOwnerUserId,
+      })
+    )
+      .unwrap()
+      .then((result) => {
+        const skillId = result.skillId || primarySkillId;
+        if (!skillId) {
+          return;
+        }
+
+        const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
+        try {
+          const likesData = JSON.parse(
+            localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+          ) as { count: number; users: string[] };
+
+          likesData.count = result.likesCount;
+
+          if (result.liked) {
+            if (!likesData.users.includes(currentUserId)) {
+              likesData.users.push(currentUserId);
+            }
+          } else {
+            likesData.users = likesData.users.filter((id) => id !== currentUserId);
+          }
+
+          localStorage.setItem(likesKey, JSON.stringify(likesData));
+        } catch (error) {
+          console.warn('[fetchPopularUsersWithPaginationThunk] Failed to persist likes', error);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to toggle like for skill card:', error);
+      });
+  };
+
+  const transformUserToCard = (user: UserListItem) =>
+    userListItemToSkillCard(user, {
+      currentUserId,
+      onLikeClick: handleLikeClick,
+    });
+
+  const page = params?.page || 1;
+  const limit = params?.limit || 9;
+
+  const response = await usersApi.fetchPopularUsers({
+    page,
+    limit,
+    currentUserId,
+  });
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[fetchPopularUsersWithPaginationThunk] API returned:', {
+      usersCount: response.users.length,
+      total: response.total,
+      hasMore: response.hasMore,
+      page,
+      limit,
+    });
+  }
+
+  return {
+    users: response.users.map((user) => transformUserToCard(user)),
+    replace: params?.replace !== undefined ? params.replace : true,
+    total: response.total,
+    hasMore: response.hasMore,
+  };
+});
+
+/**
+ * Загрузить новых пользователей с пагинацией для NewSkillsPage
+ * Возвращает данные в формате для SkillCard с сортировкой по убыванию даты
+ */
+export const fetchNewUsersWithPaginationThunk = createAsyncThunk<
+  { users: SkillCardProps[]; replace: boolean; total: number; hasMore: boolean },
+  {
+    page?: number;
+    limit?: number;
+    replace?: boolean;
+  } | void
+>('usersV2/fetchNewWithPagination', async (params, { getState, dispatch }) => {
+  const resolveCurrentUserId = () => {
+    const state = getState() as RootState;
+    return state.authV2?.user?.id;
+  };
+
+  const currentUserId = resolveCurrentUserId();
+
+  const handleLikeClick = ({
+    skillOwnerUserId,
+    primarySkillId,
+  }: {
+    skillOwnerUserId: string;
+    primarySkillId?: string;
+  }) => {
+    const currentUserId = resolveCurrentUserId();
+
+    if (!currentUserId) {
+      console.log('Cannot toggle like: user is not authenticated');
+      return;
+    }
+
+    void dispatch(
+      toggleSkillLikeByUserIdThunk({
+        currentUserId,
+        skillOwnerUserId,
+      })
+    )
+      .unwrap()
+      .then((result) => {
+        const skillId = result.skillId || primarySkillId;
+        if (!skillId) {
+          return;
+        }
+
+        const likesKey = `likes_${skillId}_${skillOwnerUserId}`;
+        try {
+          const likesData = JSON.parse(
+            localStorage.getItem(likesKey) || '{"count":0,"users":[]}'
+          ) as { count: number; users: string[] };
+
+          likesData.count = result.likesCount;
+
+          if (result.liked) {
+            if (!likesData.users.includes(currentUserId)) {
+              likesData.users.push(currentUserId);
+            }
+          } else {
+            likesData.users = likesData.users.filter((id) => id !== currentUserId);
+          }
+
+          localStorage.setItem(likesKey, JSON.stringify(likesData));
+        } catch (error) {
+          console.warn('[fetchNewUsersWithPaginationThunk] Failed to persist likes', error);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to toggle like for skill card:', error);
+      });
+  };
+
+  const transformUserToCard = (user: UserListItem) =>
+    userListItemToSkillCard(user, {
+      currentUserId,
+      onLikeClick: handleLikeClick,
+    });
+
+  const page = params?.page || 1;
+  const limit = params?.limit || 9;
+
+  const response = await usersApi.fetchNewUsers({
+    page,
+    limit,
+    currentUserId,
+  });
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[fetchNewUsersWithPaginationThunk] API returned:', {
+      usersCount: response.users.length,
+      total: response.total,
+      hasMore: response.hasMore,
+      page,
+      limit,
+    });
+  }
+
+  return {
+    users: response.users.map((user) => transformUserToCard(user)),
+    replace: params?.replace !== undefined ? params.replace : true,
+    total: response.total,
+    hasMore: response.hasMore,
+  };
 });
