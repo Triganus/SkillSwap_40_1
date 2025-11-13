@@ -9,6 +9,8 @@ import {
   selectUsersError,
   fetchRecommendedUsersThunk,
   fetchUsersWithSkillsThunk,
+  selectPopularCards,
+  selectNewCards,
 } from '@/entities/user/model-v2';
 import { setFilter, getSideBarFilters } from '@/entities/filterSideBar/model/filterSideBarSlice';
 import { useContentFiltering } from '@/entities/filtered-content';
@@ -32,6 +34,8 @@ export default function HomePage() {
   // Redux селекторы
   const searchQuery = useAppSelector(getSearchQuery);
   const usersData = useAppSelector(selectSkillCards) as SkillCardProps[];
+  const popularCards = useAppSelector(selectPopularCards) as SkillCardProps[];
+  const newCards = useAppSelector(selectNewCards) as SkillCardProps[];
   const loadingUsers = useAppSelector(selectUsersLoading);
   const totalUsers = useAppSelector(selectUsersTotal);
   const usersError = useAppSelector(selectUsersError);
@@ -312,6 +316,8 @@ export default function HomePage() {
       <section className={styles.content}>
         <HomeContent
           cards={usersData}
+          popularCards={popularCards}
+          newCards={newCards}
           isLoading={shouldShowLoader}
           hasMore={hasMoreRecommended}
           onLoadMore={handleLoadMoreRecommended}

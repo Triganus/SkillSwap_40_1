@@ -138,4 +138,8 @@ export interface UsersState {
   // Используем any чтобы избежать циклических зависимостей с SkillCardProps
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   skillCards?: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  popularCards?: any[]; // Топ-3 популярных для блока "Популярное"
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  newCards?: any[]; // Топ-3 новых для блока "Новое"
 }

@@ -28,6 +28,8 @@ interface HomeContentProps {
   // Обычный режим
   onViewAllPopular?: () => void;
   onViewAllNew?: () => void;
+  popularCards?: SkillCardProps[];
+  newCards?: SkillCardProps[];
   // Навигация на страницу навыка
   onSkillDetailsClick?: (skillId: string) => void;
 }
@@ -46,6 +48,8 @@ export const HomeContent: React.FC<HomeContentProps> = ({
   onRemoveFilter,
   onViewAllPopular,
   onViewAllNew,
+  popularCards = [],
+  newCards = [],
   onSkillDetailsClick,
 }) => {
   // Подготавливаем карточки для обычного режима (всегда вызываем хуки)
@@ -53,13 +57,19 @@ export const HomeContent: React.FC<HomeContentProps> = ({
     return showCardDetails(cards, onSkillDetailsClick);
   }, [cards, onSkillDetailsClick]);
 
-  const popularCards = useMemo(() => {
+  const displayPopularCards = useMemo(() => {
+    if (popularCards.length > 0) {
+      return showCardDetails(popularCards, onSkillDetailsClick);
+    }
     return preparedCards.slice(0, 3);
-  }, [preparedCards]);
+  }, [popularCards, preparedCards, onSkillDetailsClick]);
 
-  const newCards = useMemo(() => {
+  const displayNewCards = useMemo(() => {
+    if (newCards.length > 0) {
+      return showCardDetails(newCards, onSkillDetailsClick);
+    }
     return preparedCards.slice(3, 6);
-  }, [preparedCards]);
+  }, [newCards, preparedCards, onSkillDetailsClick]);
 
   const sortedCards = useMemo(() => {
     return sortSkillCards(preparedCards, sortOrder);
@@ -122,7 +132,7 @@ export const HomeContent: React.FC<HomeContentProps> = ({
       {onViewAllPopular && (
         <CardSectionUI
           title="Популярное"
-          cards={popularCards}
+          cards={displayPopularCards}
           onLookClick={onViewAllPopular}
           maxCards={3}
           showButton={true}
@@ -133,7 +143,7 @@ export const HomeContent: React.FC<HomeContentProps> = ({
       {onViewAllNew && (
         <CardSectionUI
           title="Новое"
-          cards={newCards}
+          cards={displayNewCards}
           onLookClick={onViewAllNew}
           maxCards={3}
           showButton={true}

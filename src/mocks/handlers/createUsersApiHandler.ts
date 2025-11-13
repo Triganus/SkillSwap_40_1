@@ -634,8 +634,11 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         const page = Number(url.searchParams.get('page') || '1');
         const limit = Number(url.searchParams.get('limit') || '3');
 
-        // Сортируем по количеству лайков (популярность)
-        const sorted = [...users].sort((a, b) => {
+        // Сначала обогащаем всех пользователей актуальными лайками из кэша
+        const enrichedUsers = enrichUsersWithLikes(users, users, currentUserId);
+
+        // Затем сортируем по количеству лайков (популярность)
+        const sorted = [...enrichedUsers].sort((a, b) => {
           const likesA = a.primarySkillLikesCount ?? 0;
           const likesB = b.primarySkillLikesCount ?? 0;
 
@@ -650,7 +653,7 @@ export function createUsersApiHandler(priority = 90): IRequestHandler {
         const slice = sorted.slice(start, start + limit);
 
         return Response.json({
-          users: enrichUsersWithLikes(slice, users, currentUserId),
+          users: slice,
           hasMore: start + limit < sorted.length,
           total: sorted.length,
         });

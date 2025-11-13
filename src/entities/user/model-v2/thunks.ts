@@ -10,7 +10,13 @@ import type { RootState } from '@/app/store';
  * Возвращает данные в формате для SkillCard
  */
 export const fetchUsersWithSkillsThunk = createAsyncThunk<
-  { users: SkillCardProps[]; replace: boolean; total?: number },
+  {
+    users: SkillCardProps[];
+    replace: boolean;
+    total?: number;
+    popularCards?: SkillCardProps[];
+    newCards?: SkillCardProps[];
+  },
   {
     page?: number;
     limit?: number;
@@ -96,17 +102,25 @@ export const fetchUsersWithSkillsThunk = createAsyncThunk<
       usersApi.fetchNewUsers({ limit: 3, currentUserId }),
       usersApi.fetchRecommendedUsers({ limit: 9, currentUserId }),
     ]);
+
+    const popularCards = popularDataResponse.users.map((user) => transformUserToCard(user));
+    const newCards = newDataResponse.users.map((user) => transformUserToCard(user));
+
+    // Для списка "Рекомендуем" создаем общий массив без дубликатов
     const allUsers = new Map<string, UserListItem>();
 
-    // popularDataResponse и newDataResponse - объекты с полем users, recommendedData тоже
-    [...popularDataResponse.users, ...newDataResponse.users, ...recommendedData.users].forEach((user) => {
-      allUsers.set(user.id, user);
-    });
+    [...popularDataResponse.users, ...newDataResponse.users, ...recommendedData.users].forEach(
+      (user) => {
+        allUsers.set(user.id, user);
+      }
+    );
 
     return {
       users: Array.from(allUsers.values()).map((user) => transformUserToCard(user)),
       replace: true, // Данные по умолчанию всегда заменяют
       total: allUsers.size, // Общее количество для данных по умолчанию
+      popularCards, // Сохраняем отдельно топ-3 популярных
+      newCards, // Сохраняем отдельно топ-3 новых
     };
   }
 

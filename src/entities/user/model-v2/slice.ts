@@ -34,6 +34,8 @@ const initialState: UsersState = {
   error: null,
   total: 0,
   skillCards: [],
+  popularCards: [],
+  newCards: [],
 };
 
 /**
@@ -258,6 +260,8 @@ export const usersSliceV2 = createSlice({
           replace: action.payload.replace,
           previousCount: state.skillCards?.length || 0,
           total: action.payload.total || 0,
+          hasPopularCards: !!action.payload.popularCards,
+          hasNewCards: !!action.payload.newCards,
         });
       }
 
@@ -268,6 +272,13 @@ export const usersSliceV2 = createSlice({
         const newUsers = action.payload.users.filter((u) => !existingIds.has(u.user.id));
 
         state.skillCards = [...(state.skillCards || []), ...newUsers];
+      }
+
+      if (action.payload.popularCards) {
+        state.popularCards = action.payload.popularCards;
+      }
+      if (action.payload.newCards) {
+        state.newCards = action.payload.newCards;
       }
 
       if (process.env.NODE_ENV === 'development') {

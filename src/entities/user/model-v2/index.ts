@@ -54,6 +54,8 @@ export {
   selectUsersError,
   selectUsersTotal,
   selectSkillCards,
+  selectPopularCards,
+  selectNewCards,
   selectPopularIds,
   selectNewIds,
   selectAllUserListItems,
