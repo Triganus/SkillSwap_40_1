@@ -36,7 +36,7 @@ export const fetchSkills = createAsyncThunk<
       return [];
     }
 
-    if (import.meta.env.DEV) {
+    if (process.env.NODE_ENV === 'development') {
       console.log('[fetchSkills] Using subcategories from store:', subcategories.length);
     }
 
