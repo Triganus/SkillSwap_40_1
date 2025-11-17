@@ -1,10 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 export default async function handler(request) {
   if (request.method !== 'GET') {
     return new Response(JSON.stringify({ message: 'Method not allowed' }), {
@@ -18,9 +11,15 @@ export default async function handler(request) {
     const page = parseInt(url.searchParams.get('page') || '1', 10);
     const limit = parseInt(url.searchParams.get('limit') || '3', 10);
 
-    const filePath = path.join(__dirname, '../../public/db/users-v2.json');
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const data = JSON.parse(fileContent);
+    // Получаем базовый URL для статических файлов
+    const baseUrl = url.origin;
+    const dataResponse = await fetch(`${baseUrl}/db/users-v2.json`);
+    
+    if (!dataResponse.ok) {
+      throw new Error(`Failed to load users data: ${dataResponse.status}`);
+    }
+    
+    const data = await dataResponse.json();
     const users = data.users || [];
 
     // Сортируем по дате создания (новые первыми)

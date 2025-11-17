@@ -1,10 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 export default async function handler(request) {
   if (request.method !== 'GET') {
     return new Response(JSON.stringify({ message: 'Method not allowed' }), {
@@ -14,9 +7,16 @@ export default async function handler(request) {
   }
 
   try {
-    const filePath = path.join(__dirname, '../../public/db/genders.json');
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const data = JSON.parse(fileContent);
+    const url = new URL(request.url);
+    // Получаем базовый URL для статических файлов
+    const baseUrl = url.origin;
+    const dataResponse = await fetch(`${baseUrl}/db/genders.json`);
+    
+    if (!dataResponse.ok) {
+      throw new Error(`Failed to load genders data: ${dataResponse.status}`);
+    }
+    
+    const data = await dataResponse.json();
 
     return new Response(JSON.stringify(data), {
       status: 200,
