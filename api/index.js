@@ -2,13 +2,27 @@
 import { categoriesData, subcategoriesData, citiesData, gendersData, usersData } from './directories/data.js';
 
 export default async function handler(request) {
-  // В Vercel через rewrites оригинальный URL доступен через заголовки
   const url = new URL(request.url);
-  // Пробуем получить оригинальный путь из заголовка x-vercel-original-path или используем pathname
-  const originalPath = request.headers.get('x-vercel-original-path') || 
-                       request.headers.get('x-invoke-path') || 
-                       url.pathname;
-  const pathname = originalPath.startsWith('/api') ? originalPath : `/api${originalPath}`;
+  // В Vercel при использовании rewrites, оригинальный путь может быть в query параметре или заголовке
+  // Но проще всего использовать pathname напрямую, так как rewrites должны сохранять его
+  let pathname = url.pathname;
+  
+  // Если pathname это просто /api, значит нужно получить путь из query или заголовка
+  if (pathname === '/api' || pathname === '/api/') {
+    // Пробуем получить из query параметра (если Vercel передает через rewrites)
+    const pathParam = url.searchParams.get('path') || url.searchParams.get('slug');
+    if (pathParam) {
+      pathname = `/api/${pathParam}`;
+    } else {
+      // Пробуем из заголовков
+      const originalPath = request.headers.get('x-vercel-original-path') || 
+                           request.headers.get('x-invoke-path');
+      if (originalPath) {
+        pathname = originalPath.startsWith('/api') ? originalPath : `/api${originalPath}`;
+      }
+    }
+  }
+  
   const method = request.method;
   
   // Логирование для отладки
@@ -16,7 +30,7 @@ export default async function handler(request) {
     pathname, 
     method, 
     url: request.url,
-    originalPath,
+    searchParams: Object.fromEntries(url.searchParams.entries()),
     headers: Object.fromEntries(request.headers.entries())
   });
 
