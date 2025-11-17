@@ -5,6 +5,9 @@ export default async function handler(request) {
   const url = new URL(request.url);
   const pathname = url.pathname; // pathname уже содержит полный путь, например /api/users/recommended
   const method = request.method;
+  
+  // Логирование для отладки
+  console.log('[API Handler]', { pathname, method, url: request.url });
 
   // CORS headers
   const corsHeaders = {
