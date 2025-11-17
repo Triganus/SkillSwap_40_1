@@ -2,12 +2,23 @@
 import { categoriesData, subcategoriesData, citiesData, gendersData, usersData } from './directories/data.js';
 
 export default async function handler(request) {
+  // В Vercel через rewrites оригинальный URL доступен через заголовки
   const url = new URL(request.url);
-  const pathname = url.pathname; // pathname уже содержит полный путь, например /api/users/recommended
+  // Пробуем получить оригинальный путь из заголовка x-vercel-original-path или используем pathname
+  const originalPath = request.headers.get('x-vercel-original-path') || 
+                       request.headers.get('x-invoke-path') || 
+                       url.pathname;
+  const pathname = originalPath.startsWith('/api') ? originalPath : `/api${originalPath}`;
   const method = request.method;
   
   // Логирование для отладки
-  console.log('[API Handler]', { pathname, method, url: request.url });
+  console.log('[API Handler]', { 
+    pathname, 
+    method, 
+    url: request.url,
+    originalPath,
+    headers: Object.fromEntries(request.headers.entries())
+  });
 
   // CORS headers
   const corsHeaders = {
