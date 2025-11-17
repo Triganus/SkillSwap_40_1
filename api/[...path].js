@@ -1,8 +1,12 @@
 // Единая API функция для всех endpoints
 import { categoriesData, subcategoriesData, citiesData, gendersData, usersData } from './directories/data.js';
 
-export default async function handler(request) {
+export default async function handler(request, context) {
+  // В Vercel catch-all роуте путь доступен через context.params
+  const pathSegments = context.params?.path || [];
+  const fullPath = '/api/' + pathSegments.join('/');
   const url = new URL(request.url);
+  url.pathname = fullPath; // Исправляем pathname для правильной обработки
   const pathname = url.pathname;
   const method = request.method;
 
