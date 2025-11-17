@@ -1,3 +1,5 @@
+import { usersData } from '../directories/data.js';
+
 export default async function handler(request) {
   if (request.method !== 'GET') {
     return new Response(JSON.stringify({ message: 'Method not allowed' }), {
@@ -11,16 +13,7 @@ export default async function handler(request) {
     const page = parseInt(url.searchParams.get('page') || '1', 10);
     const limit = parseInt(url.searchParams.get('limit') || '3', 10);
 
-    // Получаем базовый URL для статических файлов
-    const baseUrl = url.origin;
-    const dataResponse = await fetch(`${baseUrl}/db/users-v2.json`);
-    
-    if (!dataResponse.ok) {
-      throw new Error(`Failed to load users data: ${dataResponse.status}`);
-    }
-    
-    const data = await dataResponse.json();
-    const users = data.users || [];
+    const users = usersData.users || [];
 
     // Обогащаем пользователей данными
     const enrichedUsers = users.map(user => ({

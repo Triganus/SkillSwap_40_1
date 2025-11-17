@@ -16,17 +16,8 @@ export default async function handler(request) {
       });
     }
 
-    const url = new URL(request.url);
-    // Получаем базовый URL для статических файлов
-    const baseUrl = url.origin;
-    const dataResponse = await fetch(`${baseUrl}/db/users-v2.json`);
-    
-    if (!dataResponse.ok) {
-      throw new Error(`Failed to load users data: ${dataResponse.status}`);
-    }
-    
-    const data = await dataResponse.json();
-    const users = data.users || [];
+    const { usersData } = await import('../directories/data.js');
+    const users = usersData.users || [];
 
     // Ищем пользователя по email
     const user = users.find(u => u.email?.toLowerCase() === email.toLowerCase()) || users[0];

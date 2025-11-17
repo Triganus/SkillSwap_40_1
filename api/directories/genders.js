@@ -1,3 +1,5 @@
+import { gendersData } from './data.js';
+
 export default async function handler(request) {
   if (request.method !== 'GET') {
     return new Response(JSON.stringify({ message: 'Method not allowed' }), {
@@ -7,18 +9,7 @@ export default async function handler(request) {
   }
 
   try {
-    const url = new URL(request.url);
-    // Получаем базовый URL для статических файлов
-    const baseUrl = url.origin;
-    const dataResponse = await fetch(`${baseUrl}/db/genders.json`);
-    
-    if (!dataResponse.ok) {
-      throw new Error(`Failed to load genders data: ${dataResponse.status}`);
-    }
-    
-    const data = await dataResponse.json();
-
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify(gendersData), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

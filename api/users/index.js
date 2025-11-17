@@ -1,3 +1,5 @@
+import { usersData } from '../directories/data.js';
+
 export default async function handler(request) {
   if (request.method !== 'GET') {
     return new Response(JSON.stringify({ message: 'Method not allowed' }), {
@@ -8,17 +10,7 @@ export default async function handler(request) {
 
   try {
     const url = new URL(request.url);
-    
-    // Получаем базовый URL для статических файлов
-    const baseUrl = url.origin;
-    const dataResponse = await fetch(`${baseUrl}/db/users-v2.json`);
-    
-    if (!dataResponse.ok) {
-      throw new Error(`Failed to load users data: ${dataResponse.status}`);
-    }
-    
-    const data = await dataResponse.json();
-    let users = data.users || [];
+    let users = usersData.users || [];
 
     // Простая фильтрация
     const page = parseInt(url.searchParams.get('page') || '1', 10);
