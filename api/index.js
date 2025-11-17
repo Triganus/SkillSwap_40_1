@@ -3,11 +3,36 @@ import { categoriesData, subcategoriesData, citiesData, gendersData, usersData }
 
 export default async function handler(request) {
   const url = new URL(request.url);
-  const pathname = url.pathname; // pathname уже содержит полный путь, например /api/users/recommended
+  // В Vercel при использовании rewrites, оригинальный путь может быть в query параметре или заголовке
+  // Но проще всего использовать pathname напрямую, так как rewrites должны сохранять его
+  let pathname = url.pathname;
+  
+  // Если pathname это просто /api, значит нужно получить путь из query или заголовка
+  if (pathname === '/api' || pathname === '/api/') {
+    // Пробуем получить из query параметра (если Vercel передает через rewrites)
+    const pathParam = url.searchParams.get('path') || url.searchParams.get('slug');
+    if (pathParam) {
+      pathname = `/api/${pathParam}`;
+    } else {
+      // Пробуем из заголовков
+      const originalPath = request.headers.get('x-vercel-original-path') || 
+                           request.headers.get('x-invoke-path');
+      if (originalPath) {
+        pathname = originalPath.startsWith('/api') ? originalPath : `/api${originalPath}`;
+      }
+    }
+  }
+  
   const method = request.method;
   
   // Логирование для отладки
-  console.log('[API Handler]', { pathname, method, url: request.url });
+  console.log('[API Handler]', { 
+    pathname, 
+    method, 
+    url: request.url,
+    searchParams: Object.fromEntries(url.searchParams.entries()),
+    headers: Object.fromEntries(request.headers.entries())
+  });
 
   // CORS headers
   const corsHeaders = {
