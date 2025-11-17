@@ -1,28 +1,12 @@
 // Единая API функция для всех endpoints
 import { categoriesData, subcategoriesData, citiesData, gendersData, usersData } from './directories/data.js';
 
-export default async function handler(request) {
+export default async function handler(request, context) {
   const url = new URL(request.url);
-  // В Vercel при использовании rewrites, оригинальный путь может быть в query параметре или заголовке
-  // Но проще всего использовать pathname напрямую, так как rewrites должны сохранять его
-  let pathname = url.pathname;
-  
-  // Если pathname это просто /api, значит нужно получить путь из query или заголовка
-  if (pathname === '/api' || pathname === '/api/') {
-    // Пробуем получить из query параметра (если Vercel передает через rewrites)
-    const pathParam = url.searchParams.get('path') || url.searchParams.get('slug');
-    if (pathParam) {
-      pathname = `/api/${pathParam}`;
-    } else {
-      // Пробуем из заголовков
-      const originalPath = request.headers.get('x-vercel-original-path') || 
-                           request.headers.get('x-invoke-path');
-      if (originalPath) {
-        pathname = originalPath.startsWith('/api') ? originalPath : `/api${originalPath}`;
-      }
-    }
-  }
-  
+  // В Vercel catch-all route путь доступен через context.params.slug
+  const slug = context?.params?.slug || [];
+  const pathSegments = Array.isArray(slug) ? slug : [slug];
+  const pathname = '/api/' + pathSegments.join('/');
   const method = request.method;
   
   // Логирование для отладки
@@ -30,8 +14,9 @@ export default async function handler(request) {
     pathname, 
     method, 
     url: request.url,
-    searchParams: Object.fromEntries(url.searchParams.entries()),
-    headers: Object.fromEntries(request.headers.entries())
+    slug,
+    pathSegments,
+    contextParams: context?.params
   });
 
   // CORS headers
